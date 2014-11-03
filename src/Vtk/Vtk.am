@@ -1,0 +1,93 @@
+
+
+#if VTK_5_x
+_VTK_LIBS = -lQVTK \
+           -lLSDyna \
+           -lMapReduceMPI \
+           -lmpistubs \
+           -lvtkalglib \
+           -lvtkCharts \
+           -lvtkCommon \
+           -lvtkDICOMParser \
+           -lvtkexoIIc \
+           -lvtkFiltering \
+           -lvtkftgl \
+           -lvtkGenericFiltering \
+           -lvtkGraphics \
+           -lvtkHybrid \
+           -lvtkImaging \
+           -lvtkInfovis \
+           -lvtkmetaio \
+           -lvtkNetCDF_cxx \
+           -lvtkNetCDF \
+           -lvtkproj4 \
+           -lvtkRendering \
+           -lvtksqlite \
+           -lvtksys \
+           -lvtkverdict \
+           -lvtkViews \
+           -lvtkVolumeRendering \
+           -lvtkWidgets
+
+AM_CFLAGS += $(VTK_CFLAGS)
+AM_CXXFLAGS += $(VTK_CXXFLAGS)
+AM_LDFLAGS += $(VTK_LDFLAGS) $(_VTK_LIBS)
+
+#else
+#_VTK_LIBS = \
+#            -lvtkRenderingOpenGL-6.0 \
+#            -lvtkImagingHybrid-6.0 \
+#            -lvtkIOImage-6.0 \
+#            -lvtkCommonDataModel-6.0 \
+#            -lvtkCommonMath-6.0 \
+#            -lvtkCommonCore-6.0 \
+#            -lvtksys-6.0 \
+#            -lvtkCommonMisc-6.0 \
+#            -lvtkCommonSystem-6.0 \
+#            -lvtkCommonTransforms-6.0 \
+#            -lvtkCommonExecutionModel-6.0 \
+#            -lvtkDICOMParser-6.0 \
+#            -lvtkIOCore-6.0 \
+#            -lvtkzlib-6.0 \
+#            -lvtkmetaio-6.0 \
+#            -lvtkjpeg-6.0 \
+#            -lvtkpng-6.0 \
+#            -lvtktiff-6.0 \
+#            -lvtkImagingCore-6.0 \
+#            -lvtkRenderingCore-6.0 \
+#            -lvtkFiltersExtraction-6.0 \
+#            -lvtkFiltersCore-6.0 \
+#            -lvtkFiltersGeneral-6.0 \
+#            -lvtkCommonComputationalGeometry-6.0 \
+#            -lvtkFiltersStatistics-6.0 \
+#            -lvtkImagingFourier-6.0 \
+#            -lvtkalglib-6.0 \
+#            -lvtkFiltersGeometry-6.0 \
+#            -lvtkFiltersSources-6.0 \
+#            -lvtkIOXMLParser-6.0 \
+#            -lvtkexpat-6.0 \
+#            -lvtkRenderingAnnotation-6.0 \
+#            -lvtkImagingColor-6.0 \
+#            -lvtkRenderingFreeType-6.0 \
+#            -lvtkfreetype-6.0 \
+#            -lvtkftgl-6.0 \
+#            -lvtkInteractionStyle-6.0 \
+#            -lvtkRenderingVolumeOpenGL-6.0 \
+#            -lvtkRenderingVolume-6.0 \
+#            -lvtkIOXML-6.0 \
+#            -lvtkIOGeometry-6.0 \
+#            -lvtkjsoncpp-6.0 \
+#            -lvtkInteractionWidgets-6.0 \
+#            -lvtkFiltersHybrid-6.0 \
+#            -lvtkImagingSources-6.0 \
+#            -lvtkFiltersModeling-6.0 \
+#            -lvtkImagingGeneral-6.0 \
+#            -lvtkIOLegacy-6.0 \
+#            -lvtkRenderingFreeTypeOpenGL-6.0
+
+
+
+#AM_CFLAGS += $(VTK_CFLAGS)
+#AM_CXXFLAGS += $(VTK_CXXFLAGS) -rdynamic
+#AM_LDFLAGS += $(VTK_LDFLAGS) $(_VTK_LIBS) -lGLU -lSM -lICE -lX11 -lXext -lSM -lICE -lX11 -lXext -lXt -lm -ldl -lGL
+#endif

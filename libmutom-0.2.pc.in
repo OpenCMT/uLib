@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Mutom Library (INFN)
+Description: Library for Muon Tomography experiments.
+Requires: eigen3
+Version: @PACKAGE_VERSION@
+Libs: -L${libdir} -lmutom-0.2 -lboost_program_options
+Cflags: -I${includedir}/libmutom-@PACKAGE_VERSION@ -I${libdir}/libmutom-@PACKAGE_VERSION@/include

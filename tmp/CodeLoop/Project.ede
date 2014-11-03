@@ -1,0 +1,14 @@
+;; Object TMP
+;; EDE Project Files are auto generated: Do Not Edit
+(ede-proj-project "TMP"
+  :file "Project.ede"
+  :name "TMP"
+  :targets (list 
+   (ede-proj-target-makefile-program "loop"
+    :name "loop"
+    :path ""
+    :source '("main.cpp")
+    )
+   )
+  :makefile-type 'Makefile.am
+  )

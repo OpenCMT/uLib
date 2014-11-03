@@ -1,0 +1,21 @@
+#! /bin/sh
+
+ROOTDIR=`root-config --prefix`
+
+if [ -e /usr/share/aclocal/root.m4 ]
+then
+    ROOTM4=.
+elif [ -e $ROOTDIR/build/misc/root.m4 ] 
+then
+    ROOTM4=$ROOTDIR/build/misc
+fi
+
+aclocal -I ./m4 
+
+autoheader
+
+libtoolize
+
+automake --add-missing --gnu
+
+autoconf

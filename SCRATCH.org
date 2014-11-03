@@ -1,0 +1,14 @@
+
+ #+TITLE: Documento Scratch per la raccolta delle idee:
+
+
+* IDEAS
+
+** TODO Uso dell __atribute__ transparent_union per l'accesso trasparente ai membri della union data in un vettore.
+L'accesso union dichiarato anonimo e' incompatibile con il c99 questo potrebbe sistemare la cosa?
+
+** TODO Uso dell __attribute__ packed per salvare lo spazio dedicato alle union per i bitfield dei flags
+
+
+
+* ISSUES
