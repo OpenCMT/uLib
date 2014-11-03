@@ -1,0 +1,13 @@
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Mutom Library (INFN)
+Description: Library for Muon Tomography experiments.
+Url: @PACKAGE_URL@
+Version: @PACKAGE_VERSION@
+Requires: eigen3
+Libs: -L${libdir} @PKGCONFIG_LIBS@
+Cflags: @CMAKE_C_FLAGS@ @CMAKE_CXX_FLAGS@ @PKGCONFIG_INCLUDES@

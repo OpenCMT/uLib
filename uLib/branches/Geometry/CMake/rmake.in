@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# CONNECTION ---------------------------------------------------------------- ##
+USER=@REMOTE_BUILD_USER@
+MACHINES="@REMOTE_BUILD_MACHINES@"
+SSH=@REMOTE_BUILD_SSHBIN@
+PORT=@REMOTE_BUILD_SSHPORT@
+
+# BUILD --------------------------------------------------------------------- ##
+
+MAKE=@REMOTE_BUILD_MAKEBIN@
+BUILD_DIR=@REMOTE_BUILD_BULIDIR@
+SOURCE_DIR=@REMOTE_BUILD_SRCDIR@
+CURRENT_DIR=`pwd`
+ARGS=$@
+
+
+# FIND RELATIVE PATH -------------------------------------------------------- ##
+
+function relpath {
+# both $1 and $2 are absolute paths
+# returns $2 relative to $1
+source=$1
+target=$2
+common_part=$source
+back=
+while [ "${target#$common_part}" = "${target}" ]; do
+  common_part=$(dirname $common_part)
+  back="../${back}"
+done
+echo ${back}${target#$common_part/}
+}
+
+CURRENT_SRCDIR=$(cd -- ${CURRENT_DIR}/$(relpath $BUILD_DIR/ $SOURCE_DIR/)/ && pwd)
+
+
+
+for m in ${MACHINES}; do
+ echo "building into machine: ${m}"
+ echo "remote commands: --------------------------------------------------------------------------------------------------------------"
+ echo "source dir = ${SOURCE_DIR}"
+ echo "build  dir = ${BUILD_DIR}"
+ echo "repath to LOCAL MACHINE source dir = ${CURRENT_SRCDIR}"
+ echo "${SSH} -p ${PORT} ${USER}@${m} ${MAKE} -C ${BUILD_DIR} ${ARGS}  3>&1 1>&2 2>&3  | sed -e 's|${SOURCE_DIR}|${CURRENT_SRCDIR}|g' 3>&1 1>&2 2>&3"
+ echo " ------------------------------------------------------------------------------------------------------------------------------"
+ ${SSH} -p ${PORT} ${USER}@${m} "${MAKE} -C ${BUILD_DIR} ${ARGS}  3>&1 1>&2 2>&3  | sed -e 's|${SOURCE_DIR}|${CURRENT_SRCDIR}|g'" 3>&1 1>&2 2>&3
+done

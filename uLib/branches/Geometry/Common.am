@@ -1,0 +1,54 @@
+
+
+if DEBUG
+OPT = -D_DEBUG -g3 -O0 
+OPT_LD = -no-install
+else
+OPT = -DNDEBUG -O3
+OPT_LD =
+endif
+
+if PARAL_MP
+OPEN_MP = -fopenmp
+else
+OPEN_MP =
+endif
+
+
+
+# fix it with proper macro expansion
+EIGEN = $(EIGEN3_CFLAGS)
+
+# Root Flags
+ROOTCFLAGS = @ROOTCFLAGS@
+ROOTLDFLAGS = -L@ROOTLIBDIR@
+
+# Boost required libraries
+BOOST_FLAGS = $(BOOST_SERIALIZATION_LDFLAGS) $(BOOST_SIGNALS_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LDFLAGS)
+BOOST_LIBS  = $(BOOST_SERIALIZATION_LIBS)    $(BOOST_SIGNALS_LIBS)    $(BOOST_PROGRAM_OPTIONS_LIBS)
+
+ULIB_INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/src -I$(top_srcdir)/src/ltk
+
+AM_CFLAGS   =  $(OPT) $(OPEN_MP)
+AM_CXXFLAGS =  -std=c++0x $(OPT) $(OPEN_MP) $(EIGEN) $(ROOTCFLAGS) $(GEANT4CFLAGS) $(BOOST_CPPFLAGS) $(ULIB_INCLUDES) $(QT4_CFLAGS)
+AM_LDFLAGS  =  $(OPT_LD) $(ROOTLDFLAGS) # $(BOOST_FLAGS)
+
+AM_LIBS_ROOT   = @ROOTLIBS@
+AM_LIBS_GEANT4 = $(GEANT4LIBS)
+AM_LIBS_QT4    = $(QT4_LIBS)
+AM_LIBS_BOOST  = $(BOOST_LIBS)
+
+AM_LIBS_ALL = @LIBS@            \
+              @LIBADD_DL@       \
+              @LIBREADLINE@     \
+              $(AM_LIBS_ROOT)   \
+              $(AM_LIBS_BOOST)  \
+              $(AM_LIBS_GEANT4) \
+              $(AM_LIBS_QT4)
+
+AM_DEFAULT_SOURCE_EXT = .cpp
+
+
+# clean_all:
+#	rm -f *~ *# *.vtk *.vti *.ply
+#	@echo "all cleaned up!"

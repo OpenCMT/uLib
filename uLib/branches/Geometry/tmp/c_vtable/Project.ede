@@ -1,0 +1,15 @@
+;; Object vtable
+;; EDE Project Files are auto generated: Do Not Edit
+(ede-proj-project "vtable"
+  :file "Project.ede"
+  :name "vtable"
+  :targets (list 
+   (ede-proj-target-makefile-program "c"
+    :name "c"
+    :path ""
+    :source '("main.c" "Object.c" "Vector.c")
+    :auxsource '("Vector.h")
+    )
+   )
+  :makefile-type 'Makefile.am
+  )
