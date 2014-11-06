@@ -35,37 +35,61 @@
 #include "Math/StructuredData.h"
 #include <Core/ProgrammableAccessor.h>
 
+#include <vtkInformation.h>
+
+
 namespace uLib {
 
-class DataSet_Base {
-public:
-    DataSet_Base() {}
 
-    virtual ~DataSet_Base() {}
-    virtual const void * GetPtr(Id_t id) const = 0;
-    virtual       void * GetPtr(Id_t id)       = 0;
-    virtual size_t Size() const = 0;
+class AbstractArray {
+public:
+    virtual void * GetDataPointer(Id_t id) const = 0;
+    virtual void  SetSize(const size_t size) = 0;
+    virtual const size_t GetSize() const = 0;
+    virtual ~AbstractArray() {}
+};
+
+
+class DataSetAttributes {
+public:
+
+    template < typename GeT, typename SeT >
+    inline void SetScalars(GeT get, SeT set) {
+        m_Scalars.SetAccessFunctions(get,set);
+    }
 
 private:
-
-
+    ProgrammableAccessor<double> m_Scalars;
 };
 
-template <typename T>
-class VectorData : public DataSet_Base, public Vector<T> {
+
+template < typename T >
+class DataVector : public AbstractArray {
 public:
+    void * GetDataPointer(Id_t id) const { return (void *)&m_Data.at(id); }
 
+    inline void SetSize(const size_t size) { m_Data.resize(size); }
+    inline const size_t GetSize() const { return m_Data.size(); }
 
-protected:
-    const void *GetPtr(Id_t id) const { return &this->at(id); }
-    void *      GetPtr(Id_t id)       { return &this->at(id); }
+    uLibRefMacro(Data,Vector<T>)
+    uLibRefMacro(Attributes,DataSetAttributes)
+private:
+    DataSetAttributes m_Attributes;
+    Vector<T> m_Data;
 };
 
 
 
 
 
+//class DataSet {
+//public:
 
+//    virtual Vector3d     GetPoint(const Id_t) const = 0;
+//    virtual Vector<Id_t> GetCell(const Id_t)  const = 0;
+
+//private:
+//};
 
 
 

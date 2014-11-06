@@ -43,28 +43,6 @@
 
 namespace uLib {
 
-template< typename T, Size_t size >
-class Array : public std::array<T,size> {
-
-};
-
-
-template< typename T, Size_t size >
-class SmartArray : public SmartPointer< Array<T,size> > {
-    typedef SmartPointer< Array<T,size> > ptr;
-public:
-    SmartArray() : ptr(new Array<T,size>()) { }
-    SmartArray( const SmartArray &copy) : ptr(copy) { }
-    virtual ~SmartArray() {}
-
-    T& operator[](unsigned int p) {
-        return ptr::get()->at(p);
-    }
-
-
-
-};
-
 
 
 }

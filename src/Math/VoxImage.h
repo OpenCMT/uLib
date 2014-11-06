@@ -45,28 +45,28 @@ namespace uLib {
 //  ABSTRACT VOX IMAGE    //////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace Abstract {
-class VoxImage : public uLib::ImageData {
-public:
-    typedef uLib::ImageData BaseClass;
+//namespace Abstract {
+//class VoxImage : public uLib::ImageData {
+//public:
+//    typedef uLib::ImageData BaseClass;
 
-    virtual float GetValue(const Vector3i id) const = 0;
-    virtual float GetValue(const int id) const = 0;
-    virtual void SetValue(const Vector3i id, float value) = 0;
-    virtual void SetValue(const int id, float value) = 0;
+//    virtual float GetValue(const Vector3i id) const = 0;
+//    virtual float GetValue(const int id) const = 0;
+//    virtual void SetValue(const Vector3i id, float value) = 0;
+//    virtual void SetValue(const int id, float value) = 0;
 
-    virtual void SetDims(const Vector3i &size) = 0;
+//    virtual void SetDims(const Vector3i &size) = 0;
 
-    void ExportToVtk(const char *file, bool density_type = 0);
-    void ExportToVtkXml(const char *file, bool density_type = 0);
-    int ImportFromVtk(const char *file);
+//    void ExportToVtk(const char *file, bool density_type = 0);
+//    void ExportToVtkXml(const char *file, bool density_type = 0);
+//    int ImportFromVtk(const char *file);
 
-protected:
+//protected:
 
-    virtual ~VoxImage() {}
-    VoxImage(const Vector3i &size) : BaseClass(size) {}
-};
-}
+//    virtual ~VoxImage() {}
+//    VoxImage(const Vector3i &size) : BaseClass(size) {}
+//};
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 //  VOXEL   ////////////////////////////////////////////////////////////////////
@@ -92,9 +92,9 @@ std::basic_ostream<T> & operator << (std::basic_ostream<T> &o, const Voxel &v) {
 
 
 template< typename T >
-class VoxImage :  public Abstract::VoxImage {
+class VoxImage :  public ImageData {
 public:
-    typedef Abstract::VoxImage BaseClass;
+    typedef ImageData BaseClass;
 
     VoxImage();
 
@@ -120,14 +120,16 @@ public:
     inline T& operator[](const Vector3i &id) { return m_Data[Map(id)]; }
 
     // this implements Abstract interface //
-    inline Scalarf GetValue(const Vector3i id) const { return this->At(id)(); }
-    inline Scalarf GetValue(const int id) const { return this->At(id)(); }
-    inline void SetValue(const Vector3i id, Scalarf value) { this->operator [](id)() = value; }
-    inline void SetValue(const int id, float value) { this->operator [](id)() = value; }
+    inline void * GetDataPointer(const Id_t id) const { return (void *)&this->At(id); }
+    inline Scalarf GetValue(const Vector3i id) const { return this->At(id).Value; }
+    inline Scalarf GetValue(const int id) const { return this->At(id).Value; }
+    inline void SetValue(const Vector3i id, Scalarf value) { this->operator [](id).Value = value; }
+    inline void SetValue(const int id, float value) { this->operator [](id).Value = value; }
 
+    // fix needed
     inline void SetDims(const Vector3i &size) {
         this->m_Data.resize(size.prod());
-        StructuredData::SetDims(size);
+        ImageMap::SetDims(size);
     }    
 
     inline VoxImage<T> clipImage(const Vector3i begin, const Vector3i end) const;
@@ -213,13 +215,11 @@ template<typename T>
 VoxImage<T>::VoxImage() :
     m_Data(0),
     BaseClass(Vector3i(0,0,0)) {}
-//{ Interface::IsA <T,Interface::Voxel>(); /* structural check for T */ }
 
 template<typename T>
 VoxImage<T>::VoxImage(const Vector3i &size) :
     m_Data(size.prod()),
     BaseClass(size) {}
-//{ Interface::IsA <T,Interface::Voxel>(); /* structural check for T */ }
 
 
 template <typename T>

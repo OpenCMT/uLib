@@ -31,7 +31,18 @@
 #include "Math/Dense.h"
 #include "Math/DataSet.h"
 
+//#include "boost/range.hpp"
+//#include "boost/range/iterator.hpp"
+
+
+
+
+
 namespace uLib {
+
+
+
+
 
 class ImageMap {
 public:
@@ -68,6 +79,9 @@ public:
     inline int Map(Vector3i index) const;
 
     Vector3i UnMap(int index) const;
+
+
+
 
 private:
     Order m_DataOrder;

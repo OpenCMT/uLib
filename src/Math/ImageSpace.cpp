@@ -28,19 +28,10 @@
 
 namespace uLib {
 
-ImageSpace::ImageSpace(const Vector3i size) :
-    StructuredData(size)
-{}
+//ImageSpace::ImageSpace(const Vector3i size) :
+//    StructuredData(size)
+//{}
 
-//void ImageSpace::SetSize(const Vector3f v)
-//{
-//    ContainerBox::SetSize( v.array() / this->GetDims().array().cast<float>() );
-//}
-
-//Vector3f ImageSpace::GetSize() const
-//{
-//    return ContainerBox::GetSize().array() * this->GetDims().array().cast<float>();
-//}
 
 void ImageSpace::SetSpacing(const Vector3f spacing)
 {
@@ -51,18 +42,6 @@ Vector3f ImageSpace::GetSpacing() const
 {
     return ContainerBox::GetSize();
 }
-
-
-//bool ImageSpace::IsInsideBounds(const Vector4f pt) const
-//{
-//    Vector4f ptl =  this->GetLocalPoint(pt);
-//    int result = 0;
-//    for ( int i=0; i<3 ;++i) {
-//        result += ptl(i) > (float)this->GetDims()(i);
-//        result += ptl(i) < 0;
-//    }
-//    return result == 0;
-//}
 
 Vector3i ImageSpace::Find(const Vector4f pt) const
 {

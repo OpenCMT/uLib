@@ -53,7 +53,9 @@
 
 #include <stdlib.h>
 
+#include <Eigen/Core>
 #include <Eigen/Dense>
+
 #include "Core/Types.h"
 #include "Core/Serializable.h"
 
@@ -105,6 +107,61 @@ EIGEN_MAKE_TYPEDEFS_ALL_SIZES(std::complex<double>, cd)
 
 #undef EIGEN_MAKE_TYPEDEFS_ALL_SIZES
 #undef EIGEN_MAKE_TYPEDEFS
+
+
+
+
+//#define EIGEN_MAKE_ARRAY_TYPEDEFS(Type, TypeSuffix, Size, SizeSuffix)   \
+///** \ingroup arraytypedefs */                                    \
+//typedef Eigen::Array<Type, Size, Size> Array##SizeSuffix##SizeSuffix##TypeSuffix;  \
+///** \ingroup arraytypedefs */                                    \
+//typedef Eigen::Array<Type, Size, 1>    Array##SizeSuffix##TypeSuffix;
+
+//#define EIGEN_MAKE_ARRAY_FIXED_TYPEDEFS(Type, TypeSuffix, Size)         \
+///** \ingroup arraytypedefs */                                    \
+//typedef Eigen::Array<Type, Size, Dynamic> Array##Size##X##TypeSuffix;  \
+///** \ingroup arraytypedefs */                                    \
+//typedef Eigen::Array<Type, Dynamic, Size> Array##X##Size##TypeSuffix;
+
+//#define EIGEN_MAKE_ARRAY_TYPEDEFS_ALL_SIZES(Type, TypeSuffix) \
+//EIGEN_MAKE_ARRAY_TYPEDEFS(Type, TypeSuffix, 2, 2) \
+//EIGEN_MAKE_ARRAY_TYPEDEFS(Type, TypeSuffix, 3, 3) \
+//EIGEN_MAKE_ARRAY_TYPEDEFS(Type, TypeSuffix, 4, 4) \
+//EIGEN_MAKE_ARRAY_TYPEDEFS(Type, TypeSuffix, Dynamic, X) \
+//EIGEN_MAKE_ARRAY_FIXED_TYPEDEFS(Type, TypeSuffix, 2) \
+//EIGEN_MAKE_ARRAY_FIXED_TYPEDEFS(Type, TypeSuffix, 3) \
+//EIGEN_MAKE_ARRAY_FIXED_TYPEDEFS(Type, TypeSuffix, 4)
+
+//EIGEN_MAKE_ARRAY_TYPEDEFS_ALL_SIZES(int,                  i)
+//EIGEN_MAKE_ARRAY_TYPEDEFS_ALL_SIZES(float,                f)
+//EIGEN_MAKE_ARRAY_TYPEDEFS_ALL_SIZES(double,               d)
+//EIGEN_MAKE_ARRAY_TYPEDEFS_ALL_SIZES(std::complex<float>,  cf)
+//EIGEN_MAKE_ARRAY_TYPEDEFS_ALL_SIZES(std::complex<double>, cd)
+
+//#undef EIGEN_MAKE_ARRAY_TYPEDEFS_ALL_SIZES
+//#undef EIGEN_MAKE_ARRAY_TYPEDEFS
+//#undef EIGEN_MAKE_ARRAY_TYPEDEFS_LARGE
+
+//#define EIGEN_USING_ARRAY_TYPEDEFS_FOR_TYPE_AND_SIZE(TypeSuffix, SizeSuffix) \
+//using Eigen::Matrix##SizeSuffix##TypeSuffix; \
+//using Eigen::Vector##SizeSuffix##TypeSuffix; \
+//using Eigen::RowVector##SizeSuffix##TypeSuffix;
+
+//#define EIGEN_USING_ARRAY_TYPEDEFS_FOR_TYPE(TypeSuffix) \
+//EIGEN_USING_ARRAY_TYPEDEFS_FOR_TYPE_AND_SIZE(TypeSuffix, 2) \
+//EIGEN_USING_ARRAY_TYPEDEFS_FOR_TYPE_AND_SIZE(TypeSuffix, 3) \
+//EIGEN_USING_ARRAY_TYPEDEFS_FOR_TYPE_AND_SIZE(TypeSuffix, 4) \
+//EIGEN_USING_ARRAY_TYPEDEFS_FOR_TYPE_AND_SIZE(TypeSuffix, X) \
+
+//#define EIGEN_USING_ARRAY_TYPEDEFS \
+//EIGEN_USING_ARRAY_TYPEDEFS_FOR_TYPE(i) \
+//EIGEN_USING_ARRAY_TYPEDEFS_FOR_TYPE(f) \
+//EIGEN_USING_ARRAY_TYPEDEFS_FOR_TYPE(d) \
+//EIGEN_USING_ARRAY_TYPEDEFS_FOR_TYPE(cf) \
+//EIGEN_USING_ARRAY_TYPEDEFS_FOR_TYPE(cd)
+
+
+
 
 } // uLib
 

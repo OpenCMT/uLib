@@ -50,6 +50,27 @@ C_BEGIN_DECLS
 /* ////////////////////////////////////////////////////////////////////////// */
 
 
+#define LTK_VOID            0
+#define LTK_BIT             1
+#define LTK_CHAR            2
+#define LTK_SIGNED_CHAR    15
+#define LTK_UNSIGNED_CHAR   3
+#define LTK_SHORT           4
+#define LTK_UNSIGNED_SHORT  5
+#define LTK_INT             6
+#define LTK_UNSIGNED_INT    7
+#define LTK_LONG            8
+#define LTK_UNSIGNED_LONG   9
+#define LTK_FLOAT          10
+#define LTK_DOUBLE         11
+#define LTK_ID_TYPE        12
+
+
+#define LTK_OBJECT 21
+
+
+
+
 typedef void *     Pointer_t;
 typedef id_t       Id_t;
 typedef size_t     Size_t;

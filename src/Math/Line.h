@@ -50,6 +50,10 @@ public:
     Vector & direction() { return this->m_Data[1]; }
     const Vector & origin() const { return this->m_Data[0]; }
     const Vector & direction() const { return this->m_Data[1]; }
+    _Scalar & origin(Id_t id) { return this->m_Data[0](id); }
+    _Scalar & direction(Id_t id) { return this->m_Data[1](id); }
+    const _Scalar & origin(Id_t id) const { return this->m_Data[0](id); }
+    const _Scalar & direction(Id_t id) const { return this->m_Data[1](id); }
 };
 
 typedef Line<float,2> Line2f;

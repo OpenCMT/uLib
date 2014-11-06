@@ -3,6 +3,7 @@ set(TESTS
         MathVectorTest
         GeometryTest
         ContainerBoxTest
+        ImageDataTest
         VoxImageTest
         VoxRaytracerTest
         StructuredDataTest

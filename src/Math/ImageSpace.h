@@ -35,25 +35,18 @@ namespace uLib {
 class ImageSpace : public ContainerBox {
     typedef ContainerBox BaseClass;
 public:
-    ImageSpace(const Vector3i size);
 
     using ContainerBox::SetOrigin;
-
-//    void SetSize(const Vector3f v);
-
-//    Vector3f GetSize() const;
 
     void SetSpacing(const Vector3f spacing);
 
     Vector3f GetSpacing() const;
 
-//    bool IsInsideBounds(const Vector4f pt) const;
-
     Vector3i Find(const Vector4f pt) const;
 
     void PrintSelf(std::ostream &o);
 
-private:
+protected:
     using ContainerBox::GetSize;
     using ContainerBox::SetSize;
 };

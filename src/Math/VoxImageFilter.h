@@ -55,7 +55,7 @@ class VoxImageFilter {
 public:
     virtual void Run() = 0;
 
-    virtual void SetImage(Abstract::VoxImage *image) = 0;
+    virtual void SetImage(ImageData *image) = 0;
 
 protected:
     virtual ~VoxImageFilter() {}
@@ -88,7 +88,7 @@ public:
 
     uLibGetMacro(Image,VoxImage<VoxelT> *)
 
-    void SetImage(Abstract::VoxImage *image);
+    void SetImage(ImageData *image);
 
 protected:
 

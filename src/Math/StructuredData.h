@@ -28,74 +28,74 @@
 #ifndef STRUCTUREDDATA_H
 #define STRUCTUREDDATA_H
 
-#include "Core/Macros.h"
-#include "Core/Object.h"
-#include "Math/Dense.h"
-#include "Math/DataSet.h"
+//#include "Core/Macros.h"
+//#include "Core/Object.h"
+//#include "Math/Dense.h"
+//#include "Math/DataSet.h"
 
 
-namespace uLib {
+//namespace uLib {
 
-class StructuredData  {
-public:    
-    enum _Order
-    {
-        CustomOrder = 0,
-        XYZ = 0 | 1 << 2 | 2 << 4,
-        XZY = 0 | 2 << 2 | 1 << 4,
-        YXZ = 1 | 0 << 2 | 2 << 4,
-        YZX = 2 | 0 << 2 | 1 << 4,
-        ZXY = 1 | 2 << 2 | 0 << 4,
-        ZYX = 2 | 1 << 2 | 0 << 4
-    };
+//class StructuredData  {
+//public:
+//    enum _Order
+//    {
+//        CustomOrder = 0,
+//        XYZ = 0 | 1 << 2 | 2 << 4,
+//        XZY = 0 | 2 << 2 | 1 << 4,
+//        YXZ = 1 | 0 << 2 | 2 << 4,
+//        YZX = 2 | 0 << 2 | 1 << 4,
+//        ZXY = 1 | 2 << 2 | 0 << 4,
+//        ZYX = 2 | 1 << 2 | 0 << 4
+//    };
 
-    typedef enum _Order Order;
+//    typedef enum _Order Order;
 
-    StructuredData(const Vector3i &size);
+//    StructuredData(const Vector3i &size);
 
-    StructuredData(const StructuredData &copy) :        
-        m_DataOrder(copy.m_DataOrder),
-        m_Dims(copy.m_Dims),
-        m_Increments(copy.m_Increments)
-    {}
-
-
-    uLibGetMacro(Dims,Vector3i)
-
-    void SetDims(const Vector3i &size);
-
-    uLibGetSetMacro(Increments,Vector3i)
-
-    void SetDataOrder(Order order = YXZ);
-
-    uLibGetMacro(DataOrder,Order)
-
-    bool IsInsideGrid(const Vector3i &v) const;
-
-    inline int Map(Vector3i index) const;
-
-    Vector3i UnMap(int index) const;
-
-private:
-    Order m_DataOrder;
-    Vector3i m_Dims;
-    Vector3i m_Increments; //TODO: make this line matrix //
-};
+//    StructuredData(const StructuredData &copy) :
+//        m_DataOrder(copy.m_DataOrder),
+//        m_Dims(copy.m_Dims),
+//        m_Increments(copy.m_Increments)
+//    {}
 
 
+//    uLibGetMacro(Dims,Vector3i)
 
-// --- INLINES -------------------------------------------------------------- //
+//    void SetDims(const Vector3i &size);
 
+//    uLibGetSetMacro(Increments,Vector3i)
 
-inline int StructuredData::Map(Vector3i index) const
-{
-    return (m_Increments.transpose() * index);
-}
+//    void SetDataOrder(Order order = YXZ);
+
+//    uLibGetMacro(DataOrder,Order)
+
+//    bool IsInsideGrid(const Vector3i &v) const;
+
+//    inline int Map(Vector3i index) const;
+
+//    Vector3i UnMap(int index) const;
+
+//private:
+//    Order m_DataOrder;
+//    Vector3i m_Dims;
+//    Vector3i m_Increments; //TODO: make this line matrix //
+//};
 
 
 
+//// --- INLINES -------------------------------------------------------------- //
 
 
-}
+//inline int StructuredData::Map(Vector3i index) const
+//{
+//    return (m_Increments.transpose() * index);
+//}
+
+
+
+
+
+//}
 
 #endif // STRUCTUREDDATA_H
