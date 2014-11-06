@@ -23,58 +23,40 @@
 
 //////////////////////////////////////////////////////////////////////////////*/
 
+#ifndef U_CORE_NAMED_H
+#define U_CORE_NAMED_H
+
+#include <Core/Types.h>
+#include <Core/String.h>
+
+namespace uLib {
+
+class Named {
+public:
+    Named() {}
+    Named(const String &string) : m_name(string) {}
+    Named(const char *name) : m_name(name) {}
+
+    // default generic behaviour //
+    template < typename T >
+    Named(T t) : m_name(typeid(t).name()) {}
+
+    const String GetName() const { return m_name; }
+
+    void SetName(const String name) { m_name = name; }
+
+    template < typename T >
+    void SetName(T t) { m_name = typeid(t).name(); }
+
+private:
+    String m_name;
+};
 
 
-#include "StructuredData.h"
-
-//using namespace uLib;
-
-//StructuredData::StructuredData(const Vector3i &size) :
-//    m_Dims(size)
-//{
-//    SetDataOrder();
-//}
-
-//void StructuredData::SetDims(const Vector3i &size)
-//{
-//    this->m_Dims = size;
-//    SetDataOrder();
-//}
-
-//void StructuredData::SetDataOrder(StructuredData::Order order)
-//{
-//    int i = order & 0x3;
-//    int j = (order >> 2) & 0x3;
-//    int k = (order >> 4) & 0x3;
-//    this->m_Increments[i] = 1;
-//    this->m_Increments[j] = m_Dims[i];
-//    this->m_Increments[k] = m_Dims[i] * m_Dims[j];
-//    this->m_DataOrder = order;
-//}
-
-//bool StructuredData::IsInsideGrid(const Vector3i &v) const
-//{
-//    int vok = 1;
-//    vok *= (v(0) >= 0 && v(0) < m_Dims[0]);
-//    vok *= (v(1) >= 0 && v(1) < m_Dims[1]);
-//    vok *= (v(2) >= 0 && v(2) < m_Dims[2]);
-//    return vok;
-//}
+} // uLib
 
 
 
-//Vector3i StructuredData::UnMap(int index) const
-//{
-//    Vector3i v( 0,0,0 );
-//    Vector3i iv = m_Increments;
-//    int id = 0;
-//    for(int k=0; k<3; ++k) {
-//        int inc = iv.maxCoeff(&id);
-//        v(id) = index / inc;
-//        index -= v(id) * inc;
-//        iv(id) = 0;
-//    }
-//    return v;
-//}
 
 
+#endif // NAMED_H

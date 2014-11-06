@@ -48,7 +48,7 @@ public:
     };
 
 public:
-    typedef Abstract::VoxImage Content;
+    typedef ImageData Content;
 
     vtkVoxImage(Content &content);
 

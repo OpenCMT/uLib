@@ -39,8 +39,8 @@ namespace uLib {
 // KERNEL //////////////////////////////////////////////////////////////////////
 
 template < typename T >
-class Kernel : public StructuredData {
-    typedef StructuredData BaseClass;
+class Kernel : public ImageMap {
+    typedef ImageMap BaseClass;
 public:
     Kernel(const Vector3i &size);
 
@@ -63,7 +63,7 @@ Kernel<T>::Kernel(const Vector3i &size) :
     BaseClass(size),
     m_Data(size.prod())
 {
-    Interface::IsA<T,Interface::Voxel>();
+//    Interface::IsA<T,Interface::Voxel>();
 }
 
 template < typename T >
@@ -166,7 +166,7 @@ _TPL_
 void VoxImageFilter<_TPLT_>::SetKernelNumericXZY(const Vector<float> &numeric)
 {
     // set data order //
-    StructuredData::Order order = m_KernelData.GetDataOrder();
+    ImageMap::Order order = m_KernelData.GetDataOrder();
     //m_KernelData.SetDataOrder(StructuredData::XZY);
     Vector3i id;
     int index = 0;
@@ -258,7 +258,7 @@ void VoxImageFilter<_TPLT_>::SetKernelWeightFunction(ShapeT shape)
 
 
 _TPL_
-void VoxImageFilter<_TPLT_>::SetImage(Abstract::VoxImage *image)
+void VoxImageFilter<_TPLT_>::SetImage(ImageData *image)
 {
     this->m_Image = reinterpret_cast<VoxImage<VoxelT> *> (image);
     this->SetKernelOffset();

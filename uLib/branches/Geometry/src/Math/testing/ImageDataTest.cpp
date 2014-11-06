@@ -23,58 +23,56 @@
 
 //////////////////////////////////////////////////////////////////////////////*/
 
+#include "testing-prototype.h"
+#include "Math/ImageData.h"
+
+using namespace uLib;
+
+namespace {
+struct MyVoxel {
+    MyVoxel() : value(0), count(0) {}
+    float value;
+    int count;
+};
 
 
-#include "StructuredData.h"
-
-//using namespace uLib;
-
-//StructuredData::StructuredData(const Vector3i &size) :
-//    m_Dims(size)
-//{
-//    SetDataOrder();
-//}
-
-//void StructuredData::SetDims(const Vector3i &size)
-//{
-//    this->m_Dims = size;
-//    SetDataOrder();
-//}
-
-//void StructuredData::SetDataOrder(StructuredData::Order order)
-//{
-//    int i = order & 0x3;
-//    int j = (order >> 2) & 0x3;
-//    int k = (order >> 4) & 0x3;
-//    this->m_Increments[i] = 1;
-//    this->m_Increments[j] = m_Dims[i];
-//    this->m_Increments[k] = m_Dims[i] * m_Dims[j];
-//    this->m_DataOrder = order;
-//}
-
-//bool StructuredData::IsInsideGrid(const Vector3i &v) const
-//{
-//    int vok = 1;
-//    vok *= (v(0) >= 0 && v(0) < m_Dims[0]);
-//    vok *= (v(1) >= 0 && v(1) < m_Dims[1]);
-//    vok *= (v(2) >= 0 && v(2) < m_Dims[2]);
-//    return vok;
-//}
+struct VoxelMean : public MyVoxel {
+    VoxelMean() {}
+    void SetValue(const float value) { this->value += value; ++count; }
+    float GetValue() const { return value/count; }
+};
+}
 
 
 
-//Vector3i StructuredData::UnMap(int index) const
-//{
-//    Vector3i v( 0,0,0 );
-//    Vector3i iv = m_Increments;
-//    int id = 0;
-//    for(int k=0; k<3; ++k) {
-//        int inc = iv.maxCoeff(&id);
-//        v(id) = index / inc;
-//        index -= v(id) * inc;
-//        iv(id) = 0;
-//    }
-//    return v;
-//}
+
+int main() {
+
+    DataVector<MyVoxel> v;
+
+    DataVectorImage img;
+
+    img.Data() = v;
+    img.Scalars().SetAccessFunctions(&MyVoxel::value);
+    img.SetDims(Vector3i(3,3,3));
+
+    for (int x=0; x<img.GetDims().prod(); ++x){
+        img.SetValue(x,x);
+        std::cout << img.UnMap(x).transpose() << " -> " << img.GetValue(x) << "\n";
+    }
+
+    DataVector<VoxelMean> vm;
+
+    img.Data() = vm;
+    img.SetDims(Vector3i(3,3,3));
+    img.Scalars().SetAccessFunctions(&VoxelMean::GetValue,&VoxelMean::SetValue);
+
+    for (int x=0; x<img.GetDims().prod(); ++x){
+        img.SetValue(x,x);
+        img.SetValue(x,x+2);
+        img.SetValue(x,x-1);
+        std::cout << img.UnMap(x).transpose() << " -> " << img.GetValue(x) << "\n";
+    }
 
 
+}

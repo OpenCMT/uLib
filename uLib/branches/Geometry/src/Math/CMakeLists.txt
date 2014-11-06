@@ -7,6 +7,7 @@ set(HEADERS
                                 Transform.h
                                 StructuredData.h
 #                                StructuredGrid.h
+                                ImageSpace.h
                                 ImageMap.h
                                 ImageData.h
                                 VoxImage.h
@@ -32,6 +33,7 @@ set(SOURCES
                 VoxRaytracer.cpp
                 StructuredData.cpp
 #                StructuredGrid.cpp
+                ImageSpace.cpp
                 ImageMap.cpp
                 ImageData.cpp
                 VoxImage.cpp
