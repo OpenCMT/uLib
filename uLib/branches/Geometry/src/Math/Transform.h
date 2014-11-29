@@ -113,14 +113,23 @@ public:
 
     inline void PreRotate(const Matrix3f &m) { this->m_T.prerotate(m); }
 
-    inline void QuaternionRotate(const Vector4f &q)
-    { this->m_T.rotate(Eigen::Quaternion<float>(q)); }
+    inline void Rotate(const float angle, Vector3f axis)
+    {
+        axis.normalize(); // prehaps not necessary ( see eigens )
+        Eigen::AngleAxisf ax(angle,axis);
+        this->m_T.rotate(Eigen::Quaternion<float>(ax));
+    }
 
-    inline void EulerYZYRotate(const Vector3f &e) {
+    inline void Rotate(const Vector3f euler_axis) {
+        float angle = euler_axis.norm();
+        Rotate(angle,euler_axis);
+    }
+
+    inline void EulerYZYRotate(const Vector3f &euler_angles) {
         Matrix3f mat;
-        mat =     Eigen::AngleAxisf(e.x(), Vector3f::UnitY())
-                * Eigen::AngleAxisf(e.y(), Vector3f::UnitZ())
-                * Eigen::AngleAxisf(e.z(), Vector3f::UnitY());
+        mat =     Eigen::AngleAxisf(euler_angles.x(), Vector3f::UnitY())
+                * Eigen::AngleAxisf(euler_angles.y(), Vector3f::UnitZ())
+                * Eigen::AngleAxisf(euler_angles.z(), Vector3f::UnitY());
         m_T.rotate(mat);
     }
 
@@ -133,8 +142,12 @@ public:
 };
 
 
+typedef Eigen::Quaternion<float>  Quaternionf;
+typedef Eigen::Quaternion<double> Quaterniond;
 
-}
+
+
+} // uLib
 
 
 

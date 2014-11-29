@@ -91,7 +91,7 @@ void VoxRaytracer::RayData::PrintSelf(std::ostream &o)
 ////////////////////////////////////////////////////////////////////////////////
 
 
-bool VoxRaytracer::GetEntryPoint(const HLine3f line, Vector4f &pt)
+bool VoxRaytracer::GetEntryPoint(const HLine3f line, Vector4f &pt) const
 {
     Vector4f s = m_Image->GetLocalPoint(line.direction());
     pt = m_Image->GetLocalPoint(line.origin());
@@ -140,7 +140,7 @@ bool VoxRaytracer::GetEntryPoint(const HLine3f line, Vector4f &pt)
     return false;
 }
 
-bool VoxRaytracer::GetExitPoint(const HLine3f line, Vector4f &pt)
+bool VoxRaytracer::GetExitPoint(const HLine3f line, Vector4f &pt) const
 {
     HLine3f out = line;
     out.direction() *= -1;

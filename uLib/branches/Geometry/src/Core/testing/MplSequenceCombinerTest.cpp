@@ -23,66 +23,51 @@
 
 //////////////////////////////////////////////////////////////////////////////*/
 
+#include <iostream>
+#include <Core/Types.h>
+#include <Core/MplSequenceCombiner.h>
+#include <Core/ClassFactory.h>
+
+#include "testing-prototype.h"
 
 
-#ifndef U_VTKVOXIMAGE_H
-#define U_VTKVOXIMAGE_H
+using namespace uLib;
 
-#include <Core/Object.h>
-#include <Math/VoxImage.h>
+struct A {};
+struct B {};
+struct C {};
+struct D {};
+struct E {};
+struct F {};
+struct G {};
+struct H {};
+struct I {};
 
-#include "uLibVtkInterface.h"
-
-
-class vtkImageData;
-
-namespace uLib {
-namespace Vtk {
-
-class vtkVoxImage : public Puppet {
-    uLibTypeMacro(vtkVoxImage,Puppet)
-public:    
-    uLib_properties()
-    {
-        float writer_factor;
-    };
-
-public:
-    typedef ImageData Content;
-
-    vtkVoxImage(Content &content);
-
-    ~vtkVoxImage();
-
-    vtkImageData * GetImageData();
-
-    void SaveToXMLFile(const char *fname);
-
-    void ReadFromVKTFile(const char *fname);
-
-    void ReadFromXMLFile(const char *fname);
-
-    void setShadingPreset(int blendType = 2);
-
-    void Update();
-
-protected:
-    void InstallPipe();
-
-private:
-    class vtkVoxImagePimpl *d;
+namespace {
+struct PrintTypeId {
+    template <class T>
+    void operator()(T) const
+    { std::cout << typeid(T).name() << "  "; }
 };
-
-
-inline void vtkVoxImage::init_properties()
-{
-    $_init();
-    $$.writer_factor = 1.E6;
+struct PrintSeq {
+    template < typename T >
+    void operator()(T) {
+        mpl::for_each<T>( PrintTypeId() );
+        std::cout << "\n";
+    }
+};
 }
 
+int main() {
+    BEGIN_TESTING( Mpl Sequence Combiner Test);
 
-} // vtk
-} // uLib
+    typedef mpl::vector<A,B,C>   seq1;
+    typedef mpl::vector<D,E,F>   seq2;
+    typedef mpl::vector<G,H,I>   seq3;
 
+    typedef mpl::combine_view< mpl::vector<seq1,seq2,seq3> > cv;
+    mpl::for_each< cv >( PrintSeq() );
 
-#endif // VTKVOXIMAGE_H
+    END_TESTING;
+}
+

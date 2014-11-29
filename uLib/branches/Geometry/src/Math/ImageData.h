@@ -65,6 +65,7 @@ public:
 
 
 class DataVectorImage : public ImageData {
+    typedef float ScalarT;
 public:
 
     inline void * GetDataPointer(const Id_t id) const {
@@ -81,11 +82,13 @@ public:
         m_Data->SetSize(size.prod());
     }
 
+//    uLibRefMacro(Data,AbstractArray*)
     uLibRefMacro(Data,SmartPointer<AbstractArray>)
-    uLibRefMacro(Scalars,ProgrammableAccessor<double>)
+    uLibRefMacro(Scalars,ProgrammableAccessor<ScalarT>)
 private:
+//    AbstractArray* m_Data;
     SmartPointer<AbstractArray> m_Data;
-    ProgrammableAccessor<double> m_Scalars;
+    ProgrammableAccessor<ScalarT> m_Scalars;
 };
 
 

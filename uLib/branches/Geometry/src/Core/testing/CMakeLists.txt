@@ -21,6 +21,9 @@ set( TESTS
         UuidTest
         TypeIntrospectionTraversal
         OptionsTest
+        ProgrammableAccessorTest
+        ClassFactoryTest
+        MplSequenceCombinerTest
 )
 
 set(LIBRARIES

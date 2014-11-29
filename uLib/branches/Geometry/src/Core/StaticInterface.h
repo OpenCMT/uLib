@@ -30,6 +30,23 @@
 
 namespace uLib {
 
+
+// SFINAE //
+/*
+template <typename T>
+struct has_type_info {
+    typedef char yes[1];
+    typedef char no[2];
+    template <typename U> static yes& test(typename U::type_info::BaseList*);
+    template <typename   > static no&  test(...);
+    //        struct apply {
+    static const bool value = sizeof(test<T>(0)) == sizeof(yes);
+    typedef boost::mpl::bool_<value> type;
+    //        };
+};
+*/
+
+
 #define MAKE_TRAITS ; // TODO
 
 #define uLibCheckFunction(class_name,name,out, ... ) \
@@ -56,22 +73,24 @@ namespace Interface {
 //};
 
 template <class T, class SI>
-static inline void IsA() {
+static inline void IsA(T *t = 0) {
     (void) ((void (SI::*)()) &SI::template check_structural<T>);
 }
 
-// not working
-//template <class T, class SI>
-//struct StaticIsA {
-//    void test() {
-//        static const void (SI::*x)() = SI::template check_structural<T>;
-//    }
-//};
-
+template <class T, class SI>
+static inline void IsA(T &t) {
+    (void) ((void (SI::*)()) &SI::template check_structural<T>);
 }
 
+template <class T, class SI>
+struct StaticIsA {
+    StaticIsA() {
+        void (SI::*x)() = &SI::template check_structural<T>;
+        (void) x;
+    }
+};
 
-
-}
+} // Interface
+} // uLib
 
 #endif // STATICINTERFACE_H

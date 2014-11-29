@@ -53,7 +53,9 @@ public:
 
     Vector(unsigned int size) : BaseClass(size) {}
     Vector(unsigned int size, T &value) : BaseClass(size,value) {}
+    Vector(const Vector<T> &copy) : BaseClass(copy) {}
     Vector() : BaseClass(0) {}
+
 
     inline VectorCommaInit operator <<(T scalar) {
         return VectorCommaInit(this, scalar);

@@ -40,13 +40,18 @@
 #include <boost/mpl/vector/vector20.hpp>
 #include <boost/mpl/copy.hpp>
 
+#include <boost/mpl/find.hpp>
+
 #include <boost/mpl/transform.hpp>
 #include <boost/mpl/transform_view.hpp>
 #include <boost/mpl/filter_view.hpp>
 
 #include <boost/mpl/list.hpp>
+#include <boost/mpl/map.hpp>
 #include <boost/mpl/string.hpp>
 #include <boost/mpl/for_each.hpp>
+#include <boost/mpl/same_as.hpp>
+
 #include <boost/mpl/has_xxx.hpp>
 
 #include <boost/utility/enable_if.hpp>
@@ -64,6 +69,7 @@ namespace mpl {
 
 using namespace boost::mpl;
 using namespace boost::mpl::placeholders;
+
 
 //using boost::enable_if;
 
@@ -132,8 +138,10 @@ struct nvp {
 };
 
 
-} // mpl
 
+
+
+} // mpl
 } // uLib
 
 #endif // MPL_H

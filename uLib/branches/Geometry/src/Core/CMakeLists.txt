@@ -22,6 +22,8 @@ set(HEADERS
                                 Vector.h
                                 CommaInitializer.h
                                 ProgrammableAccessor.h
+                                Named.h
+                                MplSequenceCombiner.h
 )
 
 SET(SOURCES
