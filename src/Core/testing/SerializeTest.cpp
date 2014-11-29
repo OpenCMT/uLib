@@ -115,7 +115,7 @@ class A : public virtual Object {
 public:
     A() : m_a(5552368) {}
 
-    properties() {
+    uLib_properties() {
         std::string p_a;
     };
 

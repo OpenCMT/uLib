@@ -45,32 +45,12 @@ struct Test {
         uLibCheckMember(Self,testmemb,int);
     }
 };
-}
+} // Interface
 
 struct Test {
     bool test(int i, float f){}
     int testmemb;
 };
-
-
-
-//// INTERFAC TO SIMPLE CLASS ///////////
-
-namespace Interface {
-struct Simple {
-    MAKE_TRAITS
-    template<class Self> void check_structural() {
-        uLibCheckMember(Self,memb1,int);
-        uLibCheckMember(Self,memb2,float);
-    }
-};
-}
-
-struct Simple {
-    int memb1;
-    float memb2;
-};
-
 
 /////////////////////////
 
@@ -85,27 +65,31 @@ public:
     }
 };
 
+
 template <class T>
-class UseSimple {
+class UseTest2 {
+    Interface::StaticIsA<T, Interface::Test> x;
 public:
-    UseSimple() {
-        Interface::IsA<T,Interface::Simple>();
+    UseTest2() {
+        T t;
+        int i; float f;
+        t.test(i,f);
     }
 };
 
+} // uLib
 
 
-}
+
+using namespace uLib;
 
 int main()
 {
     BEGIN_TESTING(Static Interface);
 
+    UseTest<Test> u;
 
-
-    uLib::UseTest<uLib::Test> u;
-
-    uLib::UseSimple<uLib::Simple> s;
+    UseTest2<Test> u2;
 
     END_TESTING;
 }

@@ -23,8 +23,12 @@
 
 //////////////////////////////////////////////////////////////////////////////*/
 
+
 #include "testing-prototype.h"
 #include "Math/ImageData.h"
+#include <Core/Mpl.h>
+
+#include <root/TRandom.h>
 
 using namespace uLib;
 
@@ -38,7 +42,7 @@ struct MyVoxel {
 
 struct VoxelMean : public MyVoxel {
     VoxelMean() {}
-    void SetValue(const float value) { this->value += value; ++count; }
+    void SetValue(const float _value) { value += _value; ++count; }
     float GetValue() const { return value/count; }
 };
 }
@@ -48,31 +52,42 @@ struct VoxelMean : public MyVoxel {
 
 int main() {
 
-    DataVector<MyVoxel> v;
+//    DataVector<MyVoxel> v;
 
     DataVectorImage img;
 
-    img.Data() = v;
-    img.Scalars().SetAccessFunctions(&MyVoxel::value);
-    img.SetDims(Vector3i(3,3,3));
+//    img.Data() = v;
+//    img.Scalars().SetAccessFunctions(&MyVoxel::value);
+//    img.SetDims(Vector3i(3,3,3));
 
-    for (int x=0; x<img.GetDims().prod(); ++x){
-        img.SetValue(x,x);
-        std::cout << img.UnMap(x).transpose() << " -> " << img.GetValue(x) << "\n";
-    }
+//    for (int x=0; x<img.GetDims().prod(); ++x){
+//        img.SetValue(x,x);
+//        std::cout << img.UnMap(x).transpose() << " -> " << img.GetValue(x) << "\n";
+//    }
 
     DataVector<VoxelMean> vm;
 
+    Vector<VoxelMean> vm_2;
+    vm_2.resize(Vector3i(300,300,300).prod());
+
     img.Data() = vm;
-    img.SetDims(Vector3i(3,3,3));
+    img.SetDims(Vector3i(300,300,300));
     img.Scalars().SetAccessFunctions(&VoxelMean::GetValue,&VoxelMean::SetValue);
 
+//    TRandom random;
+
+
+    for(int i=0; i< 100; ++i)
     for (int x=0; x<img.GetDims().prod(); ++x){
-        img.SetValue(x,x);
-        img.SetValue(x,x+2);
-        img.SetValue(x,x-1);
-        std::cout << img.UnMap(x).transpose() << " -> " << img.GetValue(x) << "\n";
+//                vm.Data()[x].value += 1; vm.Data()[x].count++;
+//        vm.Data()[x].SetValue(1);
+        vm_2[x].SetValue(1);
+//                img.SetValue(x,1);
+//        boost::bind(&VoxelMean::SetValue,&vm.Data()[x], _1)(1);
+        //        std::cout << img.UnMap(x).transpose() << " -> " << img.GetValue(x) << "\n";
     }
 
+//    img.ExportToVtk("test.vtk");
 
 }
+

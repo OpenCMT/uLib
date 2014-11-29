@@ -52,7 +52,7 @@
     typedef uLib::mpl::bool_<true>::type propable_trait;                                          \
     public: struct DLL_PUBLIC ObjectProps
 
-#define properties() ULIB_props()
+#define uLib_properties() ULIB_props()
 
 #define default(vlaue)
 

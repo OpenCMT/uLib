@@ -67,7 +67,16 @@ int main()
     uLib::Vector<float> v;
     v << 5,4,3,2,6,1,2,3,65,7,32,23,4,3,45,4,34,3,4,4,3,3,4,2,2,3;
 
+    uLib::Vector<float> v2;
+    v2 = v;
+    std::cout << "v2: " << v2;
 
+    {
+        int i = 0;
+        foreach (i , v) {
+            TEST1(v[i] == v2[i]);
+        }
+    }
 
     int id = VectorSplice(v.begin(),v.end(),3,__Cmp<float>());
 

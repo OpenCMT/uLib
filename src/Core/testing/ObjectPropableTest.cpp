@@ -60,7 +60,7 @@ struct A : virtual Object {
 
     uLibTypeMacro(A, Object)
 
-    properties() {
+    uLib_properties() {
         int      p_a;
         Vector3f p_3f;
     };
@@ -84,7 +84,7 @@ ULIB_SERIALIZE_OBJECT_PROPS(A)   { ar & AR(p_a) & AR(p_3f); }
 struct B : A {
     uLibTypeMacro(B,A)
 
-    properties() {
+    uLib_properties() {
         std::string p;
     };
 
@@ -118,7 +118,7 @@ ULIB_SERIALIZE(C) { ar & AR(m_c) & AR(m_str); }
 struct D : virtual Object, B {
     uLibTypeMacro(D,Object,B)
 
-    properties() {
+    uLib_properties() {
         C p_c;
     };
 };

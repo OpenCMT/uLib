@@ -67,9 +67,9 @@ public:
 public:
     VoxRaytracer(ImageData &image) : m_Image(&image) {}
 
-    bool GetEntryPoint(const HLine3f line, Vector4f &pt);
+    bool GetEntryPoint(const HLine3f line, Vector4f &pt) const;
 
-    bool GetExitPoint(const HLine3f line, Vector4f &pt);
+    bool GetExitPoint(const HLine3f line, Vector4f &pt) const;
 
     RayData  TraceBetweenPoints(const Vector4f &in, const Vector4f &out) const;
 

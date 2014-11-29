@@ -32,6 +32,7 @@ public:
 
     any_c(const any & other) : any(other) {}
 
+    // FIX !! //
     // this is needed to tait static_cast using any_cast function //
     template <typename _TT>
     operator _TT () const { return boost::any_cast<_TT>(*this); }
@@ -77,10 +78,10 @@ private:
 template<typename D, typename R, typename T>
 class functor_by_mfptr_cc : public ProgrammableAccessor_Base<D>
 {
-    typedef R(T::*GetterType)() const;
-    typedef void(T::*SetterType)(const R);
+    typedef R(T::*GeT)() const;
+    typedef void(T::*SeT)(const R);
 public:
-    explicit functor_by_mfptr_cc( GetterType _get, SetterType _set ) :
+    explicit functor_by_mfptr_cc( GeT _get, SeT _set ) :
         GetPtr(_get), SetPtr(_set)  {}
     D Get(void * ptr) const
     { return static_cast<D>((reinterpret_cast<T *>(ptr)->*GetPtr)()); }
@@ -88,8 +89,8 @@ public:
     { if (SetPtr) (reinterpret_cast<T *>(ptr)->*SetPtr)(static_cast<const R>(data)); }
 
 private:
-    GetterType GetPtr;
-    SetterType SetPtr;
+    GeT GetPtr;
+    SeT SetPtr;
 };
 
 template<typename D, typename R, typename T>
@@ -114,7 +115,12 @@ private:
 template<typename D, typename R, typename T>
 class functor_by_member : public ProgrammableAccessor_Base<D>
 {
-public:
+    template < R T::*_pf >
+    class StaticWrapper {
+        static D Get(void *ptr) { return static_cast<D>(reinterpret_cast<T *>(ptr)->*_pf); }
+        static void Set(void *ptr, const D data) { (reinterpret_cast<T *>(ptr)->*_pf) = static_cast<const D>(data); }
+    };
+public:    
     explicit functor_by_member(R T::*__pf) : MDPtr(__pf) {}
     D Get(void * ptr) const
     { return static_cast<D>(reinterpret_cast<T *>(ptr)->*MDPtr); }
@@ -192,6 +198,7 @@ public:
         this->SetName(_pf);
     }
     // ------ //
+
 
     const Wrapper operator() (void *ob) const { return Wrapper(this,ob); }
 

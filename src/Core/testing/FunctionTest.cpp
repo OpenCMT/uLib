@@ -84,6 +84,19 @@ public:
 
 } // uLib
 
+namespace uLib {
+
+namespace detail {
+} // detail
+
+
+
+} // uLib
+
+
+
+
+
 using namespace uLib;
 
 int main() {
