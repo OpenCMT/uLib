@@ -19,12 +19,11 @@ namespace uLib {
 ////////////////////////////////////////////////////////////////////////////////
 // generator //
 
-template <class BaseType, class T>
-static BaseType * newClass() { return new T; }
+template <class T>
+static void * newClass() { return new T; }
 
-
-
-
+template <class T>
+static void * newClass2(void *a1,void *a2) { return new T(a1,a2); }
 
 
 
@@ -34,18 +33,18 @@ static BaseType * newClass() { return new T; }
 
 template <class BaseType>
 class NamedClassFactory {
-    typedef BaseType*(*_newClassfn)();
+    typedef void * (*_newClassfn)();
     typedef std::map<const char*,_newClassfn> MapType;
 
 public:
     template<typename Type>
     void AddType(const char* name) {
-        m_map.insert(std::make_pair(name, &newClass<BaseType,Type>));
+        m_map.insert(std::make_pair(name, &newClass<Type>));
     }
 
     BaseType *Create(const char *type) {
         typename MapType::iterator itr = m_map.find(type);
-        return itr->second();
+        return static_cast<BaseType*>(itr->second());
     }
 
     void List(std::ostream &o) {
@@ -67,7 +66,7 @@ private:
 
 template <class BaseType, typename RegSeqT>
 class RegisteredClassFactory {
-    typedef BaseType*(*_newClassfn)();
+    typedef void *(*_newClassfn)();
     typedef std::vector<_newClassfn> TypeVectorType;
 
     struct AddTypeOp {
@@ -79,7 +78,7 @@ class RegisteredClassFactory {
     };
 
     template < typename T >
-    void addType() { m_map.push_back(&newClass<BaseType,T>); }
+    void addType() { m_map.push_back(&newClass<T>); }
 
 public:
 
@@ -97,7 +96,7 @@ public:
     BaseType *Create() {
         int id = Find<T>();
         typename TypeVectorType::iterator itr = m_map.begin() + id;
-        return (*itr)();
+        return (BaseType *)(*itr)();
     }
 
 private:
@@ -116,12 +115,12 @@ template <
         typename S1
         >
 class RegisteredClassFactory1 {
-    typedef BaseType*(*_newClassfn)();
+    typedef void*(*_newClassfn)();
     typedef std::vector<_newClassfn> TypeVectorType;
 
     template < typename U >
     void addType() { m_map.push_back(&newClass<
-                                               BaseType,
+//                                               BaseType,
                                                DerivedType<U>
                                               >); }
 
@@ -151,7 +150,7 @@ public:
 
     BaseType *Create(int id1) {
         typename TypeVectorType::iterator itr = m_map.begin() + id1;
-        return (*itr)();
+        return (BaseType *)(*itr)();
     }
 
 private:
@@ -174,12 +173,12 @@ template <
         typename S2
         >
 class RegisteredClassFactory2 {
-    typedef BaseType*(*_newClassfn)();
+    typedef void*(*_newClassfn)();
     typedef std::vector<_newClassfn> TypeVectorType;
 
     template < typename U, typename V >
     void addType() { m_map.push_back(&newClass<
-                                               BaseType,
+//                                               BaseType,
                                                DerivedType<U,V>
                                               >); }
 
@@ -196,11 +195,19 @@ class RegisteredClassFactory2 {
     };
 
     typedef mpl::combine_view< mpl::vector<S1,S2> > AlgView;
+
+//    template < typename _T, class _Seq >
+//    static inline int find() {
+//        typedef typename mpl::find<_Seq,_T>::type iter;
+//        return iter::pos::value;
+//    }
+
 public:
 
     RegisteredClassFactory2() {
         mpl::for_each< AlgView >(AddTypeSeqOp(this));
     }
+
 
     template < typename T >
     static inline int FindS1() {
@@ -215,9 +222,9 @@ public:
     }
 
 
-    BaseType *Create(int id1, int id2) {
+    BaseType * Create(int id1, int id2) {
         typename TypeVectorType::iterator itr = m_map.begin() + id1 + m_size1 * id2;
-        return (*itr)();
+        return (BaseType *)(*itr)();
     }
 
 private:
@@ -243,12 +250,12 @@ template <
         typename S3
         >
 class RegisteredClassFactory3 {
-    typedef BaseType*(*_newClassfn)();
+    typedef void*(*_newClassfn)();
     typedef std::vector<_newClassfn> TypeVectorType;
 
     template < typename T1, typename T2, typename T3 >
     void addType() { m_map.push_back(&newClass<
-                                               BaseType,
+//                                               BaseType,
                                                DerivedType<T1,T2,T3>
                                               >); }
 
@@ -293,7 +300,7 @@ public:
 
     BaseType *Create(int id1, int id2, int id3) {
         typename TypeVectorType::iterator itr = m_map.begin() + id1 + m_size1 * id2 + m_size1 * m_size3 * id3;
-        return (*itr)();
+        return (BaseType *)(*itr)();
     }
 
 private:

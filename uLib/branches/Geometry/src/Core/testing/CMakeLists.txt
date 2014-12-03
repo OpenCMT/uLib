@@ -24,6 +24,7 @@ set( TESTS
         ProgrammableAccessorTest
         ClassFactoryTest
         MplSequenceCombinerTest
+        ClassCompoundTest
 )
 
 set(LIBRARIES

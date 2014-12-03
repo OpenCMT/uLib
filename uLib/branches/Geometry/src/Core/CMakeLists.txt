@@ -24,6 +24,7 @@ set(HEADERS
                                 ProgrammableAccessor.h
                                 Named.h
                                 MplSequenceCombiner.h
+                                ClassCompound.h
 )
 
 SET(SOURCES

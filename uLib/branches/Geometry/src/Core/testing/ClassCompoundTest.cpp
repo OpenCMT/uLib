@@ -25,15 +25,8 @@
 
 #include <iostream>
 
-//#include "boost/preprocessor.hpp"
-//#include "boost/preprocessor/repetition.hpp"
-
-#include "Core/MplSequenceCombiner.h"
-
+#include "Core/Vector.h"
 #include "Core/ClassCompound.h"
-
-#include "Core/ClassFactory.h"
-#include "Core/Serializable.h"
 
 #include "testing-prototype.h"
 
@@ -45,7 +38,6 @@ using namespace uLib;
 // WORKING EXAMPLE //
 
 namespace Test {
-
 
 
 class Voxel {
@@ -124,17 +116,34 @@ void copy(VoxelVectorBase *src, VoxelVectorBase *dst) {
 
 template < class VoxType,
            class CounterType >
-class VoxelVector : public VoxelVectorBase {
+class VoxelVector :
+        public VoxelVectorBase,
+        public ClassCompound< VoxType, CounterType >
+{
+    typedef ClassCompound< VoxType, CounterType > Compound;
+
 public:
 
-    VoxelVector() {} // remove?
-    VoxelVector( const VoxType *A1, const CounterType *A2 ) {
-        (void) A1;
-        SetA2(A2);
+    VoxelVector() {}
+
+    template < class Other >
+    VoxelVector(const Other &t) : Compound(t) {
+        // assumes that Other is a voxelvector //
+        for(int i=0; i<t.Size(); ++i) {
+            this->Set(i, t.Get(i));
+        }
     }
 
-    void * GetA2() { return &m_counter; }
-    void   SetA2(const void *A2) { m_counter = *A2; }
+    template < class Other >
+    VoxelVector & operator = (const Other &t) {
+        for(int i=0; i<t.Size(); ++i) {
+            this->Set(i, t.Get(i));
+        }
+        (Compound &)(*this) = t;
+        return *this;
+    }
+
+    using Compound::operator =;
 
     float Get(int id) const { return m_data[id].Get(); }
     void Set(int id, float data) {
@@ -142,102 +151,54 @@ public:
         m_data[id].Set(data);
     }
     int Size() const { return m_data.size(); }
-    int Count() const { return m_counter.Count(m_data); }
+    int Count() const {
+        return CounterType::Count(m_data);
+    }
 private:
     friend class VoxelVectorFactory;
-    CounterType     m_counter;
     Vector<VoxType> m_data;
 };
 
 
-class VoxelVectorFactory {
-public:
-    VoxelVectorFactory() :
-        m_id1(0), m_id2(0)
-    {
-        m_base = m_factory.Create(0,0);
-    }
-
-    ~VoxelVectorFactory() {
-        delete m_base;
-    }
-
-    VoxelVectorBase * operator -> () const { return m_base; }
-
-    template < typename T >
-    void SetVoxel() {
-        int id = m_factory.FindS1<T>();
-        VoxelVectorBase * newbase = m_factory.Create(id,m_id2);
-        Test::copy(m_base,newbase); // *newbase = *m_base;
-
-        //
-
-        delete m_base;
-        m_base = newbase;
-    }
-
-    template < typename T >
-    void SetCounter(const T &ref) {
-        int id = m_factory.FindS2<T>();
-        VoxelVectorBase * newbase = m_factory.Create(m_id1,id);
-        Test::copy(m_base,newbase); // *newbase = *m_base;
-
-        //
-
-        delete m_base;
-        m_base = newbase;
-    }
-
-
-private:
-    RegisteredClassFactory2< VoxelVectorBase, VoxelVector, mpl::vector<VoxelMean,VoxelVal>, mpl::vector<VoxCount,VoxCountOver> > m_factory;
-    int m_id1, m_id2;
-    VoxelVectorBase * m_base;
-};
 } // Test
 
 
+using namespace Test;
 
-
-
-
-
-struct B1 {
-    B1() : m_b1(1) {}
-    int m_b1;
-};
-
-struct B2 {
-    B2() : m_b2(2) {}
-    int m_b2;
-};
-
-struct B3 {
-    B3() : m_b3(3) {}
-    int m_b3;
-};
-
-struct B3b {
-    B3b() : m_b3(3) {}
-    int m_b3; // learn to handle ambiguity ..
-};
 
 
 int main() {
 
-    ClassCompound< B1, B2 > h1;
-    ClassCompound< B2, B3, B1 > h2;
+    VoxelVector< VoxelMean, VoxCountOver > img;
+    img.Set(0,555);
+    img.Set(1,23);
+    img.Set(1,25);
+    img.Set(2,68);
+
+    img.A1::m_threshold = 50;
+
+    std::cout << "-> ";
+    for(int i=0; i<3; ++i) {
+        std::cout << img.Get(i) << " ";
+    }
+    std::cout << " count: " << img.Count() << "\n";
 
 
-    h1.A0::m_b1 = 111;
-    h1.A1::m_b2 = 222;
+    VoxelVector< VoxelVal, VoxCountOver > img2 = img;
 
-    h2 = h1;
+    img2.Set(1,0);
 
-    std::cout << "h1: " << h1.A0::m_b1 << " " << h1.A1::m_b2 << "\n";
-    std::cout << "h2: " << h2.A0::m_b2 << " " << h2.A1::m_b3 << "\n";
+    std::cout << "-> ";
+    for(int i=0; i<3; ++i) {
+        std::cout << img2.Get(i) << " ";
+    }
+    std::cout << " count threshold: " << img2.A1::m_threshold << " ";
+    std::cout << " count: " << img2.Count() << "\n";
+
+
 
 }
+
 
 
 
