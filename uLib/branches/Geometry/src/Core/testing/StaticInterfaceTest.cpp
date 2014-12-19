@@ -38,6 +38,7 @@ namespace uLib {
 //// INTERFACE TO COMPLEX CLASS /////
 
 namespace Interface {
+
 struct Test {
     MAKE_TRAITS
     template<class Self> void check_structural() {
@@ -45,30 +46,38 @@ struct Test {
         uLibCheckMember(Self,testmemb,int);
     }
 };
+
 } // Interface
+
+
 
 struct Test {
     bool test(int i, float f){}
     int testmemb;
 };
 
+struct NoTest {
+    bool test(int i, float f){}
+    float testmemb;
+};
+
 /////////////////////////
 
-template <class T>
-class UseTest {
-public:
-    UseTest() {
-        Interface::IsA<T,Interface::Test>();
-        T t;
-        int i; float f;
-        t.test(i,f);
-    }
-};
+//template <class T>
+//class UseTest {
+//public:
+//    UseTest() {
+//        Interface::IsA<T,Interface::Test<T> >();
+//        T t;
+//        int i; float f;
+//        t.test(i,f);
+//    }
+//};
 
 
 template <class T>
 class UseTest2 {
-    Interface::StaticIsA<T, Interface::Test> x;
+    static Interface::StaticIsA<T, Interface::Test > check;
 public:
     UseTest2() {
         T t;
@@ -87,9 +96,9 @@ int main()
 {
     BEGIN_TESTING(Static Interface);
 
-    UseTest<Test> u;
+//    UseTest<Test> u;
 
-    UseTest2<Test> u2;
+    UseTest2<NoTest> u2;
 
     END_TESTING;
 }

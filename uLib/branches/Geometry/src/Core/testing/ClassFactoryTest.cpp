@@ -28,11 +28,14 @@
 //#include "boost/preprocessor.hpp"
 //#include "boost/preprocessor/repetition.hpp"
 
+#include "boost/concept_archetype.hpp"
+
 #include "Core/MplSequenceCombiner.h"
 
 #include "Core/ClassCompound.h"
-
 #include "Core/ClassFactory.h"
+#include "Core/StaticInterface.h"
+
 #include "Core/Serializable.h"
 
 #include "testing-prototype.h"
@@ -42,204 +45,140 @@ using namespace uLib;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// WORKING EXAMPLE //
 
+// TEST 1 //
+
+/*
+ * TEST 1
 namespace Test {
 
+struct BB {};
 
-
-class Voxel {
-public:
-    virtual void Set(float) = 0;
-    virtual float Get() const = 0;
-    virtual ~Voxel() {}
-};
-
-class VoxelMean : public Voxel {
-public:
-    VoxelMean() : m_data(0), m_count(0) {}
-    void  Set(float data) { m_data += data; ++m_count; }
-    float Get() const { return m_data / m_count; }
-private:
-    float m_data;
-    int m_count;
-};
-
-class VoxelVal : public Voxel {
-public:
-    VoxelVal() : m_data(0) {}
-    void Set(float data) { m_data = data; }
-    float Get() const { return m_data; }
-private:
-    float m_data;
-};
-
-
-
-
-class VoxCount {
-public:
-    template < class T >
-    int Count(const Vector<T> &ref ) const {
-        return ref.size();
-    }
-};
-
-class VoxCountOver {
-public:
-    VoxCountOver() : m_threshold(0) {}
-
-    template < class T >
-    int Count(const Vector<T> &ref ) const {
-        int count = 0 ;
-        foreach (const T &el, ref) {
-            if( el.Get() >= m_threshold ) ++count;
-        }
-        return count;
-    }
-    float m_threshold;
-};
-
-
-
-
-class VoxelVectorBase {
-public:
-    virtual float Get(int) const = 0;
-    virtual void Set(int,float) = 0;
-    virtual int Size() const = 0;
-    virtual int Count() const = 0;
-    virtual ~VoxelVectorBase() {}
-};
-
-template < class T >
-void copy(T *src, T *dst) { }
-
-void copy(VoxelVectorBase *src, VoxelVectorBase *dst) {
-    for(int i=0; i<src->Size(); ++i) {
-        dst->Set(i,src->Get(i));
-    }
-}
-
-
-template < class VoxType,
-           class CounterType >
-class VoxelVector : public VoxelVectorBase {
-public:
-
-    VoxelVector() {} // remove?
-    VoxelVector( const VoxType *A1, const CounterType *A2 ) {
-        (void) A1;
-        SetA2(A2);
-    }
-
-    void * GetA2() { return &m_counter; }
-    void   SetA2(const void *A2) { m_counter = *A2; }
-
-    float Get(int id) const { return m_data[id].Get(); }
-    void Set(int id, float data) {
-        if(id >= Size()) m_data.resize(id+1);
-        m_data[id].Set(data);
-    }
-    int Size() const { return m_data.size(); }
-    int Count() const { return m_counter.Count(m_data); }
-private:
-    friend class VoxelVectorFactory;
-    CounterType     m_counter;
-    Vector<VoxType> m_data;
-};
-
-
-class VoxelVectorFactory {
-public:
-    VoxelVectorFactory() :
-        m_id1(0), m_id2(0)
-    {
-        m_base = m_factory.Create(0,0);
-    }
-
-    ~VoxelVectorFactory() {
-        delete m_base;
-    }
-
-    VoxelVectorBase * operator -> () const { return m_base; }
-
-    template < typename T >
-    void SetVoxel() {
-        int id = m_factory.FindS1<T>();
-        VoxelVectorBase * newbase = m_factory.Create(id,m_id2);
-        Test::copy(m_base,newbase); // *newbase = *m_base;
-
-        //
-
-        delete m_base;
-        m_base = newbase;
-    }
-
-    template < typename T >
-    void SetCounter(const T &ref) {
-        int id = m_factory.FindS2<T>();
-        VoxelVectorBase * newbase = m_factory.Create(m_id1,id);
-        Test::copy(m_base,newbase); // *newbase = *m_base;
-
-        //
-
-        delete m_base;
-        m_base = newbase;
-    }
-
-
-private:
-    RegisteredClassFactory2< VoxelVectorBase, VoxelVector, mpl::vector<VoxelMean,VoxelVal>, mpl::vector<VoxCount,VoxCountOver> > m_factory;
-    int m_id1, m_id2;
-    VoxelVectorBase * m_base;
-};
-} // Test
-
-
-
-
-
-
-
-struct B1 {
+struct B1 : BB {
     B1() : m_b1(1) {}
+    void Print() { std::cout << m_b1; }
     int m_b1;
 };
 
-struct B2 {
+struct B2 : BB {
     B2() : m_b2(2) {}
+    void Print() { std::cout << m_b2; }
     int m_b2;
 };
 
-struct B3 {
+struct B3 : BB {
     B3() : m_b3(3) {}
+    void Print() { std::cout << m_b3; }
     int m_b3;
 };
 
 struct B3b {
-    B3b() : m_b3(3) {}
+    B3b() : m_b3(30) {}
+    void Print() { std::cout << m_b3; }
     int m_b3; // learn to handle ambiguity ..
 };
 
 
+
+
+struct HB {
+    virtual ~HB() {}
+    virtual void Print() = 0;
+};
+
+template <
+        class A0,
+        class A1
+        >
+struct H : HB, ClassCompound<A0,A1> {
+    typedef ClassCompound<A0,A1> Compound;
+
+    H() {}
+
+    template < class Other >
+    H(const Other &t) : Compound(t) {}
+
+    using Compound::operator =;
+    using Compound::SetComponent;
+
+    void Print() {
+        std::cout << "this is a holder of type: " << typeid(this).name() << "\n";
+        std::cout << "-> ";
+        A0::Print();
+        std::cout << " ";
+        A1::Print();
+        std::cout << "\n";
+    }
+
+};
+
+
+struct HFactory {
+
+    template < class T0, class T1 >
+    static H<T0,T1>* create(const T0 &t0, const T1 &t1) {
+        H<T0,T1> *out = new H<T0,T1>;
+        out->A0() = t0;
+        out->A1() = t1;
+        return out;
+    }
+
+};
+
+
+template < class I0, class I1 >
+struct CompoundFactory {
+
+    template < class T0, class T1 >
+    static ClassCompound<T0,T1> create(const T0 &t0, const T1 &t1) {
+        ClassCompound<T0,T1> out;
+        ULIB_INTERFACE_ASSERT(I0,T0);
+        ULIB_INTERFACE_ASSERT(I1,T1);
+        out.A0() = t0;
+        out.A1() = t1;
+        return out;
+    }
+
+
+};
+
+
+
+typedef mpl::vector< B1, B2  > seq1;
+typedef mpl::vector< B3, B3b > seq2;
+
+
+
 int main() {
 
-    ClassCompound< B1, B2 > h1;
-    ClassCompound< B2, B3, B1 > h2;
+    B1 b1;
+    B2 b2;
+    B3 b3;
+    B3b b3b;
+
+    b1.m_b1 = 111;
+    b2.m_b2 = 222;
+    b3.m_b3 = 333;
+    b3b.m_b3 = 333;
 
 
-    h1.A0::m_b1 = 111;
-    h1.A1::m_b2 = 222;
+    H<B1,B2> h12;
+    h12.A0() = b1;
 
-    h2 = h1;
+    H<B1,B3> h13 = h12.SetComponent<1>(b3);
+    h13.Print();
 
-    std::cout << "h1: " << h1.A0::m_b1 << " " << h1.A1::m_b2 << "\n";
-    std::cout << "h2: " << h2.A0::m_b2 << " " << h2.A1::m_b3 << "\n";
+    {
+        H<B1,B2> h12 = CompoundFactory<BB,BB>::create(b1,b2);
+        h12.Print();
+    }
+
 
 }
 
+} // Test
 
+*/
 
 
 

@@ -23,23 +23,38 @@
 
 //////////////////////////////////////////////////////////////////////////////*/
 
+#include <iostream>
+#include <Core/Types.h>
+#include <Core/Mpl.h>
+
+#include <boost/type_traits.hpp>
+
+#include "testing-prototype.h"
+
+using namespace uLib;
+
+struct A0 {};
+struct A1 {};
+struct A2 {};
+struct A3 {};
+struct A4 {};
+struct A5 {};
+struct A6 {};
 
 
-#include <stdio.h>
-#include <stdlib.h>
 
 
-namespace uLib {
-namespace detail {
+int main() {
+    BEGIN_TESTING(Core MplSequence Replace element);
 
-} // detail
-} // uLib
+    typedef mpl::vector<A0,A1,A2,A3,A4> seq;
 
-#define BEGIN_TESTING(name)                \
-static int _fail = 0;                      \
-printf("..:: Testing " #name " ::..\n");
+    typedef mpl::replace_el<seq,A6,2>::type new_seq;
 
-#define TEST1(val) _fail += (val)==0
-#define TEST0(val) _fail += (val)!=0
-#define END_TESTING return _fail;
+    PrintTypeId::PrintMplSeq<new_seq>();
+
+    //    BOOST_MPL_ASSERT(( boost::is_same< new_seq, mpl::vector<A0,A1,A6,A3,A4> > ));
+
+    END_TESTING;
+}
 

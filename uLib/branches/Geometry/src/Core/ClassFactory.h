@@ -15,6 +15,122 @@
 namespace uLib {
 
 
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// RUNTIME CLASS FACTORY not jet usable... classes under development !
+
+
+template <
+        class BaseType,
+        template <class T1, class T2> class DerivedType,
+        typename S1,
+        typename S2
+        >
+class Factory2 {
+    typedef Factory2 ThisClass;
+    typedef void*(ThisClass::* newClassFn)(void *,void *);
+    typedef std::vector<newClassFn> newClassFnVector;
+    typedef mpl::combine_view< mpl::vector<S1,S2> > AlgView;
+
+    template <class U, class V>
+    void * newClass(void *ob1, void *ob2 ) {
+        DerivedType<U,V> *out = new DerivedType<U,V>;
+        if(ob1) static_cast<U&>(*out) = *static_cast<U*>(ob1);
+        if(ob2) static_cast<V&>(*out) = *static_cast<V*>(ob2);
+        return out;
+    }
+
+    template < typename U, typename V >
+    void addType() { m_map.push_back(&ThisClass::newClass< U,V >); }
+
+    struct AddTypeSeqOp {
+        AddTypeSeqOp( Factory2 *_p) : m_parent(_p) {}
+        template < typename Seq >
+        void operator()(Seq) {
+            m_parent->addType<
+                    typename mpl::at<Seq, mpl::int_<0> >::type,
+                    typename mpl::at<Seq, mpl::int_<1> >::type
+                    > ();
+        }
+        Factory2 *m_parent;
+    };
+
+    BaseType * create() {
+        typename newClassFnVector::iterator itr = m_map.begin() + m_id0 + m_size1 * m_id1;
+        return (BaseType *)(this->*(*itr))(m_algs[0], m_algs[1]);
+    }
+public:
+
+    Factory2() :
+        m_id0(0), m_id1(0)
+    {
+        mpl::for_each< AlgView >(AddTypeSeqOp(this));
+        m_algs[0] = NULL;
+        m_algs[1] = NULL;
+        m_base = create();
+    }
+
+    BaseType * operator -> () const { return m_base; }
+
+    template < typename T >
+    static inline int FindS1() {
+        typedef typename mpl::find<S1,T>::type iter;
+        return iter::pos::value;
+    }
+
+    template < typename T >
+    static inline int FindS2() {
+        typedef typename mpl::find<S2,T>::type iter;
+        return iter::pos::value;
+    }
+
+
+    template < class A >
+    void setA0 (A* alg) {
+        m_algs[0] = alg;
+        m_id0 = FindS1<A>();
+        delete m_base;
+        m_base = create();
+    }
+
+    template < class A >
+    void setA1 (A* alg) {
+        m_algs[1] = alg;
+        m_id1 = FindS2<A>();
+        delete m_base;
+        m_base = create();
+    }
+
+
+private:
+    newClassFnVector m_map;
+    int m_id0, m_id1;
+    void * m_algs[2];
+    BaseType *m_base;
+    static const int m_size1 = mpl::size<S1>::type::value;
+    static const int m_size2 = mpl::size<S2>::type::value;
+};
+
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // generator //
@@ -195,12 +311,6 @@ class RegisteredClassFactory2 {
     };
 
     typedef mpl::combine_view< mpl::vector<S1,S2> > AlgView;
-
-//    template < typename _T, class _Seq >
-//    static inline int find() {
-//        typedef typename mpl::find<_Seq,_T>::type iter;
-//        return iter::pos::value;
-//    }
 
 public:
 

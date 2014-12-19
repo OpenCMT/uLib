@@ -46,6 +46,10 @@
 #include <boost/mpl/transform_view.hpp>
 #include <boost/mpl/filter_view.hpp>
 
+#include <boost/mpl/replace.hpp>
+#include <boost/mpl/erase.hpp>
+#include <boost/mpl/insert.hpp>
+
 #include <boost/mpl/list.hpp>
 #include <boost/mpl/map.hpp>
 #include <boost/mpl/string.hpp>
@@ -127,11 +131,10 @@ struct inherit_nofold {
 
 
 
-
 template< class T>
-struct type {
+struct type {};
 
-};
+
 
 template <const char *N, class T>
 struct nvp {
@@ -141,6 +144,20 @@ struct nvp {
 };
 
 
+
+template < class Seq, class A, int N >
+class replace_el {
+    template < class _Seq, int _n >
+    struct pos {
+        typedef typename mpl::begin<_Seq>::type begin;
+        typedef typename mpl::advance<begin, mpl::int_<_n> >::type type;
+    };
+
+    typedef typename mpl::erase<Seq, typename pos<Seq,N>::type >::type s1;
+    typedef typename mpl::insert<s1, typename pos<s1,N>::type , A>::type result;
+public:
+    typedef result type;
+};
 
 
 

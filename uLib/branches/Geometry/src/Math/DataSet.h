@@ -33,6 +33,8 @@
 
 #include "Math/Dense.h"
 #include "Math/StructuredData.h"
+
+#include <Core/ClassCompound.h>
 #include <Core/ProgrammableAccessor.h>
 
 #include <vtkInformation.h>
@@ -41,57 +43,158 @@
 namespace uLib {
 
 
+//typedef std::iterator SequenceIterator;
+
+//template < typename T >
+//struct Enumeration {
+
+//};
+
+//template < typename T >
+//struct Iterator {
+
+//};
+
+//class AbstractDenseSequence {
+//public:
+
+//    virtual bool Empty() const = 0;
+
+
+//};
+
+
 class AbstractArray {
 public:
-    virtual void * GetDataPointer(Id_t id) const = 0;
+    virtual const void * GetDataPointer(Id_t id) const = 0;
+    virtual void * GetDataPointer(Id_t id) = 0;
     virtual void  SetSize(const size_t size) = 0;
     virtual const size_t GetSize() const = 0;
     virtual ~AbstractArray() {}
 };
 
 
-class DataSetAttributes {
-public:
 
-    template < typename GeT, typename SeT >
-    inline void SetScalars(GeT get, SeT set) {
-        m_Scalars.SetAccessFunctions(get,set);
+template < typename T >
+class DataAttributes {
+public:
+    template < typename F >
+    void AddAttribute(const char *name, F f) {
+        ProgrammableAccessor<T> pa(name);
+        pa.SetAccessFunctions(f);
+        m_Accessors.push_back(pa);
+        if(m_Accessors.size() == 1)
+            SetActive(name);
     }
 
+    template < typename F1, typename F2 >
+    void AddAttribute(const char *name, F1 f1, F2 f2) {
+        ProgrammableAccessor<T> pa(name);
+        pa.SetAccessFunctions(f1,f2);
+        m_Accessors.push_back(pa);
+        if(m_Accessors.size() == 1)
+            SetActive(name);
+    }
+
+    ProgrammableAccessor<T> * GetAttribute(const char *name) /*const*/ {
+        foreach (ProgrammableAccessor<T> &el, m_Accessors) {
+            if(el.GetName() == name)
+                return &el;
+        }
+        return NULL;
+    }
+
+    void SetActive(const char *name) {
+        m_Active = this->GetAttribute(name);
+    }
+    uLibGetMacro(Active,ProgrammableAccessor<T> *)
+    uLibRefMacro(Accessors, Vector< ProgrammableAccessor<T> >);
 private:
-    ProgrammableAccessor<double> m_Scalars;
+    Vector< ProgrammableAccessor<T> > m_Accessors;
+    ProgrammableAccessor<T>   *m_Active;
 };
 
 
 
-
-template < typename T >
-class DataVector : public AbstractArray {
+class DataSet : public AbstractArray {
 public:
-    void * GetDataPointer(Id_t id) const { return (void *)&m_Data.at(id); }
+    DataSet() {}
+    virtual ~DataSet() {}
+
+    template < typename F >
+    inline void AddScalarAccess(const char *name, F f) { Scalars().AddAttribute(name,f); }
+
+    template < typename F1, typename F2 >
+    inline void AddScalarAccess(const char *name, F1 f1, F2 f2) { Scalars().AddAttribute(name,f1,f2); }
+
+    double GetScalar(int id) {
+        ProgrammableAccessor<double> *acc = Scalars().GetActive();
+        if (acc) return acc->Get(this->GetDataPointer(id));
+    }
+
+    double GetScalar(const char *name, int id) {
+        ProgrammableAccessor<double> *acc = Scalars().GetAttribute(name);
+        if (acc) return acc->Get(this->GetDataPointer(id));
+    }
+
+    void SetScalar(int id, double val) {
+        ProgrammableAccessor<double> *acc = Scalars().GetActive();
+        if (acc) acc->Set(this->GetDataPointer(id),val);
+    }
+
+    void SetScalar(const char *name, int id, double val) {
+        ProgrammableAccessor<double> *acc = Scalars().GetAttribute(name);
+        if (acc) acc->Set(this->GetDataPointer(id),val);
+    }
+
+    inline void SetActiveScalars(const char *name) { Scalars().SetActive(name); }
+    inline ProgrammableAccessor<double> * GetActiveScalars() { return Scalars().GetActive(); }
+
+
+    uLibRefMacro(Scalars,DataAttributes< double   >);
+    uLibRefMacro(Vectors,DataAttributes< Vector3d >);
+private:
+    DataAttributes< double   > m_Scalars;
+    DataAttributes< Vector3d > m_Vectors; // da finire ... //
+};
+
+
+template <
+        typename T,
+        class ScalarAccess
+        >
+class DataVectorCompound :
+        public DataSet,
+        public ClassCompound< ScalarAccess >
+{
+    typedef DataVectorCompound<T,ScalarAccess> ThisClass;
+    typedef ClassCompound< ScalarAccess > Compound;
+    typedef T DataType;
+
+public:
+    DataVectorCompound() {}
+
+    template < class Other >
+    DataVectorCompound(const Other &cp) :
+        Compound(cp),
+        m_Data(cp.Data())
+    {}
+
+    const void * GetDataPointer(Id_t id) const { return (const void *)&m_Data.at(id); }
+    void * GetDataPointer(Id_t id) { return (void *)&m_Data.at(id); }
+
+    inline DataType & operator [] (Id_t id) { return m_Data.operator [](id); }
+    inline const DataType & operator [] (Id_t id) const { return m_Data.operator [](id); }
 
     inline void SetSize(const size_t size) { m_Data.resize(size); }
     inline const size_t GetSize() const { return m_Data.size(); }
 
-    uLibRefMacro(Data,Vector<T>)
-    uLibRefMacro(Attributes,DataSetAttributes)
+    uLibRefMacro(Data,Vector<DataType>)
+    uLibConstRefMacro(Data,Vector<T>)
 private:
-    DataSetAttributes m_Attributes;
-    Vector<T> m_Data;
+    Vector<DataType> m_Data;
 };
 
-
-
-
-
-//class DataSet {
-//public:
-
-//    virtual Vector3d     GetPoint(const Id_t) const = 0;
-//    virtual Vector<Id_t> GetCell(const Id_t)  const = 0;
-
-//private:
-//};
 
 
 
