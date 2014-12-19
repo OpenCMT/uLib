@@ -25,8 +25,10 @@
 
 
 #include "testing-prototype.h"
+
+
+#include "Math/DataSet.h"
 #include "Math/ImageData.h"
-#include <Core/Mpl.h>
 
 #include <root/TRandom.h>
 
@@ -35,59 +37,74 @@ using namespace uLib;
 namespace {
 struct MyVoxel {
     MyVoxel() : value(0), count(0) {}
+    MyVoxel(float v, int c) : value(v), count(c) {}
     float value;
     int count;
 };
 
+struct MyVoxelMeanAccess {
+    static void Set(MyVoxel &vox, double val) {
+        vox.value = val;
+        ++vox.count;
+    }
+    static double Get(const MyVoxel &vox) { return vox.value/vox.count; }
+};
 
-struct VoxelMean : public MyVoxel {
-    VoxelMean() {}
-    void SetValue(const float _value) { value += _value; ++count; }
-    float GetValue() const { return value/count; }
+struct MyVoxelValueAccess {
+    static void Set(MyVoxel &vox, double val) {
+        vox.value = val;
+        vox.count = 1;
+    }
+    static double Get(const MyVoxel &vox) { return vox.value; }
+};
+
+struct MyVoxelJitterAccess {
+    MyVoxelJitterAccess() : min(-1), max(1) { srand (static_cast <unsigned> (time(0))); }
+    MyVoxelJitterAccess(float min, float max) : min(min), max(max) { srand (static_cast <unsigned> (time(0))); }
+
+    float random() const {
+        return min + static_cast <float> (rand()) / ( static_cast <float> (RAND_MAX/(max-min)));
+    }
+
+    void Set(MyVoxel &vox, double val) {
+        vox.value = val + random();
+        vox.count = 1;
+    }
+    double Get(const MyVoxel &vox) const { return vox.value / vox.count + random(); }
+
+    float min, max;
 };
 }
 
 
 
-
 int main() {
 
-//    DataVector<MyVoxel> v;
+    DataVectorCompound< MyVoxel, MyVoxelMeanAccess > data;
+    data.Data().push_back( MyVoxel(5,1) );
+    data.Data().push_back( MyVoxel(10,2) );
+    data.Data().push_back( MyVoxel(15,3) );
+    data.Data().push_back( MyVoxel(2368,1) );
 
-    DataVectorImage img;
+    data[3].value = 123;
 
-//    img.Data() = v;
-//    img.Scalars().SetAccessFunctions(&MyVoxel::value);
-//    img.SetDims(Vector3i(3,3,3));
+    DataVectorCompound< MyVoxel, MyVoxelValueAccess > data2 = data;
 
-//    for (int x=0; x<img.GetDims().prod(); ++x){
-//        img.SetValue(x,x);
-//        std::cout << img.UnMap(x).transpose() << " -> " << img.GetValue(x) << "\n";
-//    }
-
-    DataVector<VoxelMean> vm;
-
-    Vector<VoxelMean> vm_2;
-    vm_2.resize(Vector3i(300,300,300).prod());
-
-    img.Data() = vm;
-    img.SetDims(Vector3i(300,300,300));
-    img.Scalars().SetAccessFunctions(&VoxelMean::GetValue,&VoxelMean::SetValue);
-
-//    TRandom random;
-
-
-    for(int i=0; i< 100; ++i)
-    for (int x=0; x<img.GetDims().prod(); ++x){
-//                vm.Data()[x].value += 1; vm.Data()[x].count++;
-//        vm.Data()[x].SetValue(1);
-        vm_2[x].SetValue(1);
-//                img.SetValue(x,1);
-//        boost::bind(&VoxelMean::SetValue,&vm.Data()[x], _1)(1);
-        //        std::cout << img.UnMap(x).transpose() << " -> " << img.GetValue(x) << "\n";
+    std::cout << "image data test \n";
+    foreach (MyVoxel &el, data2.Data()) {
+        std::cout << "-> " << el.value << " - " << el.count << "\n";
     }
 
-//    img.ExportToVtk("test.vtk");
+    DataVectorCompound< MyVoxel, MyVoxelJitterAccess > data3 = data2;
+    data3.A0().min = -1;
+    data3.A0().max =  1;
+    data3.AddScalarAccess("scalars",&MyVoxel::value);
+    data3.AddScalarAccess("counts",&MyVoxel::count);
+
+    std::cout << "image data test \n";
+    for(int i=0; i<data3.GetSize(); ++i) {
+        std::cout << " -> " << data3.GetScalar(i) << " - " << data3.GetScalar("counts",i) << "\n";
+    }
 
 }
 

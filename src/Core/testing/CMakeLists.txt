@@ -23,8 +23,10 @@ set( TESTS
         OptionsTest
         ProgrammableAccessorTest
         ClassFactoryTest
+        ClassFactoryRuntimeTest
         MplSequenceCombinerTest
         ClassCompoundTest
+        MplSequenceReplaceElTest
 )
 
 set(LIBRARIES

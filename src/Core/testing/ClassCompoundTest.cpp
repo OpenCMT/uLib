@@ -28,6 +28,12 @@
 #include "Core/Vector.h"
 #include "Core/ClassCompound.h"
 
+#include "Core/StaticInterface.h"
+
+#include "Core/Mpl.h"
+
+
+
 #include "testing-prototype.h"
 
 using namespace uLib;
@@ -69,8 +75,26 @@ private:
 
 
 
+class VoxCountInterface {
+
+//    int (* p_Count)(void * const);
+//    template <class T> static int S_Count(void * const ob) { return static_cast<T*>(ob)->Count(); }
+
+    void * const m_ob;
+public:
+    template < class T >
+    VoxCountInterface( T &t ) :
+        m_ob(&t)/*,
+        p_Count(&S_Count<T>)*/
+    {}
+
+//    int Count() const { return (*p_Count)(m_ob); }
+};
+
+
 class VoxCount {
 public:
+
     template < class T >
     int Count(const Vector<T> &ref ) const {
         return ref.size();
@@ -104,8 +128,13 @@ public:
     virtual ~VoxelVectorBase() {}
 };
 
+
+
+
 template < class T >
 void copy(T *src, T *dst) { }
+
+
 
 void copy(VoxelVectorBase *src, VoxelVectorBase *dst) {
     for(int i=0; i<src->Size(); ++i) {
@@ -114,50 +143,81 @@ void copy(VoxelVectorBase *src, VoxelVectorBase *dst) {
 }
 
 
-template < class VoxType,
+
+
+template < class Container,
            class CounterType >
 class VoxelVector :
         public VoxelVectorBase,
-        public ClassCompound< VoxType, CounterType >
+        public ClassCompound< Container, CounterType>
 {
-    typedef ClassCompound< VoxType, CounterType > Compound;
+    typedef ClassCompound< Container, CounterType> Compound;
 
 public:
 
     VoxelVector() {}
 
     template < class Other >
-    VoxelVector(const Other &t) : Compound(t) {
-        // assumes that Other is a voxelvector //
-        for(int i=0; i<t.Size(); ++i) {
-            this->Set(i, t.Get(i));
-        }
-    }
+    VoxelVector(const Other &copy) : Compound(copy) {}
 
-    template < class Other >
-    VoxelVector & operator = (const Other &t) {
-        for(int i=0; i<t.Size(); ++i) {
-            this->Set(i, t.Get(i));
-        }
-        (Compound &)(*this) = t;
-        return *this;
-    }
+    float Get(int id) const { return this->at(id).Get(); }
 
-    using Compound::operator =;
-
-    float Get(int id) const { return m_data[id].Get(); }
     void Set(int id, float data) {
-        if(id >= Size()) m_data.resize(id+1);
-        m_data[id].Set(data);
+        if(id >= Size()) this->resize(id+1);
+        this->at(id).Set(data);
     }
-    int Size() const { return m_data.size(); }
+
+    int Size() const { return this->size(); }
+
     int Count() const {
-        return CounterType::Count(m_data);
+        return CounterType::Count( this->A0() );
     }
 private:
-    friend class VoxelVectorFactory;
-    Vector<VoxType> m_data;
+//    friend class VoxelVectorFactory;
 };
+
+
+
+template < class ContainerInterface,
+           class CounterInterface >
+class VoxelVectorFactory
+{
+public:
+
+    template < class T0, class T1 >
+    static VoxelVector<T0,T1> * create( const T0 &t0, const T1 &t1) {
+        VoxelVector<T0,T1> *out = new VoxelVector<T0,T1>;
+
+        ULIB_INTERFACE_ASSERT(VoxCountInterface,T1);
+
+        out->A0() = t0;
+        out->A1() = t1;
+        return out;
+    }
+
+//    template < class H0, class A, int n >
+//    static void Set(const H0 &hold, const A &alg) {
+
+//    }
+
+
+
+//    template < class A, int n >
+//    typename mpl::replace_el<Seq,A,n>::type
+//    SetComponent(const A &alg) {
+//        typedef typename mpl::replace_el<Seq,A,n>::type _seq;
+
+//        result_type out = *this;
+//        static_cast< A& >(out) = alg;
+//        return out;
+//    }
+
+
+
+};
+
+
+
 
 
 } // Test
@@ -169,31 +229,95 @@ using namespace Test;
 
 int main() {
 
-    VoxelVector< VoxelMean, VoxCountOver > img;
+
+
+    VoxelVector< Vector<VoxelMean>, VoxCountOver > img;
     img.Set(0,555);
     img.Set(1,23);
     img.Set(1,25);
     img.Set(2,68);
 
-    img.A1::m_threshold = 50;
+    {
+        // these are equivalent access methods //
+        img.A1().m_threshold = 50;
+
+        img.VoxCountOver::m_threshold = 50;
+
+        VoxCountOver counter;
+        counter.m_threshold = 50;
+        img.A1() = counter;
+        // ----------------------------------- //
+    }
 
     std::cout << "-> ";
     for(int i=0; i<3; ++i) {
         std::cout << img.Get(i) << " ";
     }
+    std::cout << " count threshold: " << img.A1().m_threshold << " ";
     std::cout << " count: " << img.Count() << "\n";
 
 
-    VoxelVector< VoxelVal, VoxCountOver > img2 = img;
 
+
+
+
+    VoxelVector< Vector<VoxelVal>, VoxCountOver > img2;
+    img2 = img;
+
+    // voxel is changed so objects must be copied //
+    foreach (VoxelMean &el, img) {
+        VoxelVal v; v.Set(el.Get());
+        img2.push_back(v);
+    }
+
+
+    // manual copy of content //
     img2.Set(1,0);
-
     std::cout << "-> ";
     for(int i=0; i<3; ++i) {
         std::cout << img2.Get(i) << " ";
     }
-    std::cout << " count threshold: " << img2.A1::m_threshold << " ";
+    std::cout << " count threshold: " << img2.A1().m_threshold << " ";
     std::cout << " count: " << img2.Count() << "\n";
+
+
+    VoxelVector< Vector<VoxelVal>, VoxCount > img3 = img2;
+
+    std::cout << "-> ";
+    for(int i=0; i<3; ++i) {
+        std::cout << img3.Get(i) << " ";
+    }
+    std::cout << " count: " << img3.Count() << "\n";
+
+    VoxelVector< Vector<VoxelVal>, VoxCount > img4;
+    img4 = img3.SetComponent<1>(VoxCountOver());
+
+    std::cout << "-> ";
+    for(int i=0; i<3; ++i) {
+        std::cout << img4.Get(i) << " ";
+    }
+    std::cout << " count: " << img4.Count() << "\n";
+
+    {
+        // Voxel Vector Factory //
+
+        VoxelVectorFactory< Vector<VoxelVal>, VoxCount > factory;
+
+        Vector<VoxelVal> vector;
+        VoxCount counter;
+        VoxelVectorBase * base = factory.create(vector,counter);
+
+        base->Set(0,123);
+        base->Set(1,234);
+        base->Set(2,345);
+        std::cout << "-> ";
+        for(int i=0; i<3; ++i) {
+            std::cout << base->Get(i) << " ";
+        }
+        std::cout << " count: " << base->Count() << "\n";
+    }
+
+
 
 
 

@@ -24,9 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////*/
 
 
-
 #ifndef U_CORE_STATICINTERFACE_H
 #define U_CORE_STATICINTERFACE_H
+
+
+#include "boost/concept_check.hpp"
+#include "boost/type_traits/is_base_of.hpp"
+
 
 namespace uLib {
 
@@ -85,12 +89,54 @@ static inline void IsA(T &t) {
 template <class T, class SI>
 struct StaticIsA {
     StaticIsA() {
-        void (SI::*x)() = &SI::template check_structural<T>;
+        static void (SI::*x)() = &SI::template check_structural<T>;
         (void) x;
     }
 };
 
 } // Interface
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// BOOST CONCEPT CHECK FOR INTERFACES //
+
+// fix error dump for virtual interfaces //
+
+template < class I, class T >
+struct IsInterfaceOf {
+    typedef IsInterfaceOf<I,T> ThisClass;
+
+    template <class Model>
+    struct usage_requirements
+    { ~usage_requirements() { ((Model*)0)->~Model(); } };
+
+    BOOST_CONCEPT_ASSERT((boost::concepts::usage_requirements<ThisClass>));
+
+    void test( const boost::false_type &) {
+        I interface = target;
+        (void) interface;
+    }
+
+    void test( const boost::true_type &) {
+        I * interface = new T;
+        (void) interface;
+    }
+
+    ~IsInterfaceOf() {
+        this->test( boost::is_base_of<I,T>() );
+    }
+    T target;
+};
+
 } // uLib
+
+#define ULIB_INTERFACE_ASSERT(interface, type) \
+    BOOST_CONCEPT_ASSERT(( uLib::IsInterfaceOf<interface,type> ))
+
+
+
 
 #endif // STATICINTERFACE_H

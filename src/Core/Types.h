@@ -228,6 +228,79 @@ struct TypeIntrospection {
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// CONCEPTS //
+
+
+class NonCopyable
+{
+   NonCopyable (NonCopyable const &);              // private copy constructor
+   NonCopyable & operator = (NonCopyable const &); // private assignment operator
+};
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// TYPES WRAPPERS //
+
+template < typename T >
+struct WrapType { typedef T type; };
+
+template < typename T >
+class WrapMember {
+public:
+    typedef T type;
+    WrapMember() {}
+    WrapMember(const T &t) : _wrapped_member(t) {}
+    operator T () { return _wrapped_member; }
+    operator const T () const { return _wrapped_member; }
+    operator T& () { return _wrapped_member; }
+    operator const T& () const { return _wrapped_member; }
+private:
+    T _wrapped_member;
+};
+
+
+template < typename T, T _value >
+struct WrapValue { static const T value = _value; };
+
+
+typedef WrapValue<bool,true>  StaticTrue;
+typedef WrapValue<bool,false> StaticFalse;
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// RAII //
+
+template <class T>
+class AutoDelete : NonCopyable
+{
+  public:
+     AutoDelete (T * p = 0) : m_ptr(p) {}
+    ~AutoDelete () throw()  { delete m_ptr; }
+  private:
+    T *m_ptr;
+};
+
+
+
+template < class Lock >
+class ScopedLock : NonCopyable
+{
+  public:
+    ScopedLock (Lock & l) : m_lock(l) { m_lock.acquire(); }
+    ~ScopedLock () throw () { m_lock.release(); }
+  private:
+    Lock& m_lock;
+};
+
+
+
+
 
 
 // SISTEMARE //
