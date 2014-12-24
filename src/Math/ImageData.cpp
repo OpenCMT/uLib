@@ -179,3 +179,50 @@ void ImageData::ExportToVtkXml(const char *file, bool density_type)
     fclose(vtk_file);
     printf("%s vtk file saved\n",file);
 }
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// DATASET IMAGE
+
+//void ImageData::SetSize(const Vector3f v)
+//{
+//    ImageSpace::SetSize( v.array() / this->GetDims().array().cast<float>() );
+//}
+
+//Vector3f ImageData::GetSize() const
+//{
+//    return ImageSpace::GetSize().array() * this->GetDims().array().cast<float>();
+//}
+
+//bool ImageData::IsInsideBounds(const Vector4f pt) const
+//{
+//    Vector4f ptl =  ImageSpace::GetLocalPoint(pt);
+//    int result = 0;
+//    for ( int i=0; i<3 ;++i) {
+//        result += ptl(i) > (float)this->GetDims()(i);
+//        result += ptl(i) < 0;
+//    }
+//    return result == 0;
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

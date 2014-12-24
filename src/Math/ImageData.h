@@ -41,8 +41,7 @@ public:
     ImageData() : ImageMap(Vector3i::Zero()) {}
     ImageData(const Vector3i &size) : ImageMap(size) {}
 
-    void SetSize(const Vector3f v);
-
+    void     SetSize(const Vector3f v);
     Vector3f GetSize() const;
 
     bool IsInsideBounds(const Vector4f pt) const;
@@ -51,8 +50,8 @@ public:
 
     virtual float GetValue(const Vector3i id) const = 0;
     virtual float GetValue(const int id) const = 0;
-    virtual void SetValue(const Vector3i id, float value) = 0;
-    virtual void SetValue(const int id, float value) = 0;
+    virtual void  SetValue(const Vector3i id, float value) = 0;
+    virtual void  SetValue(const int id, float value) = 0;
 
     virtual void SetDims(const Vector3i &size) = 0;
 
@@ -62,34 +61,68 @@ public:
 };
 
 
+template < class SeqCnt >
+class DataSetImage : public DataSet, public ImageSpace, public ImageMap {
 
-
-class DataVectorImage : public ImageData {
-    typedef float ScalarT;
 public:
+    DataSetImage() : ImageMap(Vector3i::Zero()), m_Sequence() {}
+    DataSetImage(const Vector3i &size) : ImageMap(size), m_Sequence(new SeqCnt(size.prod())) {}
 
-    inline void * GetDataPointer(const Id_t id) const {
-        return m_Data->GetDataPointer(id);
+    void SetSize(const Vector3f v) {
+//        ImageSpace::SetSize( v.array() / this->GetDims().array().cast<float>() );
     }
 
-    float GetValue(const Vector3i id) const { return m_Scalars.Get<float>(GetDataPointer(Map(id))); }
-    float GetValue(const int id) const { return m_Scalars.Get<float>(GetDataPointer(id)); }
-    void SetValue(const Vector3i id, float value) { m_Scalars.Set<float>(GetDataPointer(Map(id)),value); }
-    void SetValue(const int id, float value) { m_Scalars.Set<float>(GetDataPointer(id),value); }
-
-    void SetDims(const Vector3i &size) {
-        ImageMap::SetDims(size);
-        m_Data->SetSize(size.prod());
+    Vector3f GetSize() const {
+//        return ImageSpace::GetSize().array() * this->GetDims().array().cast<float>();
     }
 
-//    uLibRefMacro(Data,AbstractArray*)
-    uLibRefMacro(Data,SmartPointer<AbstractArray>)
-    uLibRefMacro(Scalars,ProgrammableAccessor<ScalarT>)
+    bool IsInsideBounds(const Vector4f pt) const {
+        Vector4f ptl =  ImageSpace::GetLocalPoint(pt);
+        int result = 0;
+        for (int i=0; i<3; ++i) {
+            result += ptl(i) > (float)this->GetDims()(i);
+            result += ptl(i) < 0;
+        }
+        return result == 0;
+    }
+
+    void SetDims(const Vector3i &size) { m_Sequence->resize(size.prod()); }
+
+    inline void * GetDataPointer(Id_t id) { return &m_Sequence->at(id); }
+
 private:
-//    AbstractArray* m_Data;
-    SmartPointer<AbstractArray> m_Data;
-    ProgrammableAccessor<ScalarT> m_Scalars;
+    SmartPointer<SeqCnt> m_Sequence;
 };
+
+
+
+
+
+//class DataVectorImage : public ImageData {
+//    typedef float ScalarT;
+//public:
+
+//    inline void * GetDataPointer(const Id_t id) const {
+//        return m_Data->GetDataPointer(id);
+//    }
+
+//    float GetValue(const Vector3i id) const { return m_Scalars.Get<float>(GetDataPointer(Map(id))); }
+//    float GetValue(const int id) const { return m_Scalars.Get<float>(GetDataPointer(id)); }
+//    void SetValue(const Vector3i id, float value) { m_Scalars.Set<float>(GetDataPointer(Map(id)),value); }
+//    void SetValue(const int id, float value) { m_Scalars.Set<float>(GetDataPointer(id),value); }
+
+//    void SetDims(const Vector3i &size) {
+//        ImageMap::SetDims(size);
+//        m_Data->SetSize(size.prod());
+//    }
+
+//    uLibRefMacro(Data,SmartPointer<AbstractArray>)
+//    uLibRefMacro(Scalars,ProgrammableAccessor<ScalarT>)
+//private:
+//    SmartPointer<AbstractArray> m_Data;
+//    ProgrammableAccessor<ScalarT> m_Scalars;
+//};
+
 
 
 
