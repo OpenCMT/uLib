@@ -62,6 +62,8 @@ namespace uLib {
 
 using namespace uLib;
 
+
+
 template < typename T >
 void print_is_iter(const T &t, typename boost::disable_if< detail::is_iterator<T> >::type *dummy = 0  ) {
     std::cout << "no";
@@ -146,7 +148,7 @@ int main() {
         std::cout << va2.Get(&v) << "\n";
     }
 
-    {
+    { // test is iterator ..
         Vector<Vox>::Iterator it;
         Vox v;
         std::cout << "is iter? ";

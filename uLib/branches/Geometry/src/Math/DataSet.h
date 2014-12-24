@@ -43,33 +43,12 @@
 namespace uLib {
 
 
-//typedef std::iterator SequenceIterator;
-
-//template < typename T >
-//struct Enumeration {
-
-//};
-
-//template < typename T >
-//struct Iterator {
-
-//};
-
-//class AbstractDenseSequence {
-//public:
-
-//    virtual bool Empty() const = 0;
-
-
-//};
 
 
 class AbstractArray {
 public:
-    virtual const void * GetDataPointer(Id_t id) const = 0;
-    virtual void * GetDataPointer(Id_t id) = 0;
-    virtual void  SetSize(const size_t size) = 0;
-    virtual const size_t GetSize() const = 0;
+    //    virtual const void * GetDataPointer(Id_t id) const = 0;
+    virtual       void * GetDataPointer(Id_t id) = 0;
     virtual ~AbstractArray() {}
 };
 
@@ -78,13 +57,14 @@ public:
 template < typename T >
 class DataAttributes {
 public:
+    DataAttributes() : m_Active(NULL) {}
+
     template < typename F >
     void AddAttribute(const char *name, F f) {
         ProgrammableAccessor<T> pa(name);
         pa.SetAccessFunctions(f);
         m_Accessors.push_back(pa);
-        if(m_Accessors.size() == 1)
-            SetActive(name);
+        m_Active = &m_Accessors.back();
     }
 
     template < typename F1, typename F2 >
@@ -92,8 +72,7 @@ public:
         ProgrammableAccessor<T> pa(name);
         pa.SetAccessFunctions(f1,f2);
         m_Accessors.push_back(pa);
-        if(m_Accessors.size() == 1)
-            SetActive(name);
+        m_Active = &m_Accessors.back();
     }
 
     ProgrammableAccessor<T> * GetAttribute(const char *name) /*const*/ {
@@ -159,6 +138,9 @@ private:
 };
 
 
+
+
+// TO BE MOVED OR REMOVED ...
 template <
         typename T,
         class ScalarAccess

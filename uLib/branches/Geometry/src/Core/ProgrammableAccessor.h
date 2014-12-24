@@ -35,22 +35,9 @@ struct is_iterator {
 
 template <typename D>
 class ProgrammableAccessor_Base {
-protected:
-
 public:
     virtual D Get(void *) const = 0;
     virtual void Set(void *,const D) const = 0;
-
-//    template <typename T>
-//    T Get(void *ob) const {
-//        return static_cast<T>(this->Get(ob));
-//    }
-
-//    template <typename T>
-//    void Set(void *ob, const T data) const {
-//        this->Set(ob,static_cast<D>(data));
-//    }
-
     virtual ~ProgrammableAccessor_Base() {}
 };
 
@@ -181,24 +168,18 @@ template <typename D >
 class ProgrammableAccessor : public Named {
 public:
 
-//    struct Wrapper {
-//        Wrapper(const ProgrammableAccessor<D> *ac, void *ob) :
-//            m_access(ac), m_object(ob)
-//        { assert(ob != NULL); }
-
-//        template <typename T>
-//        inline T Get() const { return static_cast<T>(m_access->Get(m_object)); }
-
-//        template <typename T>
-//        inline void Set(const T data) const { return m_access->Set(m_object,static_cast<T>(data)); }
-
-//        void *m_object;
-//        const ProgrammableAccessor<D> *m_access;
-//    };
 
     ProgrammableAccessor() : Named("") {}
 
     ProgrammableAccessor(const char *name) : Named(name) {}
+
+    template < typename F >
+    ProgrammableAccessor(const char *name, F f) : Named(name)
+    { SetAccessFunctions(f); }
+
+    template < typename F1, typename F2 >
+    ProgrammableAccessor(const char *name, F1 f1, F2 f2) : Named(name)
+    { SetAccessFunctions(f1,f2); }
 
     template < typename F >
     ProgrammableAccessor(F f) : Named(f)
@@ -209,8 +190,7 @@ public:
     { SetAccessFunctions(f1,f2); }
 
 
-    // ----- move to factory //
-
+    // ----- factory functions //
     template <typename R, typename T1>
     inline void SetAccessFunctions(R(*_pg)(const T1 *), void(*_ps)(T1*,R) = NULL) {
         m_base = SmartPointer< detail::ProgrammableAccessor_Base<D> >(new detail::functor_by_static_acc<D,R,T1>(_pg,_ps));
@@ -243,8 +223,23 @@ public:
     }
     // ------ //
 
+/*
+    //    struct Wrapper {
+    //        Wrapper(const ProgrammableAccessor<D> *ac, void *ob) :
+    //            m_access(ac), m_object(ob)
+    //        { assert(ob != NULL); }
 
+    //        template <typename T>
+    //        inline T Get() const { return static_cast<T>(m_access->Get(m_object)); }
+
+    //        template <typename T>
+    //        inline void Set(const T data) const { return m_access->Set(m_object,static_cast<T>(data)); }
+
+    //        void *m_object;
+    //        const ProgrammableAccessor<D> *m_access;
+    //    };
     //    const Wrapper operator() (void *ob) const { return Wrapper(this,ob); }
+*/
 
     inline D Get(void *ob) const { return m_base->Get(ob); }
 

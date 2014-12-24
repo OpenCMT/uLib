@@ -85,7 +85,8 @@ int main()
     for(uLib::Vector<float>::Iterator it = v.begin(); it!=v.end(); it++)
         std::cout << *it <<" ";
     std::cout << std::endl;
-//    std::sort(v.begin(),v.end(),LT<float>());
+
+    //    std::sort(v.begin(),v.end(),LT<float>());
 
 
     END_TESTING;

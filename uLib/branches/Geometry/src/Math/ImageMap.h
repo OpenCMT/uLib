@@ -80,9 +80,6 @@ public:
 
     Vector3i UnMap(int index) const;
 
-
-
-
 private:
     Order m_DataOrder;
     Vector3i m_Dims;

@@ -80,31 +80,48 @@ struct MyVoxelJitterAccess {
 
 int main() {
 
-    DataVectorCompound< MyVoxel, MyVoxelMeanAccess > data;
-    data.Data().push_back( MyVoxel(5,1) );
-    data.Data().push_back( MyVoxel(10,2) );
-    data.Data().push_back( MyVoxel(15,3) );
-    data.Data().push_back( MyVoxel(2368,1) );
+//    {
+//        DataVectorCompound< MyVoxel, MyVoxelMeanAccess > data;
+//        data.Data().push_back( MyVoxel(5,1) );
+//        data.Data().push_back( MyVoxel(10,2) );
+//        data.Data().push_back( MyVoxel(15,3) );
+//        data.Data().push_back( MyVoxel(2368,1) );
 
-    data[3].value = 123;
+//        data[3].value = 123;
 
-    DataVectorCompound< MyVoxel, MyVoxelValueAccess > data2 = data;
+//        DataVectorCompound< MyVoxel, MyVoxelValueAccess > data2 = data;
 
-    std::cout << "image data test \n";
-    foreach (MyVoxel &el, data2.Data()) {
-        std::cout << "-> " << el.value << " - " << el.count << "\n";
+//        std::cout << "image data test \n";
+//        foreach (MyVoxel &el, data2.Data()) {
+//            std::cout << "-> " << el.value << " - " << el.count << "\n";
+//        }
+
+//        DataVectorCompound< MyVoxel, MyVoxelJitterAccess > data3 = data2;
+//        data3.A0().min = -1;
+//        data3.A0().max =  1;
+//        data3.AddScalarAccess("scalars",&MyVoxel::value);
+//        data3.AddScalarAccess("counts",&MyVoxel::count);
+
+//        std::cout << "image data test \n";
+//        for(int i=0; i<data3.GetSize(); ++i) {
+//            std::cout << " -> " << data3.GetScalar(i) << " - " << data3.GetScalar("counts",i) << "\n";
+//        }
+//    }
+
+
+
+    DataSetImage< Vector<MyVoxel> > img( Vector3i(3,3,3) );
+    img.AddScalarAccess("value",&MyVoxel::value);
+    img.AddScalarAccess("count",&MyVoxel::count);
+
+    for(int x = 0; x < img.GetDims().prod(); ++x) {
+        img.SetActiveScalars("value");
+        img.SetScalar(x,x);
+        img.SetScalar("count",x,2*x);
+        std::cout << " [" << img.GetScalar("value",x) << "," << img.GetScalar("count", x) << "]";
     }
 
-    DataVectorCompound< MyVoxel, MyVoxelJitterAccess > data3 = data2;
-    data3.A0().min = -1;
-    data3.A0().max =  1;
-    data3.AddScalarAccess("scalars",&MyVoxel::value);
-    data3.AddScalarAccess("counts",&MyVoxel::count);
-
-    std::cout << "image data test \n";
-    for(int i=0; i<data3.GetSize(); ++i) {
-        std::cout << " -> " << data3.GetScalar(i) << " - " << data3.GetScalar("counts",i) << "\n";
-    }
+    std::cout << "\n";
 
 }
 
