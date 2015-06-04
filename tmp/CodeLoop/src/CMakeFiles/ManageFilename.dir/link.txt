@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC   -Wno-deprecated    -shared -Wl,-soname,libManageFilename.so -o libManageFilename.so CMakeFiles/ManageFilename.dir/ManageFilename.cpp.o CMakeFiles/ManageFilename.dir/Test.cpp.o 
