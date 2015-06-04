@@ -1,8 +1,0 @@
-
-
-HEADERS = ManageFilename.h \
-          Test.h
-
-
-SOURCES = ManageFilename.cpp \
-          Test.cpp
