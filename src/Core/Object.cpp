@@ -46,7 +46,7 @@ namespace uLib {
 
 const char *Version::PackageName   = PACKAGE_NAME;
 const char *Version::VersionNumber = PACKAGE_VERSION;
-const char *Version::Release       = SVN_REVISION;
+const char *Version::Release       = ""; //SVN_REVISION;
 
 
 ////////////////////////////////////////////////////////////////////////////////

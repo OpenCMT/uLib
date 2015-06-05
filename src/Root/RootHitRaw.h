@@ -50,15 +50,15 @@ public:
 class HitRaw
 {
 public:
-    virtual Int_t Flags() {}
-    virtual Int_t Chm()   const {}
-    virtual Int_t Rob()   const {}
-    virtual Int_t Tdc()   const {}
-    virtual Int_t Ch()    const {}
+    virtual Int_t Flags();
+    virtual Int_t Chm()   const;
+    virtual Int_t Rob()   const;
+    virtual Int_t Tdc()   const;
+    virtual Int_t Ch()    const;
     virtual void  SetFlags  (Int_t flags) = 0;
     virtual void  SetChamber(Int_t cmb) = 0;
     virtual void  SetChannel(Int_t Rob, Int_t Tdc, Int_t Ch) = 0;
-    virtual float operator() (  ) {}
+    virtual float operator() ();
 protected:
     virtual ~HitRaw() {}
 };

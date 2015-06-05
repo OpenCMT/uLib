@@ -397,8 +397,7 @@ namespace Archive {
 // XML //
 
 class xml_iarchive :
-    public boost::archive::xml_iarchive_impl<xml_iarchive>,
-    public boost::archive::detail::shared_ptr_helper
+    public boost::archive::xml_iarchive_impl<xml_iarchive>
 {
     typedef xml_iarchive Archive;
     typedef boost::archive::xml_iarchive_impl<Archive> base;
@@ -529,8 +528,7 @@ public:
 // TEXT //
 
 class text_iarchive :
-    public boost::archive::text_iarchive_impl<text_iarchive>,
-    public boost::archive::detail::shared_ptr_helper
+    public boost::archive::text_iarchive_impl<text_iarchive>
 {
     typedef text_iarchive Archive;
     typedef boost::archive::text_iarchive_impl<Archive> base;
@@ -604,8 +602,7 @@ public:
 // SIMPLE HUMAN READABLE TEXT //
 
 class hrt_iarchive :
-    public boost::archive::text_iarchive_impl<hrt_iarchive>,
-    public boost::archive::detail::shared_ptr_helper
+    public boost::archive::text_iarchive_impl<hrt_iarchive>
 {
     typedef hrt_iarchive Archive;
     typedef boost::archive::text_iarchive_impl<Archive> base;

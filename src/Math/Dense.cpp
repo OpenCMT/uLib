@@ -51,14 +51,14 @@
 
 
 // NEW //
-ULIB_SERIALIZE(uLib::Vector2i) { ar & boost::serialization::make_nvp(NULL,ob); }
-ULIB_SERIALIZE(uLib::Vector3i) { ar & boost::serialization::make_nvp(NULL,ob); }
-ULIB_SERIALIZE(uLib::Vector4i) { ar & boost::serialization::make_nvp(NULL,ob); }
-ULIB_SERIALIZE(uLib::Vector2f) { ar & boost::serialization::make_nvp(NULL,ob); }
-ULIB_SERIALIZE(uLib::Vector3f) { ar & boost::serialization::make_nvp(NULL,ob); }
-ULIB_SERIALIZE(uLib::Vector4f) { ar & boost::serialization::make_nvp(NULL,ob); }
-ULIB_SERIALIZE(uLib::Vector2d) { ar & boost::serialization::make_nvp(NULL,ob); }
-ULIB_SERIALIZE(uLib::Vector3d) { ar & boost::serialization::make_nvp(NULL,ob); }
-ULIB_SERIALIZE(uLib::Vector4d) { ar & boost::serialization::make_nvp(NULL,ob); }
+//ULIB_SERIALIZE(uLib::Vector2i) { ar & boost::serialization::make_nvp(NULL,ob); }
+//ULIB_SERIALIZE(uLib::Vector3i) { ar & boost::serialization::make_nvp(NULL,ob); }
+//ULIB_SERIALIZE(uLib::Vector4i) { ar & boost::serialization::make_nvp(NULL,ob); }
+//ULIB_SERIALIZE(uLib::Vector2f) { ar & boost::serialization::make_nvp(NULL,ob); }
+//ULIB_SERIALIZE(uLib::Vector3f) { ar & boost::serialization::make_nvp(NULL,ob); }
+//ULIB_SERIALIZE(uLib::Vector4f) { ar & boost::serialization::make_nvp(NULL,ob); }
+//ULIB_SERIALIZE(uLib::Vector2d) { ar & boost::serialization::make_nvp(NULL,ob); }
+//ULIB_SERIALIZE(uLib::Vector3d) { ar & boost::serialization::make_nvp(NULL,ob); }
+//ULIB_SERIALIZE(uLib::Vector4d) { ar & boost::serialization::make_nvp(NULL,ob); }
 
 
