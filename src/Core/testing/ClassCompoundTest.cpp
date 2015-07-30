@@ -258,9 +258,6 @@ int main() {
 
 
 
-
-
-
     VoxelVector< Vector<VoxelVal>, VoxCountOver > img2;
     img2 = img;
 

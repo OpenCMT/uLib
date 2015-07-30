@@ -25,6 +25,7 @@ set(HEADERS
                                 Named.h
                                 MplSequenceCombiner.h
                                 ClassCompound.h
+                                ClassComposite.h
 )
 
 SET(SOURCES

@@ -26,7 +26,9 @@ set( TESTS
         ClassFactoryRuntimeTest
         MplSequenceCombinerTest
         ClassCompoundTest
+        ClassCompoundTest2
         MplSequenceReplaceElTest
+        ClassCompositeTest
 )
 
 set(LIBRARIES

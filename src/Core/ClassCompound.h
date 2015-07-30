@@ -22,7 +22,7 @@ struct ClassCompound : ULIB_MPL_INHERIT_SEQ(_Seq) {
 
     template < class S >
     struct CopyOp {
-        CopyOp(const S * src, ClassCompound * const dst) : m_src(src), m_dst(dst) {}
+        CopyOp(const S& src, ClassCompound * const dst) : m_src(src), m_dst(dst) {}
 
         template < class T, bool b >
         void copy(const T &t, const boost::integral_constant<bool,b>&) const {
@@ -38,24 +38,24 @@ struct ClassCompound : ULIB_MPL_INHERIT_SEQ(_Seq) {
 
         template < class A >
         void operator()(A) const {
-            const A &t = *m_src;
+            const A &t = m_src;
             copy(t, boost::is_base_of<A,ClassCompound>());
         }
 
         ClassCompound * const m_dst;
-        const S *m_src;
+        const S& m_src;
     };
 
     template < class Other >
     ClassCompound(const Other &copy) {
         typedef typename Other::Seq _seq;
-        mpl::for_each<_seq>(CopyOp<Other>(&copy,this));
+        mpl::for_each<_seq>(CopyOp<Other>(copy,this));
     }
 
     template < class Other >
     inline void copy ( const Other &copy ) throw () {
         typedef typename Other::Seq _seq;
-        mpl::for_each<_seq>(CopyOp<Other>(&copy,this));
+        mpl::for_each<_seq>(CopyOp<Other>(copy,this));
     }
 
     template < class Other >

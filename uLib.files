@@ -528,3 +528,6 @@ ulib.h
 uLibConfig.cmake.in
 uLibConfigVersion.cmake.in
 vtk_test.cpp
+src/Core/testing/ClassCompoundTest2.cpp
+src/Core/ClassComposite.h
+src/Core/testing/ClassCompositeTest.cpp
