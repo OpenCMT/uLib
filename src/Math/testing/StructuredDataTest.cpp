@@ -30,8 +30,10 @@
 
 #include "Math/Dense.h"
 #include "Math/ContainerBox.h"
-#include "Math/StructuredData.h"
+//#include "Math/StructuredData.h"
+#include "Math/ImageMap.h"
 #include "Math/DataSet.h"
+#include "Math/VoxImage.h"
 
 #include <iostream>
 
@@ -53,7 +55,7 @@ int main() {
 
     Data data;
 
-    VectorData<Data> vd;
+    VoxImage<Data> vd;
     vd.push_back(data);
     vd.push_back(Data());
     vd.push_back(Data());
@@ -77,7 +79,7 @@ int main2() {
     BEGIN_TESTING(Structured Data);
 
     { // testing unmap function ////////////////////////////////////////////////
-        StructuredData sdata(Vector3i(2,3,4));
+        ImageMap sdata(Vector3i(2,3,4));
         for(int i=0; i < sdata.GetDims().prod() ; ++i) {
             Vector3i d = sdata.UnMap(i);
             std::cout << "TEST1( sdata.UnMap(" << i << ") == Vector3i("

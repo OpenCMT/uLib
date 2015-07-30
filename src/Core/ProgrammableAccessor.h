@@ -169,7 +169,7 @@ class ProgrammableAccessor : public Named {
 public:
 
 
-    ProgrammableAccessor() : Named("") {}
+    ProgrammableAccessor() {}
 
     ProgrammableAccessor(const char *name) : Named(name) {}
 
@@ -223,23 +223,23 @@ public:
     }
     // ------ //
 
-/*
-    //    struct Wrapper {
-    //        Wrapper(const ProgrammableAccessor<D> *ac, void *ob) :
-    //            m_access(ac), m_object(ob)
-    //        { assert(ob != NULL); }
 
-    //        template <typename T>
-    //        inline T Get() const { return static_cast<T>(m_access->Get(m_object)); }
-
-    //        template <typename T>
-    //        inline void Set(const T data) const { return m_access->Set(m_object,static_cast<T>(data)); }
-
-    //        void *m_object;
-    //        const ProgrammableAccessor<D> *m_access;
-    //    };
-    //    const Wrapper operator() (void *ob) const { return Wrapper(this,ob); }
-*/
+    struct Wrapper {
+        Wrapper(const ProgrammableAccessor<D> *ac, void *ob) :
+            m_access(ac), m_object(ob)
+        { assert(ob != NULL); }
+        
+        template <typename T>
+        inline T Get() const { return static_cast<T>(m_access->Get(m_object)); }
+        
+        template <typename T>
+        inline void Set(const T data) const { return m_access->Set(m_object,static_cast<T>(data)); }
+        
+        void *m_object;
+        const ProgrammableAccessor<D> *m_access;
+    };
+    const Wrapper operator() (void *ob) const { return Wrapper(this,ob); }
+    
 
     inline D Get(void *ob) const { return m_base->Get(ob); }
 

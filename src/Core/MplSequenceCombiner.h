@@ -60,23 +60,22 @@ class SequenceCombiner {
             typedef typename mpl::end<in_seq>::type   Itr_end;
 
             typedef typename mpl::if_< boost::is_same<Itr_next,Itr_end>,
-            typename mpl::push_back<seq,Itr_begin>::type,
-            typename mpl::push_back<seq,Itr_next>::type
-            >::type
+                                       typename mpl::push_back<seq,Itr_begin>::type,
+                                       typename mpl::push_back<seq,Itr_next>::type
+                                     >::type
             new_seq;
 
             typedef typename mpl::if_< boost::is_same<Itr_next,Itr_end>,
-            mpl::int_<1>,
-            mpl::int_<0>
-            >::type
+                                       mpl::int_<1>,
+                                       mpl::int_<0>
+                                     >::type
             new_state;
         public:
             typedef typename set_state<new_seq, new_state>::type type;
         };
     };
 
-    typedef typename mpl::fold<
-                                typename mpl::zip_view< mpl::vector<Seq, ItrSeq > >::type,
+    typedef typename mpl::fold< typename mpl::zip_view< mpl::vector<Seq, ItrSeq > >::type,
                                 StateSeq<>,
                                 NextOp
                               >::type
@@ -86,7 +85,8 @@ public:
 
     typedef typename mpl::if_< boost::is_same< typename StateResult::state, int_<1> >,
                                typename mpl::transform< Seq, mpl::end<_1> >::type,
-                               typename StateResult::sequence >::type
+                               typename StateResult::sequence 
+                             >::type
     next;
 };
 

@@ -134,7 +134,7 @@ struct IsInterfaceOf {
 } // uLib
 
 #define ULIB_INTERFACE_ASSERT(interface, type) \
-    BOOST_CONCEPT_ASSERT(( uLib::IsInterfaceOf<interface,type> ))
+    BOOST_CONCEPT_ASSERT(( uLib::IsInterfaceOf< interface, type > ))
 
 
 

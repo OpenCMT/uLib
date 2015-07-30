@@ -27,6 +27,7 @@
 
 
 #include "testing-prototype.h"
+#include "Math/VectorSpace.h"
 #include "Math/ImageData.h"
 #include "Math/VoxImage.h"
 
