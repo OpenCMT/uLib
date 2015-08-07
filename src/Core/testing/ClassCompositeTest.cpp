@@ -27,6 +27,8 @@
 
 #include "Core/Vector.h"
 #include "Core/ClassComposite.h"
+#include "Core/ClassCompound.h"
+
 #include "Core/StaticInterface.h"
 #include "Core/Mpl.h"
 #include "Core/Types.h"
@@ -34,11 +36,28 @@
 
 using namespace uLib;
 
+template < typename _T, class _D >
+struct Accessor {
+    static inline const _T Get(const _D &data) { return data.Get(); }
+    static inline void Set(const _D &data, const _T &value) { data.Set(value); }
+};
 
+struct Voxel {    
+    float a;
+    int b;
+    
+    const float Get() const { return a; }
+    void Set(const float value) { this->a = value; ++this->b; }    
+};
 
-struct Voxel {
-    int a;
-    float b;
+template < class _T, class _C >
+class DataSet : public ClassCompound<_C> 
+{    
+    typedef _C Container;
+public:       
+
+    
+    
 };
 
 
@@ -67,6 +86,10 @@ int main(int argc, char *argv[])
     p3 = p2;
     
     std::cout << p2.A0().a << " " << p2.A0().b << "\n";
+    
+    TEST1( p2.A0().a == 555 );
+    TEST1( p2.A0().b == 2368 );
+        
     
     
     END_TESTING;           
