@@ -103,10 +103,10 @@ int main()
 
     // muon scatter //
     MuonScatter muon;
-    muon.LineIn().origin << -6, 12, -6, 1;
-    muon.LineIn().direction << 1 , -1 , 1 , 0;
-    muon.LineOut().origin << 6 , -4 , 6 , 1;
-    muon.LineOut().direction << 1 , -1 , 1 , 0;
+    muon.LineIn().origin() << -6, 12, -6, 1;
+    muon.LineIn().direction() << 1 , -1 , 1 , 0;
+    muon.LineOut().origin() << 6 , -4 , 6 , 1;
+    muon.LineOut().direction() << 1 , -1 , 1 , 0;
 
     Vtk::vtkMuonScatter v_muon(muon);
 
@@ -122,7 +122,7 @@ int main()
 
     // voxraytracer //
     VoxRaytracer rt(grid);
-    HPoint3f pt;
+    Vector4f pt;
     rt.GetEntryPoint(muon.LineIn(),pt);
     std::cout << pt.transpose() << "\n";
 
