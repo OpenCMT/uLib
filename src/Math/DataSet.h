@@ -61,16 +61,14 @@ public:
 
     template < typename F >
     void AddAttribute(const char *name, F f) {
-        ProgrammableAccessor<T> pa(name);
-        pa.SetAccessFunctions(f);
+        ProgrammableAccessor<T> pa(name,f);        
         m_Accessors.push_back(pa);
         m_Active = &m_Accessors.back();
     }
 
     template < typename F1, typename F2 >
     void AddAttribute(const char *name, F1 f1, F2 f2) {
-        ProgrammableAccessor<T> pa(name);
-        pa.SetAccessFunctions(f1,f2);
+        ProgrammableAccessor<T> pa(name,f1,f2);        
         m_Accessors.push_back(pa);
         m_Active = &m_Accessors.back();
     }
@@ -86,11 +84,14 @@ public:
     void SetActive(const char *name) {
         m_Active = this->GetAttribute(name);
     }
+
     uLibGetMacro(Active,ProgrammableAccessor<T> *)
     uLibRefMacro(Accessors, Vector< ProgrammableAccessor<T> >);
+
 private:
+
     Vector< ProgrammableAccessor<T> > m_Accessors;
-    ProgrammableAccessor<T>   *m_Active;
+    ProgrammableAccessor<T>          *m_Active;
 };
 
 
