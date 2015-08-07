@@ -322,7 +322,8 @@ struct PrintTypeId {
 struct                    Access  {};
 template <class T> struct Access2 {};
 
-
+// NULL CLASS //
+struct Null {};
 
 
 } // uLib

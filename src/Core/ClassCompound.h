@@ -4,6 +4,7 @@
 
 #include "boost/type_traits.hpp"
 
+#include "Core/Types.h"
 #include "Core/Mpl.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +84,7 @@ struct ClassCompound : ULIB_MPL_INHERIT_SEQ(_Seq) {
 ////////////////////////////////////////////////////////////////////////////////
 // COMPOUND SPECIALIZATIONS //
 
-struct Null {};
+//struct Null {};
 template < class T0 = Null,
            class T1 = Null,
            class T2 = Null,

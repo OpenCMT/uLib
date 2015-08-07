@@ -122,7 +122,7 @@ struct ClassComposite {
 } // detail
 
 
-struct Null {};
+//struct Null {};
 template < typename T0 = Null,
            typename T1 = Null,
            typename T2 = Null,
