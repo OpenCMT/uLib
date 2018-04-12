@@ -198,5 +198,50 @@ const
     return ray;
 }
 
+// 20150528 SV for absorbed muons
+VoxRaytracer::RayData VoxRaytracer::TraceLine(const HLine3f &line) const
+{
+    RayData ray;
+
+    Vector4f pt = m_Image->GetLocalPoint(line.origin());
+    Vector4f s = m_Image->GetLocalPoint(line.direction());
+
+    float l = s.head(3).norm();
+    // intersection between track and grid when spacing is +1
+    Vector3f L(l/s(0), l/s(1), l/s(2));
+
+    // RayTracer works with a grid of interspace +1
+    // Vector3f scale; // FIXXX
+    // scale << (m_Image->GetWorldMatrix() * Vector4f(1,0,0,0)).norm(),
+    //          (m_Image->GetWorldMatrix() * Vector4f(0,1,0,0)).norm(),
+    //          (m_Image->GetWorldMatrix() * Vector4f(0,0,1,0)).norm();
+
+    // offset is the fraction of the segment between grid lines when origin is insiede voxel
+    // cwiseAbs for having positive distances
+    Vector3f offset;
+    for(int i=0;i<3;++i)
+        offset(i) = (s(i)>=0) - (pt(i)-floor(pt(i)));
+    offset = offset.cwiseProduct(L).cwiseAbs();
+    L = L.cwiseAbs();
+
+    int id; float d;
+    Vector3i vid = m_Image->Find(line.origin());
+    while(m_Image->IsInsideGrid(vid))
+    {
+        // minimun coefficient of offset: id is the coordinate, d is the value
+        // dependig on which grid line horizontal or vertical it is first intercept
+        d = offset.minCoeff(&id);
+
+        // add Lij to ray
+        ray.AddElement(m_Image->Map(vid), d * m_scale(id) );
+
+        // move to the next voxel
+        vid(id) += (int)fast_sign(s(id));
+
+        offset.array() -= d;
+        offset(id) = L(id);
+    }
+    return ray;
+}
 
 }

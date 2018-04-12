@@ -65,7 +65,12 @@ public:
 
 
 public:
-    VoxRaytracer(ImageData &image) : m_Image(&image) {}
+    VoxRaytracer(ImageData &image) : m_Image(&image) {
+         m_scale <<
+       (m_Image->GetWorldMatrix() * Vector4f(1,0,0,0)).norm(),
+       (m_Image->GetWorldMatrix() * Vector4f(0,1,0,0)).norm(),
+       (m_Image->GetWorldMatrix() * Vector4f(0,0,1,0)).norm();
+       }
 
     bool GetEntryPoint(const HLine3f line, Vector4f &pt) const;
 
@@ -73,10 +78,13 @@ public:
 
     RayData  TraceBetweenPoints(const Vector4f &in, const Vector4f &out) const;
 
+    RayData TraceLine(const HLine3f &line) const;
+
     uLibGetMacro(Image,ImageData *)
 
 private:
     ImageData *m_Image;
+    Vector3f        m_scale;
 };
 
 }

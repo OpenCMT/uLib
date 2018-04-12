@@ -28,10 +28,24 @@
 #ifndef U_ROOT_TESTTOBJECT_H
 #define U_ROOT_TESTTOBJECT_H
 
+
+#if __cplusplus >= 201703L
+#else
+namespace std {
+class string_view {
+public:
+    string_view(const char *) {}
+    string_view(const char *,int) {}
+};
+} // std
+#endif
+
+
 #include <math.h>
 #include <TObject.h>
 #include <TTree.h>
 #include <TFolder.h>
+
 
 class TestTObject : public TObject {
 public:

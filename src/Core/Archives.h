@@ -173,7 +173,7 @@ public:
     }
     template<class T>
     Archive & operator>>(T & t){
-        this->This()->load_override(t, 0);
+        this->This()->load_override(t);
         return * this->This();
     }
 
@@ -231,7 +231,7 @@ public:
     Archive & operator<<(T & t){
         // to get access you must redefine save_override by typing
         // "using save_override" in archive impl
-        this->This()->save_override(t, 0);
+        this->This()->save_override(t);
         return * this->This();
     }
 
@@ -707,8 +707,8 @@ public:
     }
 
     template<class T>
-    void save_override(T & t, BOOST_PFTO int){
-        base::save_override(boost::serialization::make_nvp(NULL, t), 0);
+    void save_override(T & t){
+        base::save_override(boost::serialization::make_nvp(NULL, t));
     }
 
     // activate this if you want to trap non nvp objects //

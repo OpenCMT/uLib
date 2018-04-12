@@ -39,6 +39,8 @@
 #include <boost/archive/impl/basic_xml_oarchive.ipp>
 #include <boost/archive/impl/xml_oarchive_impl.ipp>
 
+#include <boost/archive/impl/basic_xml_grammar.hpp>
+
 #include <boost/archive/impl/basic_xml_iarchive.ipp>
 #include <boost/archive/impl/xml_iarchive_impl.ipp>
 
@@ -87,6 +89,45 @@ template class xml_oarchive_impl              <uLib::Archive::log_archive> ;
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+//  XML GRAMMAR STUBS  /////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//
+// WARNING: this stubs were added because misteriously the implementation of
+// this templated methods are missing....
+//
+//
+template<class CharType>
+bool basic_xml_grammar<CharType>::parse_start_tag(basic_xml_grammar::IStream &is)
+{}
+//
+template<class CharType>
+bool basic_xml_grammar<CharType>::parse_end_tag(basic_xml_grammar::IStream &is)
+const {}
+//
+template<class CharType>
+bool basic_xml_grammar<CharType>::parse_string(basic_xml_grammar::IStream &is, basic_xml_grammar::StringType &s)
+{}
+//
+template<class CharType>
+void basic_xml_grammar<CharType>::init(basic_xml_grammar::IStream &is)
+{}
+//
+template<class CharType>
+bool basic_xml_grammar<CharType>::windup(basic_xml_grammar::IStream &is)
+{}
+//
+template<class CharType>
+basic_xml_grammar<CharType>::basic_xml_grammar()
+{}
+//
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
 
 } // namespace archive
 } // namespace boost
+
+
+

@@ -80,10 +80,10 @@ int main(int argc,char **argv) {
 
     tree->Fill();
 
-    u_mu.LineIn().origin << 3,3,3;
-    u_mu.LineIn().direction << 5,5,5;
-    u_mu.LineOut().origin << 1,2,3;
-    u_mu.LineOut().direction << 4,5,6;
+    u_mu.LineIn().origin() << 3,3,3;
+    u_mu.LineIn().direction() << 5,5,5;
+    u_mu.LineOut().origin() << 1,2,3;
+    u_mu.LineOut().direction() << 4,5,6;
     u_mu.SetMomentum(555);
     u_mu.SetMomentumPrime(2368);
 

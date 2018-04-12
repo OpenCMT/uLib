@@ -47,7 +47,7 @@ public:
     uLibGetMacro(Type, enum Type)
 
 private:
-    HPoint3f  m_Position;
+    Vector4f  m_Position;
     enum Type m_Type;
 };
 

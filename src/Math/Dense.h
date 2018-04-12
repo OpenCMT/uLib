@@ -372,8 +372,6 @@ typedef double        Scalard;
 //}
 
 
-
-
 //struct _HError3f
 //{
 //    Vector4f position_error;

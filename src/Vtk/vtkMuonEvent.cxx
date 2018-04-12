@@ -96,7 +96,7 @@ public:
 
     vtkAppendPolyData *m_Appender;
     vtkBoxWidget *m_WidgetIN, *m_WidgetOUT;
-    HPoint3f m_Poca;
+    Vector4f m_Poca;
 };
 
 
@@ -163,7 +163,7 @@ void vtkMuonEvent::InstallPipe()
 
         float distance = (d->content->LineIn().origin - d->content->LineOut().origin).norm() / 10;
 
-        HPoint3f pt;        
+        Vector4f pt;        
         pt = d->content->LineIn().origin;
         line_in->SetPoint1(pt(0),pt(1),pt(2));
         pt= d->content->LineIn().origin + d->content->LineIn().direction * distance;
@@ -188,7 +188,7 @@ vtkPolyData *vtkMuonEvent::GetPolyData() const
     return d->m_Appender->GetOutput();
 }
 
-void vtkMuonEvent::AddPocaPoint(HPoint3f poca)
+void vtkMuonEvent::AddPocaPoint(Vector4f poca)
 {
     d->m_Poca = poca;
     vtkSmartPointer<vtkSphereSource> sphere =
@@ -202,7 +202,7 @@ void vtkMuonEvent::AddPocaPoint(HPoint3f poca)
     d->m_Appender->Update();
 }
 
-HPoint3f vtkMuonEvent::GetPocaPoint()
+Vector4f vtkMuonEvent::GetPocaPoint()
 {
     return d->m_Poca;
 }

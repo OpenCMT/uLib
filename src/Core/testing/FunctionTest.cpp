@@ -117,15 +117,15 @@ int main() {
 
     ProgrammableAccessor<int> f1(&TestVoxel::m_data);
     ProgrammableAccessor<char> f2(&TestVoxel::ConstGet);
-    ProgrammableAccessorAny f3(&TestVoxel::m_data);
-    ProgrammableAccessor<detail::any_c> f4(&TestVoxel::m_data);
+//    ProgrammableAccessorAny f3(&TestVoxel::m_data);
+//    ProgrammableAccessor<detail::any_c> f4(&TestVoxel::m_data);
 
 
 
     int i=0;
     foreach (TestVoxel &el,v) {
         f1.Set(&el,i++);
-        std::cout << " -> " << f2.Get(&el) << " - " << f3.Get<float>(&el) << f4.Get<int>(&el) << f1(&el).Get<float>() << "\n";
+        std::cout << " -> " << f2.Get(&el) << " - " << f1(&el).Get<float>() << "\n";
 
     }
 

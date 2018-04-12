@@ -37,11 +37,11 @@ using namespace uLib;
 int main()
 {
     MuonScatter event;
-    event.LineIn().direction <<   0, -1,  1,  0;
-    event.LineIn().origin   <<    0,  1, -1,  1;
+    event.LineIn().direction() <<   0, -1,  1,  0;
+    event.LineIn().origin()   <<    0,  1, -1,  1;
 
-    event.LineOut().direction <<  0, -1,  0,  0;
-    event.LineOut().origin <<     0, -1,  0,  1;
+    event.LineOut().direction() <<  0, -1,  0,  0;
+    event.LineOut().origin() <<     0, -1,  0,  1;
 
     Vtk::vtkMuonScatter v_event(event);
     v_event.AddPocaPoint(HPoint3f(0,0,0));

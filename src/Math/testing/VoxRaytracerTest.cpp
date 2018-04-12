@@ -63,20 +63,20 @@ int main()
 
     {
         HLine3f line;
-        line.origin << 0.1, 4.1, 0.1, 1;
-        line.direction << 0.1, -0.1, 0.1,0;
+        line.origin() << 0.1, 4.1, 0.1, 1;
+        line.direction() << 0.1, -0.1, 0.1,0;
         Raytracer rt(img);
-        HPoint3f pt;
+        Vector4f pt;
         TEST1( rt.GetEntryPoint(line,pt) );
         TEST0( Vector4f0( pt - HPoint3f(0.2,4,0.2)  ) );
     }
 
     {
         HLine3f line;
-        line.origin << 4,0,4, 1;
-        line.direction << -0.1, 0.1, -0.1, 0;
+        line.origin() << 4,0,4, 1;
+        line.direction() << -0.1, 0.1, -0.1, 0;
         Raytracer rt(img);
-        HPoint3f pt;
+        Vector4f pt;
         TEST1( rt.GetEntryPoint(line,pt) );
         TEST0( Vector4f0( pt - HPoint3f(2,2,2)  ) );
     }
@@ -86,9 +86,9 @@ int main()
         img.SetSpacing(Vector3f(2,2,2));
         img.SetPosition(Vector3f(-4,-4,-4));
         Raytracer ray(img);
-        HPoint3f pt;
+        Vector4f pt;
         HLine3f  line;
-        line.origin = HPoint3f(-3,-3,-3);
+        line.origin() = HPoint3f(-3,-3,-3);
         //        line.direction = HVector3f(1,1,1); //
         TEST1( ray.GetEntryPoint(line,pt) );
         TEST1( pt == HPoint3f(-3,-3,-3) );

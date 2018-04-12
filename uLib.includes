@@ -19,3 +19,6 @@ src/utils/moc
 src/Vtk
 src/Vtk/testing
 tmp/c_vtable
+
+
+/usr/include/root

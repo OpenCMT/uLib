@@ -32,7 +32,7 @@ include(FindROOTv6)
 root_generate_dictionary(uLibRootDict ${DICTIONARY_HEADERS} LINKDEF Linkdef.h)
 set_source_files_properties(uLibRootDict.cxx PROPERTIES GENERATED TRUE)
 set_source_files_properties(uLibRootDict.h PROPERTIES GENERATED TRUE)
-list(APPEND SOURCES     uLibRootDict.cxx)
+# list(APPEND SOURCES uLibRootDict.cxx)
 
 
 uLib_add_shared_library(${uLib-module})

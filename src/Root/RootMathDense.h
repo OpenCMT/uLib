@@ -28,6 +28,7 @@
 #ifndef ROOTMATHDENSE_H
 #define ROOTMATHDENSE_H
 
+#include <Root/TestTObject.h>
 
 #include <Math/Vector3D.h>
 #include <Math/Vector2D.h>

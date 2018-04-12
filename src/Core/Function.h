@@ -59,31 +59,31 @@ namespace detail {
 // return a reference to function ... as the boost signal signature wants
 
 template <typename FuncT>
-struct FunctionTypes {};
+struct function_types {};
 
 template <typename R, class O>
-struct FunctionTypes< R(O::*)() > {
+struct function_types< R(O::*)() > {
     typedef R  ref();
     typedef R (ptr)();
     typedef O  obj;
 };
 
 template <typename R, class O, typename T0>
-struct FunctionTypes< R(O::*)(T0) > {
+struct function_types< R(O::*)(T0) > {
     typedef R  ref(T0);
     typedef R (ptr)(T0);
     typedef O  obj;
 };
 
 template <typename R, class O, typename T0, typename T1>
-struct FunctionTypes< R(O::*)(T0,T1) > {
+struct function_types< R(O::*)(T0,T1) > {
     typedef R  ref(T0,T1);
     typedef R (ptr)(T0,T1);
     typedef O  obj;
 };
 
 template <typename R, class O, typename T0, typename T1, typename T2>
-struct FunctionTypes< R(O::*)(T0,T1,T2) > {
+struct function_types< R(O::*)(T0,T1,T2) > {
     typedef R  ref(T0,T1,T2);
     typedef R (ptr)(T0,T1,T2);
     typedef O  obj;
@@ -102,14 +102,14 @@ struct FunctionTypes< R(O::*)(T0,T1,T2) > {
 template<typename Func>
 struct FunctionTypes {
     typedef typename boost::function_types::function_type<Func>::type Signature;
-    typedef typename detail::FunctionTypes<Func>::ref SignalSignature;
+    typedef typename detail::function_types<Func>::ref SignalSignature;
     enum {
         arity = boost::function_types::function_arity<Func>::value,
         ismfp = boost::is_member_function_pointer<Func>::value
     };
-
+    
     typedef boost::mpl::bool_< ismfp >                            HasObjectType;
-    typedef typename detail::FunctionTypes<Func>::obj             Object;
+    typedef typename detail::function_types<Func>::obj            Object;
     typedef boost::function_traits< Signature >                   Traits;
 
     virtual void PrintSelf( std::ostream &o ) {

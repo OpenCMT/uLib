@@ -35,10 +35,10 @@ namespace uLib {
 ////////////////////////////////////////////////////////////////////////////////
 
 
-inline Vector4f HVector3f(float x, float y, float z) { return Vector4f(x,y,z,0); }
+inline Vector4f HVector3f(float x=0, float y=0, float z=0) { return Vector4f(x,y,z,0); }
 inline Vector4f HVector3f(const Vector4f &v) { return Vector4f(v(0),v(1),v(2),0); }
 
-inline Vector4f HPoint3f(float x, float y, float z) { return Vector4f(x,y,z,1); }
+inline Vector4f HPoint3f(float x=0, float y=0, float z=0) { return Vector4f(x,y,z,1); }
 inline Vector4f HPoint3f(const Vector4f &v) { return Vector4f(v(0),v(1),v(2),1); }
 
 

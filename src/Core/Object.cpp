@@ -44,8 +44,8 @@
 namespace uLib {
 
 
-const char *Version::PackageName   = PACKAGE_NAME;
-const char *Version::VersionNumber = PACKAGE_VERSION;
+const char *Version::PackageName   = ""; //PACKAGE_NAME;
+const char *Version::VersionNumber = ""; //PACKAGE_VERSION;
 const char *Version::Release       = ""; //SVN_REVISION;
 
 
@@ -120,7 +120,7 @@ void Object::LoadXml(std::istream &is, Object &ob)
 
 // FINIRE
 void Object::SaveConfig(std::ostream &os, int version)
-{   
+{
     Archive::xml_oarchive ar(os);
     ObjectPropable::serialize(ar,0);
 }

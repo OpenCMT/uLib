@@ -17,10 +17,10 @@ int main()
 {
 
     uLib::MuonScatter event;
-    event.LineIn().origin << 0,0,0,1;
-    event.LineIn().direction << 1,1,1,0;
-    event.LineOut().origin << 5,5,5,1;
-    event.LineOut().direction << -1,-1,-1,0;
+    event.LineIn().origin() << 0,0,0,1;
+    event.LineIn().direction() << 1,1,1,0;
+    event.LineOut().origin() << 5,5,5,1;
+    event.LineOut().direction() << -1,-1,-1,0;
 
     uLib::Vtk::vtkMuonScatter ms(event);
 

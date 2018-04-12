@@ -20,7 +20,7 @@ set_target_properties(recipe_tar_data PROPERTIES LINKER_LANGUAGE C)
 
 set(CMAKE_TAR_FILE "cmake.tar.gz")
 add_custom_command(OUTPUT cmake_tar_data.o
-    COMMAND tar -zcvf ${CMAKE_TAR_FILE} -C ${PROJECT_SOURCE_DIR} CMake "--exclude=CMake/.svn"
+	COMMAND tar -zcvf ${CMAKE_TAR_FILE} -C ${PROJECT_SOURCE_DIR} CMake
     COMMAND objcopy --input binary  --output elf64-x86-64 --binary-architecture i386 ${CMAKE_TAR_FILE} ${CMAKE_CURRENT_BINARY_DIR}/cmake_tar_data.o
 )
 

@@ -37,7 +37,7 @@
 #include <Core/ClassCompound.h>
 #include <Core/ProgrammableAccessor.h>
 
-#include <vtkInformation.h>
+// #include <vtkInformation.h>
 
 
 namespace uLib {

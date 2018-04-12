@@ -32,6 +32,7 @@
 #include "Core/Serializable.h"
 
 #include "Math/Dense.h"
+#include "Math/Line.h"
 
 namespace uLib {
 
@@ -56,7 +57,7 @@ public:
 
 ULIB_SERIALIZABLE(uLib::MuonTrack)
 ULIB_SERIALIZE(uLib::MuonTrack) {
-    ar & AR(line);
+    ar & AR(track);
 }
 
 

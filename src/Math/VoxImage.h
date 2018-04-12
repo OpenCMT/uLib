@@ -31,6 +31,7 @@
 #include "Core/Vector.h"
 #include "Core/StaticInterface.h"
 #include "Math/Dense.h"
+#include "Math/VectorSpace.h"
 #include "Math/ImageData.h"
 
 #include <iostream>
@@ -137,6 +138,14 @@ public:
     inline VoxImage<T> clipImage(const Vector4f begin, const Vector4f end) const;
 
     inline VoxImage<T> clipImage(const float density) const;
+
+    inline VoxImage<T> maskImage(const Vector4f begin, const Vector4f end, float value) const;
+    inline VoxImage<T> maskImage(const float threshold, float belowValue=0, float aboveValue=0) const;
+    inline VoxImage<T> fixVoxels(const float threshold, float tolerance) const;
+    inline VoxImage<T> fixVoxels(const float threshold, float tolerance, const Vector4f begin, const Vector4f end) const;
+    inline VoxImage<T> fixVoxelsAroundPlane(const float threshold, float tolerance, const Vector4f begin, const Vector4f end, bool aboveAir) const;
+    inline VoxImage<T> fixVoxels(const Vector4f begin, const Vector4f end) const;
+    inline VoxImage<T> Abs() const;
 
     inline void SelectScalarfComponent(T &element, Scalarf *scalar);
 
@@ -262,6 +271,198 @@ VoxImage<T> VoxImage<T>::clipImage(const float density) const
         }
     }
     return this->clipImage(v1,v2);
+}
+
+template <typename T>
+VoxImage<T> VoxImage<T>::maskImage(const Vector4f begin, const Vector4f end, float value) const
+{
+    VoxImage<T> out(*this);
+    out.SetDims(this->GetDims());
+    out.SetPosition(this->GetPosition());
+
+    Vector3i voxB = this->Find(begin);
+    Vector3i voxE = this->Find(end);
+
+    Vector3i ID;
+
+    for(int ix=voxB(0); ix<voxE(0); ix++)
+        for(int iy=voxB(1); iy<voxE(1); iy++)
+            for(int iz=voxB(2); iz<voxE(2); iz++){
+                ID << ix,iy,iz;
+                out.SetValue(ID,value*1.E-6);
+            }
+
+    return out;
+}
+
+template <typename T>
+VoxImage<T> VoxImage<T>::maskImage(const float threshold, float belowValue, float aboveValue) const
+{
+    std::cout << "VoxImage: maskImage, fixing voxels under threshold " << threshold;
+    if(belowValue)
+        std::cout << " at value " << belowValue;
+    else
+        std::cout << " at -value";
+    std::cout << ", voxels above threshold at value ";
+    if(aboveValue)
+        std::cout << aboveValue;
+    else
+        std::cout << "found";
+
+
+    VoxImage<T> out(*this);
+    out.SetDims(this->GetDims());
+    out.SetPosition(this->GetPosition());
+
+    for(uint i=0; i< this->m_Data.size(); ++i) {
+        // skip negative voxels: they are already frozen
+        if( this->GetValue(i) >= 0 ){
+            // voxels under threshold
+            if( this->GetValue(i) <= threshold*1.E-6 ){
+                if(belowValue){
+                    out.SetValue(i,-1.*belowValue*1.E-6);}
+                else
+                    out.SetValue(i,-1.*this->GetValue(i));
+            }
+            // voxels over threshold
+            else{
+                if(aboveValue)
+                    out.SetValue(i,aboveValue*1.E-6);
+                else
+                    out.SetValue(i,this->GetValue(i));
+            }
+        }
+    }
+    return out;
+}
+
+template <typename T>
+VoxImage<T> VoxImage<T>::fixVoxels(const float threshold, float tolerance) const
+{
+    std::cout << "VoxImage: fixing voxels with value " << threshold << std::endl;
+
+    VoxImage<T> out(*this);
+    out.SetDims(this->GetDims());
+    out.SetPosition(this->GetPosition());
+
+    for(uint i=0; i< this->m_Data.size(); ++i) {
+        // voxels around threshold
+        if( fabs(this->GetValue(i) - threshold*1.E-6) < tolerance* 1.E-6 ){
+                out.SetValue(i,-1.*this->GetValue(i));
+        }
+    }
+    return out;
+}
+
+template <typename T>
+VoxImage<T> VoxImage<T>::Abs() const
+{
+    std::cout << "VoxImage: set abs voxels value " << std::endl;
+
+    VoxImage<T> out(*this);
+    out.SetDims(this->GetDims());
+    out.SetPosition(this->GetPosition());
+
+    for(uint i=0; i< this->m_Data.size(); ++i)
+        out.SetValue(i,fabs(this->GetValue(i)));
+
+    return out;
+}
+
+template <typename T>
+VoxImage<T> VoxImage<T>::fixVoxels( const float threshold, float tolerance, const Vector4f begin, const Vector4f end) const
+{
+    VoxImage<T> out(*this);
+    out.SetDims(this->GetDims());
+    out.SetPosition(this->GetPosition());
+
+    Vector3i voxB = this->Find(begin);
+    Vector3i voxE = this->Find(end);
+
+    Vector3i ID;
+
+    for(int ix=voxB(0); ix<voxE(0); ix++)
+        for(int iy=voxB(1); iy<voxE(1); iy++)
+            for(int iz=voxB(2); iz<voxE(2); iz++){
+                ID << ix,iy,iz;
+                // voxels around threshold
+                if( fabs(this->GetValue(ID) - threshold*1.E-6) < tolerance*1.E-6 ){
+                    out.SetValue(ID,-1.*this->GetValue(ID));
+                }
+            }
+
+    return out;
+}
+
+template <typename T>
+VoxImage<T> VoxImage<T>::fixVoxels(const Vector4f begin, const Vector4f end) const
+{
+    VoxImage<T> out(*this);
+    out.SetDims(this->GetDims());
+    out.SetPosition(this->GetPosition());
+
+    Vector3i voxB = this->Find(begin);
+    Vector3i voxE = this->Find(end);
+
+    Vector3i ID;
+
+    for(int ix=voxB(0); ix<voxE(0); ix++)
+        for(int iy=voxB(1); iy<voxE(1); iy++)
+            for(int iz=voxB(2); iz<voxE(2); iz++){
+                ID << ix,iy,iz;
+                // voxels around threshold
+                out.SetValue(ID,-1.*this->GetValue(ID));
+            }
+    return out;
+}
+
+
+template <typename T>
+VoxImage<T> VoxImage<T>::fixVoxelsAroundPlane( const float threshold, float tolerance, const Vector4f B, const Vector4f E, bool aboveAir) const
+{
+    VoxImage<T> out(*this);
+    Vector3i dim = this->GetDims();
+    out.SetDims(dim);
+    out.SetPosition(this->GetPosition());
+
+    Vector4f  Bcoll = this->GetPosition().homogeneous();
+
+    Vector3i ID;
+    for(int ix=0; ix<dim(0); ix++)
+        for(int iy=0; iy<dim(1); iy++)
+            for(int iz=0; iz<dim(2); iz++){
+                ID << ix,iy,iz;
+
+                // B, E voxel position
+                Vector3i iv(ix,iy,iz);
+                Vector3f v = Vector3f(iv.cast<float>().cwiseProduct(this->GetSpacing()));
+                Vector4f v4 = Vector4f(v(0),v(1),v(2),1);
+                Vector4f Bvox = Bcoll + v4;
+                Vector4f Evox = Bvox + this->GetSpacing().homogeneous();
+                Vector4f V = Bvox + 0.5*(this->GetSpacing().homogeneous());
+
+                // if distance point (x0,y0) from line by points (x1,y1) and (x2,y2) is less than tolerance
+                float x1 = B[1];
+                float y1 = B[2];
+                float x2 = E[1];
+                float y2 = E[2];
+                float x0 = V[1];
+                float y0 = V[2];
+                float dist = fabs( (x2-x1)*(y1-y0) - ((x1-x0)*(y2-y1))) / sqrt( (x2-x1)*(x2-x1)+((y2-y1)*(y2-y1)));
+                float distSign = (x2-x1)*(y1-y0) - ((x1-x0)*(y2-y1));
+
+                // set voxel air value
+                if(dist < tolerance){
+                    //std::cout << "voxel " << iv << ", line " << dist << ", tolerance " << tolerance << std::endl;
+                    out.SetValue(ID,threshold*1.E-6);
+                }
+                else
+                    out.SetValue(ID,this->GetValue(ID));
+
+                if((distSign>0 && aboveAir) || (distSign<0 && !aboveAir)  )
+                    out.SetValue(ID,threshold*1.E-6);
+            }
+    return out;
 }
 
 

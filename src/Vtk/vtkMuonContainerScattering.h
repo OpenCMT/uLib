@@ -54,9 +54,9 @@ public:
 
     virtual vtkPolyData* GetPolyData() const;
 
-    void AddPocaPoint(HPoint3f poca);
+    void AddPocaPoint(Vector4f poca);
 
-    HPoint3f GetPocaPoint();
+    Vector4f GetPocaPoint();
 
     void vtkStartInteractive();
 
