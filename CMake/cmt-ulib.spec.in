@@ -1,0 +1,111 @@
+Summary: Cosmic Muon Tomography core libraries
+Name: cmt-ulib
+Version: @PKGVERSION@
+Release: @PKGRELEASE@%{?dist}
+License: EUROPEAN UNION PUBLIC LICENCE v. 1.2
+Vendor: INFN
+URL: https://github.com/OpenCMT/uLib
+Group: Development/Libraries
+BuildArch: %{_arch}
+BuildRequires: cmake3
+BuildRequires: boost-devel
+BuildRequires: eigen3-devel
+BuildRequires: vtk-devel
+BuildRequires: readline-devel
+BuildRequires: pcl-devel
+BuildRequires: geant4-devel
+BuildRequires: root-geom
+BuildRequires: root-genvector
+BuildRequires: root-smatrix
+BuildRequires: root-montecarlo-eg
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+AutoReqProv: yes
+Source: %{name}-%{version}.tar.gz
+
+%description
+This package contains the base toolkit library for Cosmic Muon Tomography reconstruction,
+analysis and imaging software Developed by University of Padova and INFN Sezione di Padova  Italy
+
+%prep
+%setup -c
+rm -rf %{buildroot}
+mkdir -p %{buildroot}
+
+%build
+mkdir %{_builddir}/%{name}-%{version}/build
+cd %{_builddir}/%{name}-%{version}/build
+cmake3 -DCMAKE_INSTALL_PREFIX=%{buildroot}/usr \
+       -DULIB_USE_QT5=OFF \
+       -DPACKAGE_INSTALL_LIB_DIR=%{buildroot}/usr/lib64 \
+       %{_builddir}/%{name}-%{version}
+make
+
+%install
+cd %{_builddir}/%{name}-%{version}/build
+make install
+#workaround
+mv %{buildroot}/usr/lib/* %{buildroot}/usr/lib64
+rm -rf %{buildroot}/usr/lib
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%defattr(-,root,root)
+/usr/lib64/libmutom*.so.0.2
+
+
+
+
+%package devel
+Summary: Cosmic Muon Tomography core libraries, development files
+Requires: %{name}
+Requires: boost-devel
+Requires: eigen3-devel
+Requires: vtk-devel
+Requires: readline-devel
+Requires: pcl-devel
+Requires: geant4-devel
+Requires: root-geom
+Requires: root-genvector
+Requires: root-smatrix
+Requires: root-montecarlo-eg
+
+
+%description devel
+This package contains the base toolkit library for Cosmic Muon Tomography reconstruction,
+analysis and imaging software Developed by University of Padova and INFN Sezione di Padova  Italy
+
+%files devel
+%defattr(-,root,root)
+%dir /usr/lib64/cmake/mutom-0.2
+/usr/bin/uLib_config
+/usr/lib64/libmutom*.so
+/usr/lib64/cmake/mutom-0.2/*.cmake
+%dir /usr/include/mutom-0.2
+%dir /usr/include/mutom-0.2/ltk
+%dir /usr/include/mutom-0.2/Core
+%dir /usr/include/mutom-0.2/Math
+%dir /usr/include/mutom-0.2/Detectors
+%dir /usr/include/mutom-0.2/Root
+%dir /usr/include/mutom-0.2/Vtk
+/usr/include/mutom-0.2/*.h
+/usr/include/mutom-0.2/ltk/*h
+/usr/include/mutom-0.2/Core/*.h
+/usr/include/mutom-0.2/Math/*.h
+/usr/include/mutom-0.2/Math/*.hpp
+/usr/include/mutom-0.2/Detectors/*.h
+/usr/include/mutom-0.2/Root/*.h
+/usr/include/mutom-0.2/Vtk/*.h
+
+
+
+
+
+
+
+
+%changelog
+* Tue Dec 04 2018 Paolo Andreetto <paolo.andreetto@pd.infn.it> - 0.2.1-1
+- Repackaging for CentOS 7
+

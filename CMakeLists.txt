@@ -37,6 +37,7 @@ include(uLibMacros)
 include(uLibDebugMacro)
 include(uLibTargetMacros)
 include(uLibGenerateRMake)
+include(uLibGenerateRPMS)
 
 
 
