@@ -4,6 +4,7 @@ pipeline {
         docker {
             image 'infnpd/cmt-environment:latest-centos7'
             args '-u 0:0'
+            label 'DOCKER'
         }
     }
 
