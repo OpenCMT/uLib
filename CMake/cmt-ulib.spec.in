@@ -43,9 +43,12 @@ make
 %install
 cd %{_builddir}/%{name}-%{version}/build
 make install
-#workaround
+# workaround 1
 mv %{buildroot}/usr/lib/* %{buildroot}/usr/lib64
 rm -rf %{buildroot}/usr/lib
+# workaround 2
+sed -i 's|%{buildroot}/usr|/usr|g' %{buildroot}/usr/lib64/cmake/mutom-%{version}/uLibTargets.cmake
+sed -i 's|%{buildroot}/usr|/usr|g' %{buildroot}/usr/lib64/cmake/mutom-%{version}/uLibTargets-relwithdebinfo.cmake
 
 %clean
 rm -rf %{buildroot}
