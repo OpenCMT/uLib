@@ -28,14 +28,16 @@ macro(uLib_add_shared_library name)
   set(ULIB_SHARED_LIBRARIES ${shared} PARENT_SCOPE)
   source_group("${project_name}\\${name}" FILES ${SOURCES})
   set_target_properties(${mname} PROPERTIES
-                      VERSION ${PROJECT_VERSION}
-                      SOVERSION ${PROJECT_SOVERSION}
-                      INTERFACE_LINK_LIBRARIES "${LIBRARIES}"
-                      LINK_INTERFACE_LIBRARIES "${LIBRARIES}"          ## <- ok for cmake from  2.12 ?
-                      IMPORTED_LINK_INTERFACE_LIBRARIES "${LIBRARIES}" ## <- breaks cmake after 2.11 ?
-#                      PUBLIC_HEADER ""
+                        VERSION ${PROJECT_VERSION}
+                        SOVERSION ${PROJECT_SOVERSION}
+#                       INTERFACE_LINK_LIBRARIES "${LIBRARIES}"
+#                       LINK_INTERFACE_LIBRARIES "${LIBRARIES}"          ## <- ok for cmake from  2.12 ?
+#                       IMPORTED_LINK_INTERFACE_LIBRARIES "${LIBRARIES}" ## <- breaks cmake after 2.11 ?
+#                       PUBLIC_HEADER ""
   )
   debug(LIBRARIES)
+
+  target_link_libraries(${mname} ${LIBRARIES})
 
   install(TARGETS ${mname}
          EXPORT "${PROJECT_NAME}Targets"

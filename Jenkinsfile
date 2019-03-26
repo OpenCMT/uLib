@@ -2,7 +2,7 @@ pipeline {
 
     agent {
         docker {
-            image 'infnpd/cmt-environment:latest-centos7'
+            image 'infnpd/cmt-environment:1.0-centos7'
             args '-u 0:0'
             label 'DOCKER'
         }

@@ -38,8 +38,6 @@ set(LIBRARIES
        ${Boost_SIGNALS_LIBRARY}
        ${Boost_PROGRAM_OPTIONS_LIBRARY}
        ${ROOT_LIBRARIES}
-       ${PACKAGE_LIBPREFIX}Core
-       ${PACKAGE_LIBPREFIX}Math
 )
 
 uLib_add_shared_library(${uLib-module})

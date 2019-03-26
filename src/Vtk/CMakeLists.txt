@@ -31,7 +31,6 @@ set(LIBRARIES
        ${PACKAGE_LIBPREFIX}Core
        ${PACKAGE_LIBPREFIX}Math
        ${PACKAGE_LIBPREFIX}Detectors
-       ${PACKAGE_LIBPREFIX}Vtk
 )
 
 uLib_add_shared_library(${uLib-module})
