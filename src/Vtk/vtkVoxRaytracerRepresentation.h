@@ -28,8 +28,24 @@
 #ifndef U_VTKVOXRAYTRACERREPRESENTATION_H
 #define U_VTKVOXRAYTRACERREPRESENTATION_H
 
+#include <vtkLine.h>
+#include <vtkCellArray.h>
 
-#include "Core/Macros.h"
+#include <vtkLineSource.h>
+#include <vtkSphereSource.h>
+#include <vtkBoundingBox.h>
+#include <vtkCubeSource.h>
+#include <vtkSmartPointer.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkAppendPolyData.h>
+#include <vtkActor.h>
+#include <vtkAssembly.h>
+#include <vtkProp3DCollection.h>
+#include <vtkProperty.h>
+#include <vtkPolyData.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
+
 #include "Math/Dense.h"
 
 #include "uLibVtkInterface.h"
@@ -89,8 +105,23 @@ private:
 
     void SetColor(vtkActor *actor, Vector4f rgba);
 
-    friend class vtkVoxRaytracerRepresentationPimpl;
-    class vtkVoxRaytracerRepresentationPimpl *d;
+    VoxRaytracer                      *m_Content;
+
+    Scalarf                            default_radius;
+    vtkAssembly                       *m_Assembly;
+    vtkAppendPolyData                 *m_RayLine;
+    vtkActor                          *m_RayLineActor;
+    vtkActor                          *m_RayRepresentationActor;
+    vtkSmartPointer<vtkTransform>      m_Transform;
+    VoxRaytracer::RayData              m_Ray;
+    vtkSmartPointer<vtkSphereSource>   m_Sphere1;
+    vtkSmartPointer<vtkSphereSource>   m_Sphere2;
+    vtkSmartPointer<vtkLineSource>     m_Line1;
+    vtkSmartPointer<vtkLineSource>     m_Line2;
+    vtkSmartPointer<vtkLineSource>     m_Line3;
+    vtkSmartPointer<vtkAppendPolyData> m_RayRepresentation;
+
+    vtkAppendPolyData                 *m_SelectedElement;
 };
 
 

@@ -28,7 +28,6 @@
 #ifndef U_HITMC_H
 #define U_HITMC_H
 
-#include "Core/Macros.h"
 #include "Math/Dense.h"
 #include "Hit.h"
 
@@ -43,10 +42,10 @@ public:
         DeltaRay
     };
 
-    uLibConstRefMacro(Position,HPoint3f)
-    uLibGetMacro(Type, enum Type)
+    inline const HPoint3f & Position() const { return this->m_Position; }
+    inline enum Type GetType() const { return this->m_Type; }
 
-private:
+protected:
     HPoint3f  m_Position;
     enum Type m_Type;
 };
@@ -54,8 +53,8 @@ private:
 
 class HitMC : public HitMCData {
 public:
-    uLibRefMacro(Position,HPoint3f)
-    uLibSetMacro(Type, enum Type)
+    inline HPoint3f & Position() { return this->m_Position; }
+    inline void SetType(enum Type name) { this->m_Type = name; }
 };
 
 

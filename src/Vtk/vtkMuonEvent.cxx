@@ -29,22 +29,6 @@
 #include "config.h"
 #endif
 
-
-#include <vtkSmartPointer.h>
-#include <vtkSphereSource.h>
-#include <vtkAppendPolyData.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkLineSource.h>
-#include <vtkActor.h>
-
-#include <vtk3DWidget.h>
-#include <vtkBoxWidget.h>
-
-#include <vtkRenderWindowInteractor.h>
-
-#include <vtkCommand.h>
-#include <vtkTransform.h>
-
 #include "vtkMuonEvent.h"
 #include "Math/Dense.h"
 
@@ -72,105 +56,77 @@ private:
 };
 
 
-//// PIMPL /////////////////////////////////////////////////////////////////////
-
-class vtkMuonEventPimpl {
-    typedef vtkWidgetCallback Callback;
-public:
-    vtkMuonEventPimpl() :
-        m_Prop(vtkActor::New()),
-        m_PolyData(NULL),
-        m_Appender(vtkAppendPolyData::New()),
-        content(NULL)
-    {}
-
-    ~vtkMuonEventPimpl()
-    {
-        m_Prop->Delete();
-    }
-
-    // members //
-    vtkMuonEvent::Content *content;
-    vtkPolyData *m_PolyData;
-    vtkActor    *m_Prop;
-
-    vtkAppendPolyData *m_Appender;
-    vtkBoxWidget *m_WidgetIN, *m_WidgetOUT;
-    HPoint3f m_Poca;
-};
-
-
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
 /////  VTK MUON EVENT  /////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 
 vtkMuonEvent::vtkMuonEvent(MuonEventData &content) :
-    d(new vtkMuonEventPimpl)
+    m_Prop(vtkActor::New()),
+    m_PolyData(NULL),
+    m_Appender(vtkAppendPolyData::New()),
+    content(&content)
 {
-      d->content = &content;
-      InstallPipe();
+    InstallPipe();
 }
 
 vtkMuonEvent::vtkMuonEvent(const MuonEventData &content) :
-    d(new vtkMuonEventPimpl)
+    m_Prop(vtkActor::New()),
+    m_PolyData(NULL),
+    m_Appender(vtkAppendPolyData::New()),
+    content(const_cast<MuonEventData *>(&content))
 {
-      d->content = const_cast<MuonEventData *>(&content);
-      InstallPipe();
+    InstallPipe();
 }
 
 
 vtkMuonEvent::~vtkMuonEvent()
 {
-    if (d->m_Prop) d->m_Prop->Delete();
+    if (m_Prop) m_Prop->Delete();
 }
 
 vtkMuonEvent::Content &vtkMuonEvent::GetContent()
 {
-    return *d->content;
+    return *content;
 }
 
 void vtkMuonEvent::PrintSelf(std::ostream &o) const
 {
     o << "..:: MuonEvent ::..\n" \
-         "\t[in]  Origin    > " << d->content->LineIn().origin.transpose()    << "\n" <<
-         "\t[in]  Direction > " << d->content->LineIn().direction.transpose() << "\n" <<
-         "\t[out] Origin    > " << d->content->LineOut().origin.transpose()   << "\n" <<
-         "\t[out] Direction > " << d->content->LineOut().direction.transpose()<< "\n" <<
-         "\tMomentum        > " << d->content->GetMomentum() << "\n" <<
+         "\t[in]  Origin    > " << content->LineIn().origin.transpose()    << "\n" <<
+         "\t[in]  Direction > " << content->LineIn().direction.transpose() << "\n" <<
+         "\t[out] Origin    > " << content->LineOut().origin.transpose()   << "\n" <<
+         "\t[out] Direction > " << content->LineOut().direction.transpose()<< "\n" <<
+         "\tMomentum        > " << content->GetMomentum() << "\n" <<
          "...................\n";
 }
 
 vtkProp *vtkMuonEvent::GetProp()
 {
-    return d->m_Prop;
+    return m_Prop;
 }
 
 void vtkMuonEvent::InstallPipe()
 {
 
 
-    vtkAppendPolyData *appender = d->m_Appender;
+    vtkAppendPolyData *appender = m_Appender;
     vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 
-    if(d->content) {
+    if(content) {
         vtkSmartPointer<vtkLineSource> line_in = vtkSmartPointer<vtkLineSource>::New();
         vtkSmartPointer<vtkLineSource> line_out = vtkSmartPointer<vtkLineSource>::New();
 
-        float distance = (d->content->LineIn().origin - d->content->LineOut().origin).norm() / 10;
+        float distance = (content->LineIn().origin - content->LineOut().origin).norm() / 10;
 
-        HPoint3f pt;        
-        pt = d->content->LineIn().origin;
+        HPoint3f pt;
+        pt = content->LineIn().origin;
         line_in->SetPoint1(pt(0),pt(1),pt(2));
-        pt= d->content->LineIn().origin + d->content->LineIn().direction * distance;
+        pt= content->LineIn().origin + content->LineIn().direction * distance;
         line_in->SetPoint2(pt(0),pt(1),pt(2));
-        pt = d->content->LineOut().origin;
+        pt = content->LineOut().origin;
         line_out->SetPoint1(pt(0),pt(1),pt(2));
-        pt = d->content->LineOut().origin + d->content->LineOut().direction * distance;
+        pt = content->LineOut().origin + content->LineOut().direction * distance;
         line_out->SetPoint2(pt(0),pt(1),pt(2));
 
         appender->AddInputConnection(line_in->GetOutputPort());
@@ -180,31 +136,31 @@ void vtkMuonEvent::InstallPipe()
     appender->Update();
     mapper->SetInputConnection(appender->GetOutputPort());
     mapper->Update();
-    d->m_Prop->SetMapper(mapper);
+    m_Prop->SetMapper(mapper);
 }
 
 vtkPolyData *vtkMuonEvent::GetPolyData() const
 {
-    return d->m_Appender->GetOutput();
+    return m_Appender->GetOutput();
 }
 
 void vtkMuonEvent::AddPocaPoint(HPoint3f poca)
 {
-    d->m_Poca = poca;
+    m_Poca = poca;
     vtkSmartPointer<vtkSphereSource> sphere =
             vtkSmartPointer<vtkSphereSource>::New();
-    float size = (d->content->LineIn().origin - d->content->LineOut().origin).head(3).norm();
+    float size = (content->LineIn().origin - content->LineOut().origin).head(3).norm();
     size /= 100;
     sphere->SetRadius(size);
     sphere->SetCenter(poca(0),poca(1),poca(2));
     sphere->Update();
-    d->m_Appender->AddInputConnection(sphere->GetOutputPort());
-    d->m_Appender->Update();
+    m_Appender->AddInputConnection(sphere->GetOutputPort());
+    m_Appender->Update();
 }
 
 HPoint3f vtkMuonEvent::GetPocaPoint()
 {
-    return d->m_Poca;
+    return m_Poca;
 }
 
 

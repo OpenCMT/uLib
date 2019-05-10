@@ -28,7 +28,6 @@
 #ifndef U_LINEARFIT_H
 #define U_LINEARFIT_H
 
-#include "Core/Macros.h"
 #include "Math/Dense.h"
 #include "ChamberDetector.h"
 
@@ -37,32 +36,31 @@ namespace uLib {
 
 class LinearFitData {
 public:
-    uLibConstRefMacro(Position,Vector2f)
-    uLibConstRefMacro(Slope,Vector2f)
-    uLibConstRefMacro(PositionError,Vector2f)
-    uLibConstRefMacro(SlopeError,Vector2f)
-    uLibGetMacro(HitsNumber,int)
-    uLibGetMacro(Idv,ChamberDetector::ID)
+    inline const Vector2f & Position() const { return this->m_Position; }
+    inline const Vector2f & Slope() const { return this->m_Slope; }
+    inline const Vector2f & PositionError() const { return this->m_PositionError; }
+    inline const Vector2f & SlopeError() const { return this->m_SlopeError; }
+    inline int GetHitsNumber() const { return this->m_HitsNumber; }
+    inline ChamberDetector::ID GetIdv() const { return this->m_Idv; }
 
-private:
-        friend class LinearFit;
-    Vector2f m_Position;
-    Vector2f m_Slope;
-    Vector2f m_PositionError;
-    Vector2f m_SlopeError;
-    int      m_HitsNumber;
+protected:
+    Vector2f            m_Position;
+    Vector2f            m_Slope;
+    Vector2f            m_PositionError;
+    Vector2f            m_SlopeError;
+    int                 m_HitsNumber;
     DetectorChamber::ID m_Idv;
 };
 
 
 class LinearFit : public LinearFitData {
 public:
-    uLibRefMacro(Position,Vector2f)
-    uLibRefMacro(Slope,Vector2f)
-    uLibRefMacro(PositionError,Vector2f)
-    uLibRefMacro(SlopeError,Vector2f)
-    uLibSetMacro(HitsNumber,int)
-    uLibSetMacro(Idv,ChamberDetector::ID)
+    inline Vector2f & Position() { return this->m_Position; }
+    inline Vector2f & Slope() { return this->m_Slope; }
+    inline Vector2f & PositionError() { return this->m_PositionError; }
+    inline Vector2f & SlopeError() { return this->m_SlopeError; }
+    inline void SetHitsNumber(int name) { this->m_HitsNumber = name; }
+    inline void SetIdv(ChamberDetector::ID name) { this->m_Idv = name; }
 };
 
 

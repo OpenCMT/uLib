@@ -28,18 +28,16 @@
 #ifndef U_MUONERROR_H
 #define U_MUONERROR_H
 
-#include "Core/Macros.h"
 #include "Math/Dense.h"
 
 namespace uLib {
 
 
 class MuonErrorData {
-    friend class MuonError;
 public:
-    uLibConstRefMacro(Theta,Scalarf)
-    uLibConstRefMacro(Phi,Scalarf)
-private:
+    inline const Scalarf & Theta() const { return this->m_Theta; }
+    inline const Scalarf & Phi() const { return this->m_Phi; }
+protected:
     Scalarf m_Theta;
     Scalarf m_Phi;
 };
@@ -47,8 +45,8 @@ private:
 
 class MuonError  : public MuonErrorData {
 public:
-    uLibRefMacro(Theta,Scalarf)
-    uLibRefMacro(Phi,Scalarf)
+    inline Scalarf & Theta() { return this->m_Theta; }
+    inline Scalarf & Phi() { return this->m_Phi; }
 };
 
 

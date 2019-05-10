@@ -28,7 +28,22 @@
 #ifndef VTKMUONSCATTER_H
 #define VTKMUONSCATTER_H
 
-#include "Core/Macros.h"
+#include <vtkConfigure.h>
+#include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
+#include <vtkAppendPolyData.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkLineSource.h>
+#include <vtkActor.h>
+
+#include <vtk3DWidget.h>
+#include <vtkBoxWidget.h>
+
+#include <vtkRenderWindowInteractor.h>
+
+#include <vtkCommand.h>
+#include <vtkTransform.h>
+
 #include "Math/Dense.h"
 
 #include "uLibVtkInterface.h"
@@ -66,8 +81,11 @@ protected:
 private:
     void InstallPipe();
 
-    friend class vtkMuonScatterPimpl;
-    class vtkMuonScatterPimpl *d;
+    vtkMuonScatter::Content *m_Content;
+    vtkLineSource           *m_LineIn;
+    vtkLineSource           *m_LineOut;
+    vtkSphereSource         *m_SpherePoca;
+    vtkPolyData             *m_PolyData;
 };
 
 } // vtk

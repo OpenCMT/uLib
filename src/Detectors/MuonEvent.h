@@ -28,20 +28,18 @@
 #ifndef U_MUONEVENT_H
 #define U_MUONEVENT_H
 
-#include "Core/Macros.h"
 #include "Math/Dense.h"
 
 namespace uLib {
 
 
 class MuonEventData {
-    friend class MuonEvent;
 public:
-    uLibConstRefMacro(LineIn,HLine3f)
-    uLibConstRefMacro(LineOut,HLine3f)
-    uLibGetMacro(Momentum,Scalarf)
+    inline const HLine3f & LineIn() const { return this->m_LineIn; }
+    inline const HLine3f & LineOut() const { return this->m_LineOut; }
+    inline Scalarf GetMomentum() const { return this->m_Momentum; }
 
-private:
+protected:
     HLine3f  m_LineIn;
     HLine3f  m_LineOut;
     Scalarf  m_Momentum;
@@ -50,9 +48,9 @@ private:
 
 class MuonEvent  : public MuonEventData {
 public:
-    uLibRefMacro(LineIn,HLine3f)
-    uLibRefMacro(LineOut,HLine3f)
-    uLibRefMacro(Momentum,Scalarf)
+    inline HLine3f & LineIn() { return this->m_LineIn; }
+    inline HLine3f & LineOut() { return this->m_LineOut; }
+    inline Scalarf & Momentum() { return this->m_Momentum; }
 
 };
 

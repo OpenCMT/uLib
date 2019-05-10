@@ -28,7 +28,6 @@
 #ifndef STRUCTUREDDATA_H
 #define STRUCTUREDDATA_H
 
-#include "Core/Macros.h"
 #include "Core/Object.h"
 #include "Math/Dense.h"
 
@@ -60,15 +59,17 @@ public:
     {}
 
 
-    uLibGetMacro(Dims,Vector3i)
+    inline Vector3i GetDims() const { return this->m_Dims; }
 
     void SetDims(const Vector3i &size);
 
-    uLibGetSetMacro(Increments,Vector3i)
+    inline Vector3i GetIncrements() const { return this->m_Increments; }
+
+    inline void SetIncrements(Vector3i name) { this->m_Increments = name; }
 
     void SetDataOrder(Order order = YXZ);
 
-    uLibGetMacro(DataOrder,Order)
+    inline Order GetDataOrder() const { return this->m_DataOrder; }
 
     bool IsInsideGrid(const Vector3i &v) const;
 

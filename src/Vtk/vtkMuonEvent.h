@@ -28,7 +28,21 @@
 #ifndef VTKMUONEVENT_H
 #define VTKMUONEVENT_H
 
-#include "Core/Macros.h"
+#include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
+#include <vtkAppendPolyData.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkLineSource.h>
+#include <vtkActor.h>
+
+#include <vtk3DWidget.h>
+#include <vtkBoxWidget.h>
+
+#include <vtkRenderWindowInteractor.h>
+
+#include <vtkCommand.h>
+#include <vtkTransform.h>
+
 #include "Math/Dense.h"
 
 #include "uLibVtkInterface.h"
@@ -64,8 +78,14 @@ public:
 private:
     void InstallPipe();
 
-    friend class vtkMuonEventPimpl;
-    class vtkMuonEventPimpl *d;
+    vtkMuonEvent::Content *content;
+    vtkPolyData           *m_PolyData;
+    vtkActor              *m_Prop;
+
+    vtkAppendPolyData     *m_Appender;
+    vtkBoxWidget          *m_WidgetIN;
+    vtkBoxWidget          *m_WidgetOUT;
+    HPoint3f               m_Poca;
 };
 
 

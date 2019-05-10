@@ -29,7 +29,6 @@
 #ifndef U_MUONSCATTER_H
 #define U_MUONSCATTER_H
 
-#include "Core/Macros.h"
 #include "Math/Dense.h"
 
 namespace uLib {
@@ -37,20 +36,21 @@ namespace uLib {
 
 class MuonScatter {
 public:
-    uLibConstRefMacro(LineIn,HLine3f)
-    uLibConstRefMacro(ErrorIn,HError3f)
-    uLibConstRefMacro(LineOut,HLine3f)
-    uLibConstRefMacro(ErrorOut,HError3f)
+    inline const HLine3f & LineIn() const { return this->m_LineIn; }
+    inline const HError3f & ErrorIn() const { return this->m_ErrorIn; }
+    inline const HLine3f & LineOut() const { return this->m_LineOut; }
+    inline const HError3f & ErrorOut() const { return this->m_ErrorOut; }
 
-    uLibRefMacro(LineIn,HLine3f)
-    uLibRefMacro(ErrorIn,HError3f)
-    uLibRefMacro(LineOut,HLine3f)
-    uLibRefMacro(ErrorOut,HError3f)
-    uLibSetMacro(Momentum,Scalarf)
-    uLibSetMacro(MomentumPrime,Scalarf)
+    inline HLine3f & LineIn() { return this->m_LineIn; }
+    inline HError3f & ErrorIn() { return this->m_ErrorIn; }
+    inline HLine3f & LineOut() { return this->m_LineOut; }
+    inline HError3f & ErrorOut() { return this->m_ErrorOut; }
 
-    uLibGetMacro(Momentum,Scalarf)
-    uLibGetMacro(MomentumPrime,Scalarf)
+    inline void SetMomentum(Scalarf name) { this->m_Momentum = name; }
+    inline void SetMomentumPrime(Scalarf name) { this->m_MomentumPrime = name; }
+
+    inline Scalarf GetMomentum() const { return this->m_Momentum; }
+    inline Scalarf GetMomentumPrime() const { return this->m_MomentumPrime; }
 
 protected:
     HLine3f  m_LineIn;

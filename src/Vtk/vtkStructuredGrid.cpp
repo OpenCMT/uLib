@@ -29,81 +29,11 @@
 #include "config.h"
 #endif
 
-#include <vtkLineSource.h>
-#include <vtkBoundingBox.h>
-#include <vtkCubeSource.h>
-#include <vtkSmartPointer.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkActor.h>
-#include <vtkProperty.h>
-
-#include <vtkTransform.h>
-#include <vtkTransformPolyDataFilter.h>
-#include <vtkBoxWidget.h>
-#include <vtkCommand.h>
-
 #include "Math/StructuredGrid.h"
 #include "Vtk/vtkStructuredGrid.h"
 
 namespace uLib {
 namespace Vtk {
-
-////////////////////////////////////////////////////////////////////////////////
-////// PIMPL  //////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-
-class vtkStructuredGridPimpl {
-
-    // ---- WIDGET CBK ------------------------------------------------------ //
-    class vtkWidgetCallback : public vtkCommand
-    {
-    public:
-      static vtkWidgetCallback *New() { return new vtkWidgetCallback; }
-      void SetParent(uLib::Vtk::vtkStructuredGrid *parent) { this->parent = parent; }
-      virtual void Execute(vtkObject *caller, unsigned long, void*)
-        {
-          vtkSmartPointer<vtkTransform> t =
-                  vtkSmartPointer<vtkTransform>::New();
-          vtkBoxWidget *widget = reinterpret_cast<vtkBoxWidget*>(caller);
-          widget->GetTransform(t);
-          parent->SetTransform(t);
-          //std::cout << "event\n";
-      }
-    private:
-      uLib::Vtk::vtkStructuredGrid *parent;
-    };
-    // ---------------------------------------------------------------------- //
-
-public:
-    vtkStructuredGridPimpl(vtkStructuredGrid *parent, StructuredGrid &content) :
-        p(parent),
-        m_Content(&content),
-        m_Actor(vtkActor::New()),
-        m_Widget(vtkBoxWidget::New()),
-        m_Transform(vtkTransform::New())
-    {
-        vtkSmartPointer<vtkWidgetCallback> callback =
-            vtkSmartPointer<vtkWidgetCallback>::New();
-        callback->SetParent(p);
-        m_Widget->AddObserver(vtkCommand::InteractionEvent, callback);
-    }
-
-    ~vtkStructuredGridPimpl()
-    {
-        m_Actor->Delete();
-        m_Widget->Delete();
-        m_Transform->Delete();
-    }
-
-    // members //
-    vtkActor       *m_Actor;
-    vtkBoxWidget   *m_Widget;
-    StructuredGrid *m_Content;
-    vtkTransform   *m_Transform;
-private:
-    vtkStructuredGrid *p;
-};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,14 +43,24 @@ private:
 
 
 vtkStructuredGrid::vtkStructuredGrid(Content &content) :
-    d(new vtkStructuredGridPimpl(this,content))
+    m_Content(&content),
+    m_Actor(vtkActor::New()),
+    m_Widget(vtkBoxWidget::New()),
+    m_Transform(vtkTransform::New())
 {
+    vtkSmartPointer<vtkWidgetCallback> callback =
+        vtkSmartPointer<vtkWidgetCallback>::New();
+    callback->SetGrid(this);
+    m_Widget->AddObserver(vtkCommand::InteractionEvent, callback);
+
     this->InstallPipe();
 }
 
 vtkStructuredGrid::~vtkStructuredGrid()
 {
-    delete d;
+    m_Actor->Delete();
+    m_Widget->Delete();
+    m_Transform->Delete();
 }
 
 
@@ -131,26 +71,26 @@ void vtkStructuredGrid::SetTransform(vtkTransform *t)
     for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
             mat(i,j) = vmat->GetElement(i,j);
-    d->m_Content->SetMatrix(mat);
+    m_Content->SetMatrix(mat);
 
     vtkSmartPointer<vtkMatrix4x4> vmat2 = vtkSmartPointer<vtkMatrix4x4>::New();
-    mat = d->m_Content->GetWorldMatrix();
+    mat = m_Content->GetWorldMatrix();
     for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
             vmat2->SetElement(i,j,mat(i,j));
-    d->m_Transform->SetMatrix(vmat2);
-    d->m_Transform->Update();
+    m_Transform->SetMatrix(vmat2);
+    m_Transform->Update();
     this->Update();
 }
 
 vtkBoxWidget *vtkStructuredGrid::GetWidget()
 {
-    return d->m_Widget;
+    return m_Widget;
 }
 
 void vtkStructuredGrid::Update()
 {
-    d->m_Actor->GetMapper()->Update();
+    m_Actor->GetMapper()->Update();
 }
 
 void vtkStructuredGrid::InstallPipe()
@@ -161,15 +101,15 @@ void vtkStructuredGrid::InstallPipe()
             vtkSmartPointer<vtkTransformPolyDataFilter>::New();
 
     vtkSmartPointer<vtkMatrix4x4> vmat = vtkSmartPointer<vtkMatrix4x4>::New();
-    Matrix4f mat = d->m_Content->GetWorldMatrix();
+    Matrix4f mat = m_Content->GetWorldMatrix();
     for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
             vmat->SetElement(i,j,mat(i,j));
-    d->m_Transform->SetMatrix(vmat);
-    filter->SetTransform(d->m_Transform);
+    m_Transform->SetMatrix(vmat);
+    filter->SetTransform(m_Transform);
     filter->SetInputConnection(cube->GetOutputPort());
 
-    Vector3i dims = d->m_Content->GetDims();
+    Vector3i dims = m_Content->GetDims();
     cube->SetBounds(0,dims(0),0,dims(1),0,dims(2));
     cube->Update();
     filter->Update();
@@ -178,16 +118,16 @@ void vtkStructuredGrid::InstallPipe()
             vtkSmartPointer<vtkPolyDataMapper>::New();
     mapper->SetInputConnection(filter->GetOutputPort());
 
-    d->m_Actor->SetMapper(mapper);
-    d->m_Actor->GetProperty()->SetRepresentationToSurface();
-    d->m_Actor->GetProperty()->SetEdgeVisibility(true);
-    d->m_Actor->GetProperty()->SetOpacity(0.4);
-    d->m_Actor->GetProperty()->SetAmbient(0.7);
+    m_Actor->SetMapper(mapper);
+    m_Actor->GetProperty()->SetRepresentationToSurface();
+    m_Actor->GetProperty()->SetEdgeVisibility(true);
+    m_Actor->GetProperty()->SetOpacity(0.4);
+    m_Actor->GetProperty()->SetAmbient(0.7);
     // set content transform to actor //
     this->Update();
-    d->m_Widget->SetProp3D(d->m_Actor);
+    m_Widget->SetProp3D(m_Actor);
 
-    this->SetProp(d->m_Actor);
+    this->SetProp(m_Actor);
 }
 
 

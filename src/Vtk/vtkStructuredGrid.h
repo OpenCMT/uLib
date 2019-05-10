@@ -28,7 +28,19 @@
 #ifndef U_VTKSTRUCTUREDGRID_H
 #define U_VTKSTRUCTUREDGRID_H
 
-#include "Core/Macros.h"
+#include <vtkLineSource.h>
+#include <vtkBoundingBox.h>
+#include <vtkCubeSource.h>
+#include <vtkSmartPointer.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkProperty.h>
+
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkBoxWidget.h>
+#include <vtkCommand.h>
+
 #include "Math/Dense.h"
 
 #include "uLibVtkInterface.h"
@@ -55,8 +67,28 @@ public:
 private:
     void InstallPipe();
 
-    friend class vtkStructuredGridPimpl;
-    class vtkStructuredGridPimpl *d;
+    class vtkWidgetCallback : public vtkCommand
+    {
+    public:
+        static vtkWidgetCallback *New() { return new vtkWidgetCallback; }
+
+        void SetGrid(uLib::Vtk::vtkStructuredGrid *grid) { this->grid = grid; }
+
+        virtual void Execute(vtkObject *caller, unsigned long, void*)
+        {
+          vtkSmartPointer<vtkTransform> t = vtkSmartPointer<vtkTransform>::New();
+          vtkBoxWidget *widget = reinterpret_cast<vtkBoxWidget*>(caller);
+          widget->GetTransform(t);
+          grid->SetTransform(t);
+        }
+    private:
+        uLib::Vtk::vtkStructuredGrid *grid;
+    };
+
+    vtkActor          *m_Actor;
+    vtkBoxWidget      *m_Widget;
+    StructuredGrid    *m_Content;
+    vtkTransform      *m_Transform;
 };
 
 

@@ -30,7 +30,6 @@
 
 
 
-#include "Core/Macros.h"
 #include "Math/Dense.h"
 
 #include "uLibVtkInterface.h"
@@ -66,8 +65,6 @@ protected:
 private:
     void InstallPipe();
 
-    friend class vtkMuonContainerScatteringPimpl;
-    class vtkMuonContainerScatteringPimpl *d;
 };
 
 
