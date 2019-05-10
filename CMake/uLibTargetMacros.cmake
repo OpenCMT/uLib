@@ -81,25 +81,17 @@ ENDMACRO(uLib_add_target)
 
 # TESTS and LIBRARIES must be defined
 macro(uLib_add_tests name)
- foreach(tn ${TESTS})
-  add_executable(${tn} EXCLUDE_FROM_ALL ${tn}.cpp)
-  add_test(${tn} ${tn})
+    foreach(tn ${TESTS})
+        add_executable(${tn} EXCLUDE_FROM_ALL ${tn}.cpp)
+        add_test(NAME ${tn} COMMAND ${tn})
 
-  # adds dependencies to all selected modules in uLib
-  #  foreach(module ${ULIB_SELECTED_MODULES})
-  #   add_dependencies(${tn} ${project_name}${module})
-  #  endforeach(module)
+        target_link_libraries(${tn} ${LIBRARIES})
 
-  # adds libraries dependencies
-  foreach(library ${LIBRARIES})
-   target_link_libraries(${tn} ${library})
-  endforeach(library)
+    endforeach(tn)
 
- endforeach(tn)
-
- # custom target to compile all tests
- add_custom_target(all-${name}-tests)
- add_dependencies(all-${name}-tests ${TESTS})
+    # custom target to compile all tests
+    add_custom_target(all-${name}-tests)
+    add_dependencies(all-${name}-tests ${TESTS})
 endmacro(uLib_add_tests name)
 
 

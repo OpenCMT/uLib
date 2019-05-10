@@ -1,3 +1,10 @@
+find_package(Doxygen)
+
+set(doxydirlist "")
+foreach(modname ${ULIB_SELECTED_MODULES})
+    set(doxydirlist "${CMAKE_CURRENT_SOURCE_DIR}/src/${modname} ${doxydirlist}")
+endforeach(modname)
+
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cfg
      "PROJECT_NAME=${CMAKE_PROJECT_NAME}-${PACKAGE_VERSION}\n"
      "OUTPUT_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}\n"
@@ -44,7 +51,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cfg
      "WARN_IF_UNDOCUMENTED=YES\n"
      "WARN_IF_DOC_ERROR=YES\n"
      "WARN_FORMAT=\"$file:$line: $text\"\n"
-     "INPUT=${CMAKE_CURRENT_SOURCE_DIR}/src\n"
+     "INPUT=${doxydirlist}\n"
      "FILE_PATTERNS=*.h *.hpp\n"
      "ENABLE_PREPROCESSING=YES\n"
      "MACRO_EXPANSION=YES\n"
@@ -76,11 +83,15 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cfg
      "GENERATE_AUTOGEN_DEF=NO\n"
      "GENERATE_PERLMOD=NO\n")
 
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/html/index.html
-                   COMMAND doxygen ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cfg)
+option(NODOXYGEN "Disable the creation of the API documentation")
+if(NODOXYGEN OR (NOT DOXYGEN_FOUND))
+    message("Doxygen is disabled or not installed")
+else(NODOXYGEN OR (NOT DOXYGEN_FOUND))
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/html/index.html
+                       COMMAND doxygen ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cfg)
 
-add_custom_target(doxygen ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/html/index.html)
+    add_custom_target(doxygen ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/html/index.html)
 
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
-        DESTINATION usr/share/doc/${PACKAGE_NAME})
-
+    install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
+            DESTINATION share/doc/${PACKAGE_NAME})
+endif(NODOXYGEN OR (NOT DOXYGEN_FOUND))

@@ -37,8 +37,6 @@ include(uLibMacros)
 include(uLibDebugMacro)
 include(uLibTargetMacros)
 include(uLibGenerateRMake)
-include(uLibGenerateRPMS)
-#include(uLibGenerateDoc)
 
 
 ## GLOBALS ------------------------------------------------------------------ ##
@@ -75,6 +73,11 @@ if(ULIB_USE_VTK)
  LIST(APPEND ULIB_SELECTED_MODULES Vtk)
 endif(ULIB_USE_VTK)
 
+## Documentation and packages
+
+include(uLibGenerateRPMS)
+include(uLibGenerateDoc)
+
 ## this gets ulib modules into a variable ##
 function(uLib_modules result)
  set(out)
@@ -96,7 +99,7 @@ endforeach(module)
 
 ## SINGLE LIBRARY LINKING ## (work in progress ... )
 option(ULIB_SINGLELIBRARY "Link everything to a single library" OFF)
-if(ULIB_SINGLELIBRARY) 
+if(ULIB_SINGLELIBRARY)
 # set(modgrp)
 # foreach(module ${ULIB_SELECTED_MODULES})
 #  set(grpn srcgrp_${module})
@@ -199,32 +202,6 @@ install(EXPORT "${PROJECT_NAME}Targets" DESTINATION
   "${PACKAGE_INSTALL_CMAKE_DIR}" COMPONENT dev)
 
 install(FILES ${PROJECT_SOURCE_DIR}/ulib.h DESTINATION ${PACKAGE_INSTALL_INC_DIR})
-
-
-
-## dummy main executable ---------------------------------------------------- ##
-
-message("Sara's debug....")
-message(${ROOT_LIBRARIES})
-
-# add the executable
-add_executable(Coretest test.cpp)
-target_link_libraries(Coretest ${PACKAGE_LIBPREFIX}Core)
-#target_link_libraries(Coretest ${Boost_SERIALIZATION_LIBRARY})
-#target_link_libraries(Coretest ${Boost_SIGNALS_LIBRARY})
-#target_link_libraries(Coretest ${Boost_PROGRAM_OPTIONS_LIBRARY})
-#target_link_libraries(Coretest ${Geant4_LIBRARIES})
-target_link_libraries(Coretest ${ROOT_LIBRARIES})
-target_link_libraries(Coretest ${VTK_LIBRARIES})
-
-#message( "---------------------------------------------------------------------" )
-#execute_process(COMMAND
-#                "ls"
-##                "cmake --find-package -DNAME=uLib -DLANGUAGE=C -DCOMPILER_ID=GNU -DMODE=COMPILE"
-#                )
-#message( "---------------------------------------------------------------------" )
-
-## -------------------------------------------------------------------------- ##
 
 
 # TODO clean also subdirectories
