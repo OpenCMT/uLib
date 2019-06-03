@@ -75,36 +75,36 @@ endif(ULIB_USE_VTK)
 
 
 ## GEANT ##
-option(ULIB_USE_GEANT4 "Activate use of GEANT Integration" ON)
-message(STATUS "## GEANT 4 ##")
-#include(FindGEANT4) # disabled using system finder
-find_package(Geant4)
-set(GEANT4_FOUND Geant4_DIR)
-if(GEANT4_FOUND AND ULIB_USE_GEANT4)
- message(STATUS "Looking for Geant4... - Geant4 found in ${Geant4_DIR}")
- set(HAVE_GEANT4 true)
- include_directories(${Geant4_INCLUDE_DIRS})         # Add -I type paths
- add_definitions(${Geant4_DEFINITIONS})              # Add -D type defs
- debug_package(Geant4)
-endif(GEANT4_FOUND AND ULIB_USE_GEANT4)
+#option(ULIB_USE_GEANT4 "Activate use of GEANT Integration" ON)
+#message(STATUS "## GEANT 4 ##")
+##include(FindGEANT4) # disabled using system finder
+#find_package(Geant4)
+#set(GEANT4_FOUND Geant4_DIR)
+#if(GEANT4_FOUND AND ULIB_USE_GEANT4)
+# message(STATUS "Looking for Geant4... - Geant4 found in ${Geant4_DIR}")
+# set(HAVE_GEANT4 true)
+# include_directories(${Geant4_INCLUDE_DIRS})         # Add -I type paths
+# add_definitions(${Geant4_DEFINITIONS})              # Add -D type defs
+# debug_package(Geant4)
+#endif(GEANT4_FOUND AND ULIB_USE_GEANT4)
 
 ## QT4 ##
-option(ULIB_USE_QT4 "Activate use of Qt Framework" ON)
-if(ULIB_USE_QT4)
- message(STATUS "## QT4 ##")
- find_package(Qt4)
-# include_directories(${Qt4_INCLUDE_DIRS})
-# debug(Qt4_INCLUDE_DIRS)
-endif(ULIB_USE_QT4)
+#option(ULIB_USE_QT4 "Activate use of Qt Framework" ON)
+#if(ULIB_USE_QT4)
+# message(STATUS "## QT4 ##")
+# find_package(Qt4)
+## include_directories(${Qt4_INCLUDE_DIRS})
+## debug(Qt4_INCLUDE_DIRS)
+#endif(ULIB_USE_QT4)
 
 ## QT5 ##
-option(ULIB_USE_QT5 "Activate use of Qt Framework" ON)
-if(ULIB_USE_QT5)
- message(STATUS "## QT5 ##")
- find_package(Qt5Widgets)
-# include_directories(${Qt5_INCLUDE_DIRS})
-# debug(Qt5_INCLUDE_DIRS)
-endif(ULIB_USE_QT5)
+#option(ULIB_USE_QT5 "Activate use of Qt Framework" ON)
+#if(ULIB_USE_QT5)
+# message(STATUS "## QT5 ##")
+# find_package(Qt5Widgets)
+## include_directories(${Qt5_INCLUDE_DIRS})
+## debug(Qt5_INCLUDE_DIRS)
+#endif(ULIB_USE_QT5)
 
 ## READLINE ##
 message(STATUS "## READLINE ##")

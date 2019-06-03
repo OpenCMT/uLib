@@ -5,11 +5,6 @@
 
 cmake_minimum_required (VERSION 2.6)
 
-execute_process(COMMAND "clear")
-message("//////////////////////////////////////////////////////////////////////")
-message("/////////////////// CMAKE PJOJECT CONFIGURATION //////////////////////")
-message("//////////////////////////////////////////////////////////////////////")
-
 ## -------------------------------------------------------------------------- ##
 
 project(uLib)
@@ -59,10 +54,8 @@ include(uLibConfigHeader)
 
 ## select modules ##
 set(ULIB_SELECTED_MODULES
-      ltk
       Core
       Math
-      Detectors
       Root
 )
 
@@ -189,13 +182,27 @@ configure_file(uLibConfig.cmake.in
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/uLibConfig.cmake" @ONLY)
 # ... for both
 configure_file(uLibConfigVersion.cmake.in
-  "${PROJECT_BINARY_DIR}/uLibConfigVersion.cmake" @ONLY)
+               "${PROJECT_BINARY_DIR}/uLibConfigVersion.cmake" @ONLY)
 
-# Install the FooBarConfig.cmake and FooBarConfigVersion.cmake
-install(FILES
-  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/uLibConfig.cmake"
-  "${PROJECT_BINARY_DIR}/uLibConfigVersion.cmake"
-  DESTINATION "${PACKAGE_INSTALL_CMAKE_DIR}" COMPONENT dev)
+install(FILES "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/uLibConfig.cmake"
+              "${PROJECT_BINARY_DIR}/uLibConfigVersion.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/FindEigen3.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/FindReadLine.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/FindROOT.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/FindROOTv6.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/FinduLib.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/FindVTK.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/uLibCommon.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/uLibConfigHeader.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/uLibDebugMacro.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/uLibFindDependencies.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/uLibGenerateDoc.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/uLibGenerateRMake.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/uLibGenerateRPMS.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/uLibMacros.cmake"
+              "${PROJECT_SOURCE_DIR}/CMake/uLibTargetMacros.cmake"
+        DESTINATION "${PACKAGE_INSTALL_CMAKE_DIR}"
+        COMPONENT dev)
 
 # Install the export set for use with the install-tree
 install(EXPORT "${PROJECT_NAME}Targets" DESTINATION

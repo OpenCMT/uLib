@@ -13,7 +13,6 @@ BuildRequires: eigen3-devel
 BuildRequires: vtk-devel
 BuildRequires: readline-devel
 BuildRequires: pcl-devel
-BuildRequires: geant4-devel
 BuildRequires: root-geom
 BuildRequires: root-genvector
 BuildRequires: root-smatrix
@@ -35,8 +34,8 @@ mkdir -p %{buildroot}
 mkdir %{_builddir}/%{name}-%{version}/build
 cd %{_builddir}/%{name}-%{version}/build
 cmake3 -DCMAKE_INSTALL_PREFIX=%{buildroot}/usr \
-       -DULIB_USE_QT5=OFF \
        -DPACKAGE_INSTALL_LIB_DIR=%{buildroot}/usr/lib64 \
+       -DNODOXYGEN=ON \
        %{_builddir}/%{name}-%{version}
 make
 
@@ -68,7 +67,6 @@ Requires: eigen3-devel
 Requires: vtk-devel
 Requires: readline-devel
 Requires: pcl-devel
-Requires: geant4-devel
 Requires: root-geom
 Requires: root-genvector
 Requires: root-smatrix
@@ -86,18 +84,14 @@ analysis and imaging software Developed by University of Padova and INFN Sezione
 /usr/lib64/libmutom*.so
 /usr/lib64/cmake/mutom-0.2/*.cmake
 %dir /usr/include/mutom-0.2
-%dir /usr/include/mutom-0.2/ltk
 %dir /usr/include/mutom-0.2/Core
 %dir /usr/include/mutom-0.2/Math
-%dir /usr/include/mutom-0.2/Detectors
 %dir /usr/include/mutom-0.2/Root
 %dir /usr/include/mutom-0.2/Vtk
 /usr/include/mutom-0.2/*.h
-/usr/include/mutom-0.2/ltk/*h
 /usr/include/mutom-0.2/Core/*.h
 /usr/include/mutom-0.2/Math/*.h
 /usr/include/mutom-0.2/Math/*.hpp
-/usr/include/mutom-0.2/Detectors/*.h
 /usr/include/mutom-0.2/Root/*.h
 /usr/include/mutom-0.2/Vtk/*.h
 
