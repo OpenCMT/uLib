@@ -33,7 +33,7 @@
 
 #include <boost/preprocessor.hpp>
 
-#include <ltk/ltktypes.h>
+//#include <ltk/ltktypes.h>
 
 #include "Core/Macros.h"
 #include "Core/Mpl.h"
@@ -69,7 +69,7 @@ struct TypeIntrospection {
         typedef boost::mpl::bool_<value> type;
         //        };
     };
-    */    
+    */
 
     /** IsA Introspectable Object Implementation Template */
     template <class T>
@@ -161,11 +161,20 @@ struct TypeIntrospection {
 #define CONSTEXPR BOOST_CONSTEXPR
 
 
-typedef ltk::Real_t      Real_t;
-typedef ltk::Id_t        Id_t;
-//typedef ltk::Size_t      Size_t;
-typedef ltk::Pointer_t   Pointer_t;
+//typedef ltk::Real_t      Real_t;
+#ifndef LTK_DOUBLE_PRECISION
+typedef float      Real_t;
+#else
+typedef double     Real_t;
+#endif
+//typedef ltk::Id_t        Id_t;
+typedef id_t       Id_t;
+////typedef ltk::Size_t      Size_t;
+//typedef ltk::Pointer_t   Pointer_t;
+typedef void *     Pointer_t;
 typedef bool             Bool_t;      //Boolean (0=false, 1=true) (bool)
+
+
 
 //--- bit manipulation ---------------------------------------------------------
 #ifndef BIT
