@@ -87,12 +87,14 @@ analysis and imaging software Developed by University of Padova and INFN Sezione
 %dir /usr/include/mutom-0.2/Core
 %dir /usr/include/mutom-0.2/Math
 %dir /usr/include/mutom-0.2/Root
+%dir /usr/include/mutom-0.2/Detectors
 %dir /usr/include/mutom-0.2/Vtk
 /usr/include/mutom-0.2/*.h
 /usr/include/mutom-0.2/Core/*.h
 /usr/include/mutom-0.2/Math/*.h
 /usr/include/mutom-0.2/Math/*.hpp
 /usr/include/mutom-0.2/Root/*.h
+/usr/include/mutom-0.2/Detectors/*.h
 /usr/include/mutom-0.2/Vtk/*.h
 
 

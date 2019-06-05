@@ -31,7 +31,7 @@ message(STATUS "Module path: ${CMAKE_MODULE_PATH}")
 include(uLibMacros)
 include(uLibDebugMacro)
 include(uLibTargetMacros)
-include(uLibGenerateRMake)
+#include(uLibGenerateRMake)
 
 
 ## GLOBALS ------------------------------------------------------------------ ##
@@ -57,6 +57,7 @@ set(ULIB_SELECTED_MODULES
       Core
       Math
       Root
+      Detectors
 )
 
 ## uLib_add_shared_library puts names there
