@@ -31,7 +31,6 @@
 
 #include "Core/Object.h"
 #include "Core/Archives.h"
-#include "ParticlePhysics/MuonTomography/MuonScatter.h"
 
 #include "testing-prototype.h"
 
@@ -189,48 +188,12 @@ int testing_hrt_class() {
 
 
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-// MUON SCATTER EXAMPLE //
-
-int testing_mu()
-{     
-     std::stringstream ss;
-
-     MuonScatter mu;
-     mu.SetMomentumIn(555);
-     mu.SetMomentumOut(2368);
-     {
-         std::ofstream file("test.txt");
-         file << mu;
-     }
-
-     mu.SetMomentumIn(0);
-     mu.SetMomentumOut(0);
-     {
-         std::ifstream file("test.txt");
-         file >> mu;
-     }
-
-     std::cout << mu << "\n";
-
-
-}
-
-
-
-
-
-
 int main() {
     BEGIN_TESTING(Serialize Test);
 
     TEST1( test_V3f() );
     TEST1( testing_xml_class() );
     //    testing_hrt_class(); ///// << ERRORE in HRT with properties
-    TEST1( testing_mu() );
 
     END_TESTING;
 }

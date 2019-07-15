@@ -14,5 +14,9 @@ set(TESTS
         BitCodeTest
 )
 
+set(LIBRARIES
+       ${PACKAGE_LIBPREFIX}Core
+       ${PACKAGE_LIBPREFIX}Math
+)
 
 uLib_add_tests(${uLib-module})

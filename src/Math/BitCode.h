@@ -237,9 +237,9 @@ public:
 //        std::cout << boost::mpl::at_c< BitSet,1 >::type::value << "\n";
     }
 
-    int Get(unsigned short field) const {
-        return boost::mpl::at_c< BitSet, field >::type::value;
-    }
+//    int Get(unsigned short field) const {
+//        return boost::mpl::at_c< BitSet, field >::type::value;
+//    }
 };
 
 
