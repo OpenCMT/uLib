@@ -31,7 +31,6 @@
 #include <istream>
 #include <algorithm>
 
-#include "Core/Vector.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -62,7 +61,7 @@ struct StringReader {
             while( IsEscape(c = m_is.get()) );
             if (c == str[pos] ) pos++;
             else pos = 0;
-        }        
+        }
     }
 
     static inline bool IsEscape(char c){

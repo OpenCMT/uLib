@@ -33,7 +33,6 @@
 #include <ostream>
 #include <iomanip>
 
-#include <Core/Vector.h>
 #include <Core/Object.h>
 
 
@@ -109,7 +108,7 @@ public:
 
     virtual void SaveToFile(const char *vtk_file);
 
-    virtual void SaveToXMLFile(const char *vtp_file);       
+    virtual void SaveToXMLFile(const char *vtp_file);
 
 protected:
     virtual ~Polydata() {}

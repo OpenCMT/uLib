@@ -29,8 +29,8 @@
 #define VOXRAYTRACER_H
 
 #include <math.h>
+#include <vector>
 
-#include "Core/Vector.h"
 #include "Math/StructuredGrid.h"
 
 namespace uLib {
@@ -51,14 +51,14 @@ public:
 
         void AppendRay ( const RayData &in);
 
-        uLibConstRefMacro(Data,Vector<Element>)
+        uLibConstRefMacro(Data,std::vector<Element>)
         uLibConstRefMacro(TotalLength,Scalarf)
 
         void PrintSelf(std::ostream &o);
 
     private:
-        Vector<Element> m_Data;
-        Scalarf         m_TotalLength;
+        std::vector<Element> m_Data;
+        Scalarf              m_TotalLength;
     };
 
 
@@ -78,11 +78,11 @@ public:
 
     RayData TraceLine(const HLine3f &line) const;
 
-    uLibGetMacro(Image,StructuredGrid *)
+    inline StructuredGrid* GetImage() const { return this->m_Image; }
 
 private:
     StructuredGrid *m_Image;
-    Vector3f        m_scale;	
+    Vector3f        m_scale;
 };
 
 }

@@ -44,14 +44,16 @@ int test_ABTrim() {
 
     acc.SetABTrim(1,1);
 
-    Vector<float> v;
-    v << 1,5,5,5,300;
+    std::vector<float> v;
+    for(float tmpf : {1,5,5,5,300}) v.push_back(tmpf);
+    //v << 1,5,5,5,300;
 
-    for(Vector<float>::Iterator itr=v.begin(); itr<v.end(); itr++)
+    for(std::vector<float>::iterator itr=v.begin(); itr<v.end(); itr++)
         acc += *itr;
 
-    std::cout << "Accumulating  Trim(1,1) vector: "
-              << v << " ... out = " << acc() << "\n";
+    // TODO missing operator <<
+    //std::cout << "Accumulating  Trim(1,1) vector: "
+    //          << v << " ... out = " << acc() << "\n";
 
     return( acc() == 15.0 );
 
@@ -62,7 +64,7 @@ int test_Mean() {
     Accumulator_Mean<float> mean;
     TRandom rnd;
     const int c = 10000000;
-    Vector<float> v;
+    std::vector<float> v;
     v.reserve(c);
     for(int i=0;i<c;++i) v.push_back( rnd.Gaus(2000,5) );
 

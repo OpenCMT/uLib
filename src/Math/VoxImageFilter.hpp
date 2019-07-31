@@ -48,14 +48,14 @@ public:
     inline T& operator[](const int &id) { return m_Data[id]; }
     inline int GetCenterData() const;
 
-    uLibRefMacro(Data,Vector<T>)
+    inline std::vector<T> & Data() { return this->m_Data; }
 
-    inline const Vector<T>& ConstData() const { return this->m_Data; }
+    inline const std::vector<T>& ConstData() const { return this->m_Data; }
 
     void PrintSelf(std::ostream &o) const;
 
 private:
-    Vector<T> m_Data;
+    std::vector<T> m_Data;
 };
 
 template < typename T >
@@ -163,7 +163,7 @@ float VoxImageFilter<_TPLT_>::Distance2(const Vector3i &v)
 
 
 _TPL_
-void VoxImageFilter<_TPLT_>::SetKernelNumericXZY(const Vector<float> &numeric)
+void VoxImageFilter<_TPLT_>::SetKernelNumericXZY(const std::vector<float> &numeric)
 {
     // set data order //
     StructuredData::Order order = m_KernelData.GetDataOrder();
@@ -268,8 +268,8 @@ void VoxImageFilter<_TPLT_>::SetImage(Abstract::VoxImage *image)
 _TPL_
 float VoxImageFilter<_TPLT_>::Convolve(const VoxImage<VoxelT> &buffer, int index)
 {
-    const Vector<VoxelT> &vbuf = buffer.ConstData();
-    const Vector<VoxelT> &vker = m_KernelData.ConstData();
+    const std::vector<VoxelT> &vbuf = buffer.ConstData();
+    const std::vector<VoxelT> &vker = m_KernelData.ConstData();
     int vox_size = vbuf.size();
     int ker_size = vker.size();
     int pos;

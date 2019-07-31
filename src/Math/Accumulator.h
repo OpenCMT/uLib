@@ -28,7 +28,8 @@
 #ifndef U_DATABINNING_H
 #define U_DATABINNING_H
 
-#include "Core/Vector.h"
+#include <vector>
+
 #include "Dense.h"
 
 
@@ -69,7 +70,7 @@ public:
     void AddPass() { m_Means.push_back( Tmean(0,0) ); }
 
 private:
-    Vector< Tmean > m_Means;
+    std::vector< Tmean > m_Means;
 };
 
 

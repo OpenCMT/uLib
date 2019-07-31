@@ -43,7 +43,7 @@ class VoxFilterAlgorithmCustom :
         public VoxImageFilter<VoxelT, VoxFilterAlgorithmCustom<VoxelT> > {
 
 
-    typedef float (* FunctionPt)(const Vector<Scalarf> &);
+    typedef float (* FunctionPt)(const std::vector<Scalarf> &);
 public:
     typedef VoxImageFilter<VoxelT, VoxFilterAlgorithmCustom<VoxelT> > BaseClass;
     VoxFilterAlgorithmCustom(const Vector3i &size) :
@@ -53,14 +53,14 @@ public:
     float Evaluate(const VoxImage<VoxelT> &buffer, int index)
     {
         if(likely(m_CustomEvaluate)) {
-            const Vector<VoxelT> &vbuf = buffer.ConstData();
-            const Vector<VoxelT> &vker = this->m_KernelData.ConstData();
+            const std::vector<VoxelT> &vbuf = buffer.ConstData();
+            const std::vector<VoxelT> &vker = this->m_KernelData.ConstData();
             int vox_size = vbuf.size();
             int ker_size = vker.size();
             int pos;
 
             float ker_sum = 0;
-            Vector<Scalarf> mfh(ker_size);
+            std::vector<Scalarf> mfh(ker_size);
             for (int ik = 0; ik < ker_size; ik++) {
                 pos = index + vker[ik].Count - vker[this->m_KernelData.GetCenterData()].Count;
                 pos = (pos + vox_size) % vox_size;

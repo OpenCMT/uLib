@@ -29,6 +29,7 @@
 #define U_CORE_UUID_H
 
 #include <iostream>
+#include <vector>
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/name_generator.hpp>
@@ -36,7 +37,6 @@
 #include <boost/uuid/uuid_io.hpp>
 
 #include "Core/Mpl.h"
-#include "Core/Vector.h"
 #include "Core/Object.h"
 
 
@@ -127,7 +127,7 @@ public:
 
 private:
     IDGen_t gen;
-    Vector<RegisterEntry> m_registry;
+    std::vector<RegisterEntry> m_registry;
 
 };
 

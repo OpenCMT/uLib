@@ -63,7 +63,7 @@ private:
 };
 
 
-static float MaxInVector(const Vector<float> &v)
+static float MaxInVector(const std::vector<float> &v)
 {
     float max = 0;
     for(int i=0; i<v.size(); ++i)
@@ -93,7 +93,7 @@ int main()
 
         VoxImage<TestVoxel> filtered = image;
 
-        Vector<float> values;
+        std::vector<float> values;
         for(int i=0; i < filter.GetKernelData().GetDims().prod(); ++i) {
             values.push_back(1.);
             std::cout << values[i] << " ";
@@ -128,7 +128,7 @@ int main()
 
         VoxFilterAlgorithmCustom<TestVoxel> filter(Vector3i(3,3,4));
 
-        Vector<float> values;
+        std::vector<float> values;
         for(int i=0; i < filter.GetKernelData().GetDims().prod(); ++i) {
             values.push_back(static_cast<float>(1));
         }

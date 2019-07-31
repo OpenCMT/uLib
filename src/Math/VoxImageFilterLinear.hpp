@@ -48,8 +48,8 @@ public:
 
     float Evaluate(const VoxImage<VoxelT> &buffer, int index)
     {
-        const Vector<VoxelT> &vbuf = buffer.ConstData();
-        const Vector<VoxelT> &vker = this->m_KernelData.ConstData();
+        const std::vector<VoxelT> &vbuf = buffer.ConstData();
+        const std::vector<VoxelT> &vker = this->m_KernelData.ConstData();
         int vox_size = vbuf.size();
         int ker_size = vker.size();
         int pos;

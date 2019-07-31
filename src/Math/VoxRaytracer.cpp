@@ -80,7 +80,7 @@ void VoxRaytracer::RayData::AppendRay(const VoxRaytracer::RayData &in)
 void VoxRaytracer::RayData::PrintSelf(std::ostream &o)
 {
     o << "Ray: total lenght " << m_TotalLength << "\n";
-    Vector<Element>::Iterator it;
+    std::vector<Element>::iterator it;
     for(it = m_Data.begin(); it < m_Data.end(); ++it)
         o << "[ " << (*it).vox_id << ", " << (*it).L << "] \n";
 }
@@ -164,7 +164,7 @@ const
     // scale << (m_Image->GetWorldMatrix() * Vector4f(1,0,0,0)).norm(),
     //          (m_Image->GetWorldMatrix() * Vector4f(0,1,0,0)).norm(),
     //          (m_Image->GetWorldMatrix() * Vector4f(0,0,1,0)).norm();
-    
+
     Vector3f offset;
     for(int i=0;i<3;++i) offset(i) = (s(i)>=0) - (pt1(i)-floor(pt1(i))) ;
     offset = offset.cwiseProduct(L).cwiseAbs();
@@ -172,29 +172,29 @@ const
 
     //---- Check if the ray only crosses one voxel
     Vector3i vid = m_Image->Find(in);
-    if(vid == m_Image->Find(out)){                  
+    if(vid == m_Image->Find(out)){
       ray.AddElement(m_Image->Map(vid),s.norm());
       return ray;
     }
 
     //---- Otherwise, loop until ray is finished
-    int id; float d;	
+    int id; float d;
     while(l>0){
 
       d = offset.minCoeff(&id);
-      
+
       if(m_Image->IsInsideGrid(vid)){
 	ray.AddElement(m_Image->Map(vid), d * m_scale(id) );
       }
-      
+
       // nan check //
       //        if(unlikely(!isFinite(d * scale(id)))) {
       //            std:: cout << "NAN in raytracer\n";
       //            exit(1);
       //        }
-      
+
       vid(id) += (int)fast_sign(s(id));
-      
+
       l -= d;
       offset.array() -= d;
       offset(id) = fmin(L(id),l);

@@ -28,8 +28,9 @@
 #ifndef TRIANGLEMESH_H
 #define TRIANGLEMESH_H
 
+#include <vector>
+
 #include "Core/Object.h"
-#include "Core/Vector.h"
 #include "Math/Dense.h"
 
 namespace uLib {
@@ -44,12 +45,12 @@ public:
     void AddTriangle(const Id_t *id);
     void AddTriangle(const Vector3i &id);
 
-    uLibRefMacro(Points,Vector<Vector3f>)
-    uLibRefMacro(Triangles,Vector<Vector3i>)
+    inline std::vector<Vector3f> & Points() { return this->m_Points; }
+    inline std::vector<Vector3i> & Triangles() { return this->m_Triangles; }
 
 private:
-    Vector<Vector3f> m_Points;
-    Vector<Vector3i> m_Triangles;
+    std::vector<Vector3f> m_Points;
+    std::vector<Vector3i> m_Triangles;
 
 };
 

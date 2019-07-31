@@ -59,13 +59,13 @@ public:
 
     float Evaluate(const VoxImage<VoxelT> &buffer, int index)
     {
-        const Vector<VoxelT> &vbuf = buffer.ConstData();
-        const Vector<VoxelT> &vker = this->m_KernelData.ConstData();
+        const std::vector<VoxelT> &vbuf = buffer.ConstData();
+        const std::vector<VoxelT> &vker = this->m_KernelData.ConstData();
         int vox_size = vbuf.size();
         int ker_size = vker.size();
         int pos;
 
-        Vector<VoxelT> mfh(ker_size);
+        std::vector<VoxelT> mfh(ker_size);
         for (int i = 0; i < ker_size; ++i)
             mfh[i].Count = i; //index key for ordering function
         for (int ik = 0; ik < ker_size; ik++) {
@@ -126,13 +126,13 @@ public:
 
     float Evaluate(const VoxImage<VoxelT> &buffer, int index)
     {
-        const Vector<VoxelT> &vbuf = buffer.ConstData();
-        const Vector<VoxelT> &vker = this->m_KernelData.ConstData();
+        const std::vector<VoxelT> &vbuf = buffer.ConstData();
+        const std::vector<VoxelT> &vker = this->m_KernelData.ConstData();
         int vox_size = vbuf.size();
         int ker_size = vker.size();
         int pos;
 
-        Vector<VoxelT> mfh(ker_size);
+        std::vector<VoxelT> mfh(ker_size);
         for (int i = 0; i < ker_size; ++i)
             mfh[i].Count = i; //index key for ordering function
         for (int ik = 0; ik < ker_size; ik++) {

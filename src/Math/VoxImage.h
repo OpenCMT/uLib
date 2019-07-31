@@ -28,13 +28,13 @@
 #ifndef U_MATH_VOXIMAGE_H
 #define U_MATH_VOXIMAGE_H
 
-#include "Core/Vector.h"
 #include "Core/StaticInterface.h"
 #include "Math/Dense.h"
 #include "Math/StructuredGrid.h"
 
 #include <iostream>
 #include <stdlib.h>
+#include <vector>
 
 namespace uLib {
 
@@ -104,8 +104,8 @@ public:
         this->m_Data = copy.m_Data;
     }
 
-    uLibRefMacro(Data,Vector<T>)
-    inline const Vector<T>& ConstData() const { return m_Data; }
+    inline std::vector<T> & Data() { return this->m_Data; }
+    inline const std::vector<T>& ConstData() const { return m_Data; }
 
     inline const T& At(int i)              const { return m_Data.at(i); }
     inline const T& At(const Vector3i &id) const { return m_Data.at(Map(id)); }
@@ -130,7 +130,7 @@ public:
     inline void SetDims(const Vector3i &size) {
         this->m_Data.resize(size.prod());
         BaseClass::BaseClass::SetDims(size); // FIX horrible coding style !
-    }    
+    }
 
     inline VoxImage<T> clipImage(const Vector3i begin, const Vector3i end) const;
     inline VoxImage<T> clipImage(const HPoint3f begin, const HPoint3f end) const;
@@ -213,7 +213,7 @@ public:
     }
 
 private:
-    Vector<T> m_Data;
+    std::vector<T> m_Data;
 };
 
 

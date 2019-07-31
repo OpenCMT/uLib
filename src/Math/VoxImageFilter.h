@@ -65,14 +65,14 @@ protected:
 
 template < typename VoxelT, typename AlgorithmT >
 class VoxImageFilter : public Abstract::VoxImageFilter, public Object
-{   
+{
 
 public:
     VoxImageFilter(const Vector3i &size);
 
     void Run();
 
-    void SetKernelNumericXZY(const Vector<float> &numeric);
+    void SetKernelNumericXZY(const std::vector<float> &numeric);
 
     void SetKernelSpherical(float (*shape)(float));
 
@@ -84,9 +84,9 @@ public:
     template < class ShapeT >
     void SetKernelWeightFunction( ShapeT shape );
 
-    uLibGetMacro(KernelData,Kernel<VoxelT>)
+    inline Kernel<VoxelT> GetKernelData() const { return this->m_KernelData; }
 
-    uLibGetMacro(Image,VoxImage<VoxelT> *)
+    inline VoxImage<VoxelT>* GetImage() const { return this->m_Image; }
 
     void SetImage(Abstract::VoxImage *image);
 

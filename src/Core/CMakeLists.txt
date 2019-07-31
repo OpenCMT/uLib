@@ -2,7 +2,6 @@
 set(HEADERS
                                 Archives.h
                                 Array.h
-                                Collection.h
                                 Debug.h
                                 Export.h
                                 Function.h
@@ -19,8 +18,6 @@ set(HEADERS
                                 StringReader.h
                                 Types.h
                                 Uuid.h
-                                Vector.h
-                                CommaInitializer.h
                                 Timer.h
 )
 

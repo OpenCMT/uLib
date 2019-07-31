@@ -29,12 +29,11 @@
 #define U_CORE_DEBUG_H
 
 
-
-//#include "ltk/ltkdebug.h"
+#include <vector>
 #include "Macros.h"
 #include "Types.h"
 #include "Mpl.h"
-#include "Vector.h"
+#include "SmartPointer.h"
 
 #include <boost/any.hpp>
 #include <TObject.h>
@@ -128,8 +127,8 @@ public:
     }
 
 private:
-    Vector<DItem>     m_v;
-    Vector<Adapter>   m_a;
+    std::vector<DItem>     m_v;
+    std::vector<Adapter>   m_a;
 };
 
 
