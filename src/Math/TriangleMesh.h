@@ -30,13 +30,12 @@
 
 #include <vector>
 
-#include "Core/Object.h"
 #include "Math/Dense.h"
 
 namespace uLib {
 
-class TriangleMesh : public Object {
-
+class TriangleMesh
+{
 public:
     void PrintSelf(std::ostream &o);
 

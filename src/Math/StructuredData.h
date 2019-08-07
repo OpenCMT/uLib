@@ -28,14 +28,12 @@
 #ifndef STRUCTUREDDATA_H
 #define STRUCTUREDDATA_H
 
-#include "Core/Object.h"
 #include "Math/Dense.h"
 
 namespace uLib {
 
-class StructuredData : public Object {
+class StructuredData {
 public:
-    typedef Object BaseClass;
     enum _Order
     {
         CustomOrder = 0,
@@ -52,7 +50,6 @@ public:
     StructuredData(const Vector3i &size);
 
     StructuredData(const StructuredData &copy) :
-        BaseClass(copy),
         m_DataOrder(copy.m_DataOrder),
         m_Dims(copy.m_Dims),
         m_Increments(copy.m_Increments)

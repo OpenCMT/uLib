@@ -28,6 +28,7 @@
 #ifndef VOXIMAGEFILTERCUSTOM_HPP
 #define VOXIMAGEFILTERCUSTOM_HPP
 
+#include "Core/Macros.h"
 #include <Math/Dense.h>
 #include "Math/VoxImage.h"
 #include "VoxImageFilter.h"
@@ -76,7 +77,7 @@ public:
 
     }
 
-    uLibSetMacro(CustomEvaluate,FunctionPt)
+    inline void SetCustomEvaluate(FunctionPt funPt) { this->m_CustomEvaluate = funPt; }
 
 private:
     FunctionPt m_CustomEvaluate;

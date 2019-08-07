@@ -28,7 +28,6 @@
 #ifndef U_MATH_STRUCTUREDGRID_H
 #define U_MATH_STRUCTUREDGRID_H
 
-#include "Core/Object.h"
 #include "Math/ContainerBox.h"
 #include "Math/StructuredData.h"
 

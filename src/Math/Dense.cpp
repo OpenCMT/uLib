@@ -27,8 +27,8 @@
 
 
 #include "Dense.h"
-#include "Core/Archives.h"
 
+#ifdef ULIB_SERIALIZATION_ON
 ULIB_SERIALIZE(uLib::HPoint3f) {
     ar & boost::serialization::make_nvp(NULL,boost::serialization::base_object<uLib::HPoint3f::BaseClass,uLib::HPoint3f>(ob));
 }
@@ -48,5 +48,5 @@ ULIB_SERIALIZE(uLib::HError3f) {
     ar
             & "HLine -> ( poserr: " & AR(position_error) & "; direrr: " & AR(direction_error) & ") ";
 }
-
+#endif // ULIB_SERIALIZATION_ON
 

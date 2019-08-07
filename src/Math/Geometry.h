@@ -28,7 +28,6 @@
 #ifndef U_GEOMETRY_H
 #define U_GEOMETRY_H
 
-#include "Core/Object.h"
 #include "Math/Dense.h"
 #include "Math/Transform.h"
 

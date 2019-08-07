@@ -51,8 +51,9 @@ public:
 
         void AppendRay ( const RayData &in);
 
-        uLibConstRefMacro(Data,std::vector<Element>)
-        uLibConstRefMacro(TotalLength,Scalarf)
+        inline const std::vector<Element>& Data() const { return this->m_Data; }
+
+        inline const Scalarf& TotalLength() const { return this->m_TotalLength; }
 
         void PrintSelf(std::ostream &o);
 

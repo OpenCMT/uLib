@@ -28,6 +28,7 @@
 #ifndef ULIBVTKVIEWER_H
 #define ULIBVTKVIEWER_H
 
+#include <iostream>
 #include "uLibVtkInterface.h"
 
 

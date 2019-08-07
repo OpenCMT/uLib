@@ -28,7 +28,12 @@
 #ifndef U_VTKVOXIMAGE_H
 #define U_VTKVOXIMAGE_H
 
-#include <Core/Object.h>
+#include "vtk/vtkVolume.h"
+#include "vtk/vtkImageData.h"
+#include "vtk/vtkXMLImageDataReader.h"
+#include "vtk/vtkXMLImageDataWriter.h"
+#include "vtk/vtkCubeSource.h"
+
 #include <Math/VoxImage.h>
 
 #include "uLibVtkInterface.h"
@@ -39,20 +44,18 @@ class vtkImageData;
 namespace uLib {
 namespace Vtk {
 
-class vtkVoxImage : public Puppet {
-    uLibTypeMacro(vtkVoxImage,Puppet)
-public:    
-    properties()
-    {
-        float writer_factor;
-    };
-
+class vtkVoxImage : public Puppet
+{
 public:
     typedef Abstract::VoxImage Content;
 
     vtkVoxImage(Content &content);
 
     ~vtkVoxImage();
+
+    void GetContent();
+
+    void SetContent();
 
     vtkImageData * GetImageData();
 
@@ -67,19 +70,23 @@ public:
     void Update();
 
 protected:
-    void InstallPipe();
+    void    InstallPipe();
+    float   writer_factor;
 
 private:
-    class vtkVoxImagePimpl *d;
+    vtkVolume             *m_Actor;
+    vtkImageData          *m_Image;
+    vtkCubeSource         *m_Outline;
+
+    vtkXMLImageDataReader *m_Reader;
+    vtkXMLImageDataWriter *m_Writer;
+
+    vtkVoxImage::Content  &m_Content;
+
+    float                  m_Window;
+    float                  m_Level;
+
 };
-
-
-inline void vtkVoxImage::init_properties()
-{
-    $_init();
-    $$.writer_factor = 1.E6;
-}
-
 
 } // vtk
 } // uLib

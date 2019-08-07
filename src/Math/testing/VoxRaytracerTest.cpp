@@ -94,7 +94,7 @@ int main()
         TEST1( pt == HPoint3f(-3,-3,-3) );
 
         Raytracer::RayData rdata = ray.TraceBetweenPoints(HPoint3f(-3,-3,-3), HPoint3f(3,3,3));
-        foreach (const Raytracer::RayData::Element &el, rdata.Data())
+        for(const Raytracer::RayData::Element &el : rdata.Data())
         {
             std::cout << " " << el.vox_id << " , " << el.L << "\n";
         }

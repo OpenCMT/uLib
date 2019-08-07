@@ -56,7 +56,6 @@ include(uLibConfigHeader)
 set(ULIB_SELECTED_MODULES
       Core
       Math
-      Root
       Detectors
 )
 
@@ -91,73 +90,8 @@ foreach(module ${ULIB_SELECTED_MODULES})
  add_subdirectory(${SRC_DIR}/${module})
 endforeach(module)
 
-## SINGLE LIBRARY LINKING ## (work in progress ... )
-option(ULIB_SINGLELIBRARY "Link everything to a single library" OFF)
-if(ULIB_SINGLELIBRARY)
-# set(modgrp)
-# foreach(module ${ULIB_SELECTED_MODULES})
-#  set(grpn srcgrp_${module})
-#  list(APPEND modgrp ${grpn})
-# endforeach(module)
-# add_library(${project_name} SHARED ${srcgrp_Core})
-endif(ULIB_SINGLELIBRARY)
-
 ## UTILITIES ##
 add_subdirectory("${SRC_DIR}/utils/make_recipe")
-
-
-## PKG CONFIG compatible file ----------------------------------------------- ##
-
-set(PKGCONFIG_FILE_ENABLE OFF CACHE BOOL "enable pkg-config file")
-if(PKGCONFIG_FILE_ENABLE)
-message("/////////// PKG-CONFIG DISTILLER //////////////")
-set(PKGCONFIG_FILE_DESTDIR "/lib/pkgconfig/" CACHE PATH "destination path for pkg-config file")
-set(PKGCONFIG_LIBS)
-
-message(STATUS "[cflags] ${CMAKE_C_FLAGS}")
-message(STATUS "[cxxflags] ${CMAKE_CXX_FLAGS}")
-
-foreach(module ${ULIB_SHARED_LIBRARIES})
-set(PKGCONFIG_LIBS "${PKGCONFIG_LIBS} ${CMAKE_LINK_LIBRARY_FLAG}${module}")
-endforeach(module)
-message(STATUS "[libs] ${PKGCONFIG_LIBS}")
-
-set(PKGCONFIG_FLAGS)
-#add_custom_target(Dummy)
-
-# add the executable
-uLib_add_target(Dummy test.cpp)
-target_link_libraries(Dummy ${PACKAGE_LIBPREFIX}Core)
-target_link_libraries(Dummy ${Boost_SERIALIZATION_LIBRARY})
-target_link_libraries(Dummy ${Boost_SIGNALS_LIBRARY})
-target_link_libraries(Dummy ${Boost_PROGRAM_OPTIONS_LIBRARY})
-target_link_libraries(Dummy ${Geant4_LIBRARIES})
-target_link_libraries(Dummy ${ROOT_LIBRARIES})
-target_link_libraries(Dummy ${VTK_LIBRARIES})
-
-get_gcc_compile_flags(Dummy, gcc_flags_list)
-foreach(item ${gcc_flags_list})
- message(STATUS "[gcc cflags] ${item}")
- set(PKGCONFIG_FLAGS "${PKGCONFIG_FLAGS} ${item}")
-endforeach(item)
-message(STATUS "[includes] ${PKGCONFIG_FLAGS}")
-
-get_gcc_link_flags(Dummy, gcc_flags_list)
-foreach(item ${gcc_flags_list})
- message(STATUS "[gcc libs] ${item}")
-endforeach(item)
-
-configure_file(
-  "${PROJECT_SOURCE_DIR}/CMakePkgConfig.pc.in"
-  "${PROJECT_BINARY_DIR}/libmutom-${PACKAGE_VERSION}.pc"
-  )
-INSTALL_FILES(${PKGCONFIG_FILE_DESTDIR} FILES ${PROJECT_BINARY_DIR}/libmutom-${PACKAGE_VERSION}.pc)
-
-message("///////////////////////////////////////////")
-endif(PKGCONFIG_FILE_ENABLE)
-
-
-
 
 
 ## INSTALLS AND EXPORTS ----------------------------------------------------- ##
@@ -187,12 +121,9 @@ configure_file(uLibConfigVersion.cmake.in
 
 install(FILES "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/uLibConfig.cmake"
               "${PROJECT_BINARY_DIR}/uLibConfigVersion.cmake"
-              "${PROJECT_SOURCE_DIR}/CMake/FindEigen3.cmake"
               "${PROJECT_SOURCE_DIR}/CMake/FindReadLine.cmake"
               "${PROJECT_SOURCE_DIR}/CMake/FindROOT.cmake"
               "${PROJECT_SOURCE_DIR}/CMake/FindROOTv6.cmake"
-              "${PROJECT_SOURCE_DIR}/CMake/FinduLib.cmake"
-              "${PROJECT_SOURCE_DIR}/CMake/FindVTK.cmake"
               "${PROJECT_SOURCE_DIR}/CMake/uLibCommon.cmake"
               "${PROJECT_SOURCE_DIR}/CMake/uLibConfigHeader.cmake"
               "${PROJECT_SOURCE_DIR}/CMake/uLibDebugMacro.cmake"

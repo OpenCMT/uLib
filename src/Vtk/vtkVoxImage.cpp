@@ -63,53 +63,8 @@
 namespace uLib {
 namespace Vtk {
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-// PIMPL
 
-class vtkVoxImagePimpl {
-public:
-    vtkVoxImagePimpl(vtkVoxImage::Content &content) :
-        m_Content(content),
-        m_Actor(vtkVolume::New()),
-        m_Image(vtkImageData::New()),
-        m_Outline(vtkCubeSource::New()),
-        m_Reader(NULL),
-        m_Writer(NULL)
-    {}
-
-    ~vtkVoxImagePimpl()
-    {
-        m_Image->Delete();
-        m_Actor->Delete();
-        m_Outline->Delete();
-    }    
-
-    void GetContent();
-
-    void SetContent();
-
-    // members //
-    vtkVolume      *m_Actor;
-    vtkImageData   *m_Image;
-    vtkCubeSource  *m_Outline;
-
-    // io //
-    vtkXMLImageDataReader *m_Reader;
-    vtkXMLImageDataWriter *m_Writer;
-
-    // content //
-    vtkVoxImage::Content &m_Content;
-
-    // visual //
-    float m_Window;
-    float m_Level;
-};
-
-
-
-void vtkVoxImagePimpl::GetContent()
+void vtkVoxImage::GetContent()
 {
     // ULIB -> VTK //
     const int *dims = static_cast<const int *>(m_Content.GetDims().data());
@@ -139,7 +94,7 @@ void vtkVoxImagePimpl::GetContent()
     //    m_Image->Update();
 }
 
-void vtkVoxImagePimpl::SetContent()
+void vtkVoxImage::SetContent()
 {
     // VTK -> ULIB //
     int *ext = m_Image->GetExtent();
@@ -181,22 +136,29 @@ void vtkVoxImagePimpl::SetContent()
 // VTK VOXIMAGE
 
 vtkVoxImage::vtkVoxImage(Content &content) :
-    d(new vtkVoxImagePimpl(content))
-{    
-    init_properties();
-    d->GetContent();
+    m_Content(content),
+    m_Actor(vtkVolume::New()),
+    m_Image(vtkImageData::New()),
+    m_Outline(vtkCubeSource::New()),
+    m_Reader(NULL),
+    m_Writer(NULL),
+    writer_factor(1.E6)
+{
+    GetContent();
     InstallPipe();
 }
 
 vtkVoxImage::~vtkVoxImage()
 {
-    delete d;
+    m_Image->Delete();
+    m_Actor->Delete();
+    m_Outline->Delete();
 }
 
 vtkImageData *vtkVoxImage::GetImageData()
 {
-    d->GetContent();
-    return d->m_Image;
+    GetContent();
+    return m_Image;
 }
 
 void vtkVoxImage::SaveToXMLFile(const char *fname)
@@ -204,16 +166,16 @@ void vtkVoxImage::SaveToXMLFile(const char *fname)
     vtkSmartPointer<vtkXMLImageDataWriter> writer =
             vtkSmartPointer<vtkXMLImageDataWriter>::New();
     writer->SetFileName(fname);
-    d->GetContent();
+    GetContent();
     vtkSmartPointer<vtkImageShiftScale> vtkscale =
             vtkSmartPointer<vtkImageShiftScale>::New();
 
 #   if VTK_MAJOR_VERSION <= 5
-    vtkscale->SetInputConnection(d->m_Image->GetProducerPort());
+    vtkscale->SetInputConnection(m_Image->GetProducerPort());
 #   else
-    vtkscale->SetInputData(d->m_Image);
+    vtkscale->SetInputData(m_Image);
 #   endif
-    vtkscale->SetScale(p().writer_factor);
+    vtkscale->SetScale(writer_factor);
     vtkscale->Update();
     writer->SetInputConnection(vtkscale->GetOutputPort());
     writer->Update();
@@ -225,22 +187,22 @@ void vtkVoxImage::ReadFromVKTFile(const char *fname)
     vtkSmartPointer<vtkGenericDataObjectReader> reader =
             vtkSmartPointer<vtkGenericDataObjectReader>::New();
     reader->SetFileName(fname);
-    reader->Update();        
+    reader->Update();
     if(reader->IsFileStructuredPoints())
     {
         vtkSmartPointer<vtkImageShiftScale> vtkscale =
                 vtkSmartPointer<vtkImageShiftScale>::New();
         vtkscale->SetInputConnection(reader->GetOutputPort());
-        vtkscale->SetScale(1/p().writer_factor);
+        vtkscale->SetScale(1/writer_factor);
         vtkscale->Update();
 
-        d->m_Image->DeepCopy(vtkscale->GetOutput()); // FIX! (pipe connection)        
-        d->SetContent();
+        m_Image->DeepCopy(vtkscale->GetOutput()); // FIX! (pipe connection)
+        SetContent();
     }
     else {
         std::cerr << "Error: file does not contain structured points\n";
     }
-    d->m_Actor->Update();
+    m_Actor->Update();
 }
 
 void vtkVoxImage::ReadFromXMLFile(const char *fname)
@@ -252,25 +214,25 @@ void vtkVoxImage::ReadFromXMLFile(const char *fname)
     vtkSmartPointer<vtkImageShiftScale> vtkscale =
             vtkSmartPointer<vtkImageShiftScale>::New();
     vtkscale->SetInputConnection(reader->GetOutputPort());
-    vtkscale->SetScale(1/p().writer_factor);
+    vtkscale->SetScale(1/writer_factor);
     vtkscale->Update();
 
-    d->m_Image->DeepCopy(vtkscale->GetOutput());
-    d->SetContent();
+    m_Image->DeepCopy(vtkscale->GetOutput());
+    SetContent();
 }
 
 
 void vtkVoxImage::setShadingPreset(int blendType)
 {
     vtkSmartVolumeMapper *mapper =
-            (vtkSmartVolumeMapper *)d->m_Actor->GetMapper();
-    vtkVolumeProperty  *property = d->m_Actor->GetProperty();
+            (vtkSmartVolumeMapper *)m_Actor->GetMapper();
+    vtkVolumeProperty  *property = m_Actor->GetProperty();
 
     static vtkColorTransferFunction *colorFun = vtkColorTransferFunction::New();
     static vtkPiecewiseFunction *opacityFun = vtkPiecewiseFunction::New();
 
-    float window = 40 / $$.writer_factor;
-    float level  = 20 / $$.writer_factor;
+    float window = 40 / writer_factor;
+    float level  = 20 / writer_factor;
 
     property->SetColor(colorFun);
     property->SetScalarOpacity(opacityFun);
@@ -346,9 +308,9 @@ void vtkVoxImage::setShadingPreset(int blendType)
 }
 
 void vtkVoxImage::Update() {
-    d->m_Actor->Update();
-    d->m_Outline->SetBounds(d->m_Image->GetBounds());
-    d->m_Outline->Update();
+    m_Actor->Update();
+    m_Outline->SetBounds(m_Image->GetBounds());
+    m_Outline->Update();
 }
 
 void vtkVoxImage::InstallPipe()
@@ -356,26 +318,26 @@ void vtkVoxImage::InstallPipe()
     vtkSmartPointer<vtkSmartVolumeMapper> mapper =
             vtkSmartPointer<vtkSmartVolumeMapper>::New();
 #   if VTK_MAJOR_VERSION <= 5
-    mapper->SetInputConnection(d->m_Image->GetProducerPort());
+    mapper->SetInputConnection(m_Image->GetProducerPort());
 #   else
-    mapper->SetInputData(d->m_Image);
+    mapper->SetInputData(m_Image);
 #   endif
     mapper->Update();
 
-    d->m_Actor->SetMapper(mapper);
+    m_Actor->SetMapper(mapper);
     this->setShadingPreset(0);
     mapper->Update();
 
-    d->m_Outline->SetBounds(d->m_Image->GetBounds());
+    m_Outline->SetBounds(m_Image->GetBounds());
     vtkSmartPointer<vtkPolyDataMapper> mmapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    mmapper->SetInputConnection(d->m_Outline->GetOutputPort());
+    mmapper->SetInputConnection(m_Outline->GetOutputPort());
     vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
     actor->SetMapper(mmapper);
     actor->GetProperty()->SetRepresentationToWireframe();
     actor->GetProperty()->SetAmbient(0.7);
 
     //    this->SetProp(actor);
-    this->SetProp(d->m_Actor);
+    this->SetProp(m_Actor);
 }
 
 

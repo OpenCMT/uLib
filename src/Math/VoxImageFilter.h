@@ -29,7 +29,6 @@
 #define VOXIMAGEFILTER_H
 
 #include "Core/StaticInterface.h"
-#include "Core/Object.h"
 #include "Math/Dense.h"
 
 #include "Math/VoxImage.h"
@@ -64,7 +63,7 @@ protected:
 
 
 template < typename VoxelT, typename AlgorithmT >
-class VoxImageFilter : public Abstract::VoxImageFilter, public Object
+class VoxImageFilter : public Abstract::VoxImageFilter
 {
 
 public:

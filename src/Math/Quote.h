@@ -32,11 +32,11 @@
 
 namespace uLib {
 
-class Quote : public Vector2f {
+class Quote : public Vector2f
+{
 public:
 
-
-    uLibRefMacro(Offset,Scalarf);
+    inline Scalarf& Offset() { return this->m_Offset; }
 
 private:
     Scalarf m_Offset;

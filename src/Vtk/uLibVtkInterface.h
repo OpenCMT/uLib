@@ -33,8 +33,6 @@
 #include <ostream>
 #include <iomanip>
 
-#include <Core/Object.h>
-
 
 
 // vtk classes forward declaration //
@@ -48,22 +46,8 @@ class vtkRendererCollection;
 namespace uLib {
 namespace Vtk {
 
-
-
-//template <class T>
-//class Tie {
-
-//public:
-//    typedef T Content;
-
-
-//};
-
-
-
-class Puppet : public Object
+class Puppet
 {
-    uLibTypeMacro(Puppet, Object)
 public:
     Puppet();
     ~Puppet();

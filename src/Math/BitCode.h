@@ -29,12 +29,10 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
-//#include <Core/CommaInitializer.h>
-#include <Math/Dense.h>
-
-#include <Core/Mpl.h>
 #include <boost/mpl/vector_c.hpp>
 #include <boost/mpl/set_c.hpp>
+
+#include <Math/Dense.h>
 
 namespace uLib {
 

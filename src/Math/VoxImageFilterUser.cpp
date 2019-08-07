@@ -26,7 +26,6 @@
 
 
 
-#include "Core/Vector.h"
 #include "Dense.h"
 #include "VoxImage.h"
 #include "VoxImageFilterUser.h"
