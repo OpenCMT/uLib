@@ -46,46 +46,20 @@ namespace uLib {
 namespace Vtk {
 
 
-// PIMPL -------------------------------------------------------------------- //
-
-class vtkContainerBoxPimpl {
-public:
-    vtkContainerBoxPimpl() :
-        m_Cube(vtkActor::New()),
-        m_Axes(vtkActor::New()),
-        m_Pivot(vtkActor::New()),
-        m_Content(NULL)
-    {}
-
-    ~vtkContainerBoxPimpl()
-    {
-        m_Cube->Delete();
-        m_Axes->Delete();
-        m_Pivot->Delete();
-    }
-
-    // MEMBERS //
-    vtkActor      *m_Cube;
-    vtkActor      *m_Axes;
-    vtkActor      *m_Pivot;
-    vtkContainerBox::Content *m_Content;
-};
-
-// -------------------------------------------------------------------------- //
-
-
-
-
 vtkContainerBox::vtkContainerBox(vtkContainerBox::Content &content) :
-    d( new vtkContainerBoxPimpl)
+    m_Cube(vtkActor::New()),
+    m_Axes(vtkActor::New()),
+    m_Pivot(vtkActor::New()),
+    m_Content(&content)
 {
-    d->m_Content = &content;
     this->InstallPipe();
 }
 
 vtkContainerBox::~vtkContainerBox()
 {
-    delete d;
+    m_Cube->Delete();
+    m_Axes->Delete();
+    m_Pivot->Delete();
 }
 
 vtkPolyData *vtkContainerBox::GetPolyData() const
@@ -95,8 +69,8 @@ vtkPolyData *vtkContainerBox::GetPolyData() const
 
 void vtkContainerBox::InstallPipe()
 {
-    if(!d->m_Content) return;
-    Content *c = d->m_Content;
+    if(!m_Content) return;
+    Content *c = m_Content;
 
     // CUBE
     vtkSmartPointer<vtkCubeSource> cube = vtkSmartPointer<vtkCubeSource>::New();
@@ -113,9 +87,9 @@ void vtkContainerBox::InstallPipe()
             vtkSmartPointer<vtkPolyDataMapper>::New();
     mapper->SetInputConnection(cube->GetOutputPort());
     mapper->Update();
-    d->m_Cube->SetMapper(mapper);
-    d->m_Cube->GetProperty()->SetRepresentationToWireframe();
-    d->m_Cube->GetProperty()->SetAmbient(0.7);
+    m_Cube->SetMapper(mapper);
+    m_Cube->GetProperty()->SetRepresentationToWireframe();
+    m_Cube->GetProperty()->SetAmbient(0.7);
 
     // AXES //
     vtkSmartPointer<vtkAxes> axes = vtkSmartPointer<vtkAxes>::New();
@@ -123,12 +97,12 @@ void vtkContainerBox::InstallPipe()
     mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     mapper->SetInputConnection(axes->GetOutputPort());
     mapper->Update();
-    d->m_Axes->SetMapper(mapper);
+    m_Axes->SetMapper(mapper);
     Vector3f s = c->GetSize();
-    //    d->m_Axes->SetScale(s(0),s(1),s(2));
-    d->m_Axes->GetProperty()->SetLineWidth(3);
-    d->m_Axes->GetProperty()->SetAmbient(0.4);
-    d->m_Axes->GetProperty()->SetSpecular(0);
+    //    m_Axes->SetScale(s(0),s(1),s(2));
+    m_Axes->GetProperty()->SetLineWidth(3);
+    m_Axes->GetProperty()->SetAmbient(0.4);
+    m_Axes->GetProperty()->SetSpecular(0);
 
     // PIVOT //
     axes = vtkSmartPointer<vtkAxes>::New();
@@ -136,16 +110,16 @@ void vtkContainerBox::InstallPipe()
     mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     mapper->SetInputConnection(axes->GetOutputPort());
     mapper->Update();
-    d->m_Pivot->SetMapper(mapper);
+    m_Pivot->SetMapper(mapper);
     s = c->GetScale();
-    //    d->m_Pivot->SetScale(s(0),s(1),s(2));
-    d->m_Pivot->GetProperty()->SetLineWidth(3);
-    d->m_Pivot->GetProperty()->SetAmbient(0.4);
-    d->m_Pivot->GetProperty()->SetSpecular(0);
+    //    m_Pivot->SetScale(s(0),s(1),s(2));
+    m_Pivot->GetProperty()->SetLineWidth(3);
+    m_Pivot->GetProperty()->SetAmbient(0.4);
+    m_Pivot->GetProperty()->SetSpecular(0);
 
-    this->SetProp(d->m_Cube);
-    this->SetProp(d->m_Axes);
-    this->SetProp(d->m_Pivot);
+    this->SetProp(m_Cube);
+    this->SetProp(m_Axes);
+    this->SetProp(m_Pivot);
 }
 
 

@@ -31,16 +31,12 @@
 
 
 #include <vtkSmartPointer.h>
-#include <vtkVolume.h>
-#include <vtkImageData.h>
 #include <vtkImageImport.h>
 #include <vtkImageExport.h>
 
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
 
-#include <vtkXMLImageDataReader.h>
-#include <vtkXMLImageDataWriter.h>
 #include <vtkGenericDataObjectReader.h>
 #include <vtkImageShiftScale.h>
 
@@ -51,7 +47,6 @@
 
 #include <vtkActor.h>
 #include <vtkProperty.h>
-#include <vtkCubeSource.h>
 #include <vtkPolyDataMapper.h>
 
 

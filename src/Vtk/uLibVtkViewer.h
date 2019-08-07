@@ -31,6 +31,10 @@
 #include <iostream>
 #include "uLibVtkInterface.h"
 
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
+#include <vtkCornerAnnotation.h>
+#include <vtkOrientationMarkerWidget.h>
 
 class vtkProp;
 class vtk3DWidget;
@@ -79,10 +83,22 @@ public:
     void RemoveProp(vtkProp *prop);
 
 private:
-    class ViewerPimpl *d;
+    void InstallPipe();
+    void UninstallPipe();
+
+    vtkRenderer                *m_Renderer;
+    vtkRenderWindow            *m_RenderWindow;
+    vtkCornerAnnotation        *m_Annotation;
+    vtkOrientationMarkerWidget *m_Marker;
 };
 
-template <> class Tie<Viewer>;
+template <>
+class Tie<Viewer> {
+public:
+    void DoAction() {
+        std::cout << " VIEWER TIE !!! \n";
+    }
+};
 
 
 } // vtk

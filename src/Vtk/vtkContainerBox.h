@@ -47,8 +47,10 @@ public:
 private:
     void InstallPipe();
 
-    friend class vtkContainerBoxPimpl;
-    class vtkContainerBoxPimpl *d;
+    vtkActor                 *m_Cube;
+    vtkActor                 *m_Axes;
+    vtkActor                 *m_Pivot;
+    vtkContainerBox::Content *m_Content;
 };
 
 } // vtk

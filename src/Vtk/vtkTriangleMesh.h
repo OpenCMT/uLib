@@ -58,8 +58,12 @@ public:
     void Update();
 
 private:
-    friend class vtkTriangleMeshPimpl;
-    class vtkTriangleMeshPimpl *d;
+    void vtk2uLib_update();
+    void uLib2vtk_update();
+
+    TriangleMesh &m_content;
+    vtkPolyData  *m_Poly;
+    vtkActor     *m_Actor;
 };
 
 

@@ -48,36 +48,7 @@
 namespace uLib {
 
 
-class vtkTriangleMeshPimpl {
-public:
-    vtkTriangleMeshPimpl(vtkTriangleMesh::Content &content) :
-        m_content(content),
-        m_Poly(vtkPolyData::New()),
-        m_Actor(vtkActor::New())
-    {
-        vtkSmartPointer<vtkPolyDataMapper> mapper =
-                vtkSmartPointer<vtkPolyDataMapper>::New();
-        mapper->SetInputConnection(m_Poly->GetProducerPort());
-        m_Actor->SetMapper(mapper);
-    }
-
-    ~vtkTriangleMeshPimpl() {
-        m_Poly->Delete();
-        m_Actor->Delete();
-    }
-
-
-    void vtk2uLib_update();
-    void uLib2vtk_update();
-
-    // members //
-    TriangleMesh &m_content;
-    vtkPolyData  *m_Poly;
-    vtkActor     *m_Actor;
-};
-
-
-void vtkTriangleMeshPimpl::vtk2uLib_update()
+void vtkTriangleMesh::vtk2uLib_update()
 {
     // Assumes that Polys are Triangles !!! //
     vtkIdType number_of_points = m_Poly->GetNumberOfPoints();
@@ -92,7 +63,7 @@ void vtkTriangleMeshPimpl::vtk2uLib_update()
 
 
 
-    m_content.Points().resize(number_of_points);    
+    m_content.Points().resize(number_of_points);
     for (int i=0; i<number_of_points; ++i)
     {
         double *point = m_Poly->GetPoint(i);
@@ -116,7 +87,7 @@ void vtkTriangleMeshPimpl::vtk2uLib_update()
     m_Actor->GetMapper()->Update();
 }
 
-void vtkTriangleMeshPimpl::uLib2vtk_update()
+void vtkTriangleMesh::uLib2vtk_update()
 {
     vtkIdType number_of_points = m_content.Points().size();
     vtkIdType number_of_triangles = m_content.Triangles().size();
@@ -161,12 +132,20 @@ void vtkTriangleMeshPimpl::uLib2vtk_update()
 
 
 vtkTriangleMesh::vtkTriangleMesh(vtkTriangleMesh::Content &content) :
-    d(new vtkTriangleMeshPimpl(content))
-{}
+    m_content(content),
+    m_Poly(vtkPolyData::New()),
+    m_Actor(vtkActor::New())
+{
+    vtkSmartPointer<vtkPolyDataMapper> mapper =
+            vtkSmartPointer<vtkPolyDataMapper>::New();
+    mapper->SetInputConnection(m_Poly->GetProducerPort());
+    m_Actor->SetMapper(mapper);
+}
 
 vtkTriangleMesh::~vtkTriangleMesh()
 {
-    delete d;
+    m_Poly->Delete();
+    m_Actor->Delete();
 }
 
 void vtkTriangleMesh::ReadFromFile(const char *filename)
@@ -175,8 +154,8 @@ void vtkTriangleMesh::ReadFromFile(const char *filename)
             vtkSmartPointer<vtkPolyDataReader>::New();
     reader->SetFileName(filename);
     reader->Update();
-    d->m_Poly->DeepCopy(reader->GetOutput());
-    d->vtk2uLib_update();
+    m_Poly->DeepCopy(reader->GetOutput());
+    vtk2uLib_update();
 }
 
 void vtkTriangleMesh::ReadFromXMLFile(const char *filename)
@@ -185,8 +164,8 @@ void vtkTriangleMesh::ReadFromXMLFile(const char *filename)
             vtkSmartPointer<vtkXMLPolyDataReader>::New();
     reader->SetFileName(filename);
     reader->Update();
-    d->m_Poly->DeepCopy(reader->GetOutput());
-    d->vtk2uLib_update();
+    m_Poly->DeepCopy(reader->GetOutput());
+    vtk2uLib_update();
 }
 
 void vtkTriangleMesh::ReadFromObjFile(const char *filename)
@@ -195,8 +174,8 @@ void vtkTriangleMesh::ReadFromObjFile(const char *filename)
             vtkSmartPointer<vtkOBJReader>::New();
     reader->SetFileName(filename);
     reader->Update();
-    d->m_Poly->DeepCopy(reader->GetOutput());
-    d->vtk2uLib_update();
+    m_Poly->DeepCopy(reader->GetOutput());
+    vtk2uLib_update();
 }
 
 void vtkTriangleMesh::ReadFromStlFile(const char *filename)
@@ -205,23 +184,23 @@ void vtkTriangleMesh::ReadFromStlFile(const char *filename)
             vtkSmartPointer<vtkSTLReader>::New();
     reader->SetFileName(filename);
     reader->Update();
-    d->m_Poly->DeepCopy(reader->GetOutput());
-    d->vtk2uLib_update();
+    m_Poly->DeepCopy(reader->GetOutput());
+    vtk2uLib_update();
 }
 
 vtkProp *vtkTriangleMesh::GetProp()
 {
-    return d->m_Actor;
+    return m_Actor;
 }
 
 vtkPolyData *vtkTriangleMesh::GetPolyData() const
 {
-    return d->m_Poly;
+    return m_Poly;
 }
 
 void vtkTriangleMesh::Update()
 {
-    d->uLib2vtk_update();
+    uLib2vtk_update();
 }
 
 }
