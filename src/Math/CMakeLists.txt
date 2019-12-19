@@ -22,6 +22,8 @@ set(HEADERS
                                 Accumulator.h
                                 TriangleMesh.h
                                 BitCode.h
+                                Structured2DGrid.h
+                                Structured4DGrid.h
 )
 
 
@@ -33,6 +35,8 @@ set(SOURCES
                 VoxImage.cpp
                 TriangleMesh.cpp
                 Dense.cpp
+                Structured2DGrid.h
+                Structured4DGrid.h
 )
 
 set(LIBRARIES
