@@ -57,6 +57,7 @@ set(ULIB_SELECTED_MODULES
       Core
       Math
       Detectors
+      Root
 )
 
 ## uLib_add_shared_library puts names there

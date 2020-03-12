@@ -44,6 +44,9 @@ set_source_files_properties(uLibRootDict.cxx PROPERTIES GENERATED TRUE)
 set_source_files_properties(uLibRootDict.h PROPERTIES GENERATED TRUE)
 list(APPEND SOURCES     uLibRootDict.cxx)
 
+# TODO use a custom target linked to root_generate_dictionary
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/uLibRootDict_rdict.pcm
+        DESTINATION ${PACKAGE_INSTALL_LIB_DIR})
 
 uLib_add_shared_library(${uLib-module})
 add_subdirectory(testing)

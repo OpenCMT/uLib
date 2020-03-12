@@ -7,7 +7,11 @@ Vendor: INFN
 URL: https://github.com/OpenCMT/uLib
 Group: Development/Libraries
 BuildArch: %{_arch}
+%if %{?rhel}%{!?rhel:0} >= 8
+BuildRequires: cmake
+%else
 BuildRequires: cmake3
+%endif
 BuildRequires: boost-devel
 BuildRequires: eigen3-devel
 BuildRequires: vtk-devel
@@ -33,11 +37,12 @@ mkdir -p %{buildroot}
 %build
 mkdir %{_builddir}/%{name}-%{version}/build
 cd %{_builddir}/%{name}-%{version}/build
-cmake3 -DCMAKE_INSTALL_PREFIX=%{buildroot}/usr \
+%cmake -DCMAKE_INSTALL_PREFIX=%{buildroot}/usr \
+       -DCMAKE_BUILD_TYPE=RelWithDebInfo \
        -DPACKAGE_INSTALL_LIB_DIR=%{buildroot}/usr/lib64 \
        -DNODOXYGEN=ON \
        %{_builddir}/%{name}-%{version}
-make
+make %{?_smp_mflags}
 
 %install
 cd %{_builddir}/%{name}-%{version}/build
@@ -55,9 +60,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root)
 /usr/lib64/libmutom*.so.0.2
-
-
-
+/usr/lib64/uLibRootDict_rdict.pcm
 
 %package devel
 Summary: Cosmic Muon Tomography core libraries, development files
