@@ -12,6 +12,7 @@ BuildRequires: cmake
 %else
 BuildRequires: cmake3
 %endif
+BuildRequires: doxygen
 BuildRequires: boost-devel
 BuildRequires: eigen3-devel
 BuildRequires: vtk-devel
@@ -29,6 +30,9 @@ Source: %{name}-%{version}.tar.gz
 This package contains the base toolkit library for Cosmic Muon Tomography reconstruction,
 analysis and imaging software Developed by University of Padova and INFN Sezione di Padova  Italy
 
+%global _ulibpkgname mutom
+%global _ulibcmakedir %{_libdir}/cmake/%{_ulibpkgname}
+
 %prep
 %setup -c
 rm -rf %{buildroot}
@@ -37,9 +41,12 @@ mkdir -p %{buildroot}
 %build
 mkdir %{_builddir}/%{name}-%{version}/build
 cd %{_builddir}/%{name}-%{version}/build
-%cmake -DCMAKE_INSTALL_PREFIX=%{buildroot}/usr \
+%cmake -DCMAKE_INSTALL_PREFIX=%{buildroot}%{_prefix} \
        -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-       -DPACKAGE_INSTALL_LIB_DIR=%{buildroot}/usr/lib64 \
+       -DPACKAGE_NAME=%{_ulibpkgname} \
+       -DPACKAGE_INSTALL_LIB_DIR=%{buildroot}%{_libdir} \
+       -DPACKAGE_INSTALL_INC_DIR=%{buildroot}%{_includedir}/%{_ulibpkgname} \
+       -DPACKAGE_INSTALL_CMAKE_DIR=%{buildroot}%{_ulibcmakedir} \
        -DNODOXYGEN=ON \
        %{_builddir}/%{name}-%{version}
 make %{?_smp_mflags}
@@ -47,20 +54,16 @@ make %{?_smp_mflags}
 %install
 cd %{_builddir}/%{name}-%{version}/build
 make install
-# workaround 1
-mv %{buildroot}/usr/lib/* %{buildroot}/usr/lib64
-rm -rf %{buildroot}/usr/lib
-# workaround 2
-sed -i 's|%{buildroot}/usr|/usr|g' %{buildroot}/usr/lib64/cmake/mutom-%{version}/uLibTargets.cmake
-sed -i 's|%{buildroot}/usr|/usr|g' %{buildroot}/usr/lib64/cmake/mutom-%{version}/uLibTargets-relwithdebinfo.cmake
+sed -i 's|%{buildroot}/usr|%{_prefix}|g' %{buildroot}%{_ulibcmakedir}/uLibTargets.cmake
+sed -i 's|%{buildroot}/usr|%{_prefix}|g' %{buildroot}%{_ulibcmakedir}/uLibTargets-relwithdebinfo.cmake
 
 %clean
 rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-/usr/lib64/libmutom*.so.0.2
-/usr/lib64/uLibRootDict_rdict.pcm
+%{_libdir}/libmutom*.so.0.2
+%{_libdir}/uLibRootDict_rdict.pcm
 
 %package devel
 Summary: Cosmic Muon Tomography core libraries, development files
@@ -82,23 +85,23 @@ analysis and imaging software Developed by University of Padova and INFN Sezione
 
 %files devel
 %defattr(-,root,root)
-%dir /usr/lib64/cmake/mutom-0.2
+%dir %{_ulibcmakedir}
 /usr/bin/uLib_config
-/usr/lib64/libmutom*.so
-/usr/lib64/cmake/mutom-0.2/*.cmake
-%dir /usr/include/mutom-0.2
-%dir /usr/include/mutom-0.2/Core
-%dir /usr/include/mutom-0.2/Math
-%dir /usr/include/mutom-0.2/Root
-%dir /usr/include/mutom-0.2/Detectors
-%dir /usr/include/mutom-0.2/Vtk
-/usr/include/mutom-0.2/*.h
-/usr/include/mutom-0.2/Core/*.h
-/usr/include/mutom-0.2/Math/*.h
-/usr/include/mutom-0.2/Math/*.hpp
-/usr/include/mutom-0.2/Root/*.h
-/usr/include/mutom-0.2/Detectors/*.h
-/usr/include/mutom-0.2/Vtk/*.h
+%{_libdir}/libmutom*.so
+%{_ulibcmakedir}/*.cmake
+%dir %{_includedir}/%{_ulibpkgname}
+%dir %{_includedir}/%{_ulibpkgname}/Core
+%dir %{_includedir}/%{_ulibpkgname}/Math
+%dir %{_includedir}/%{_ulibpkgname}/Root
+%dir %{_includedir}/%{_ulibpkgname}/Detectors
+%dir %{_includedir}/%{_ulibpkgname}/Vtk
+%{_includedir}/%{_ulibpkgname}/*.h
+%{_includedir}/%{_ulibpkgname}/Core/*.h
+%{_includedir}/%{_ulibpkgname}/Math/*.h
+%{_includedir}/%{_ulibpkgname}/Math/*.hpp
+%{_includedir}/%{_ulibpkgname}/Root/*.h
+%{_includedir}/%{_ulibpkgname}/Detectors/*.h
+%{_includedir}/%{_ulibpkgname}/Vtk/*.h
 
 
 
