@@ -78,6 +78,7 @@ using namespace ROOT::Mutom;
 #pragma link C++ class  muBlastHit+;
 #pragma link C++ class  muCastorMCTrack+;
 #pragma link C++ class  muCastorHit+;
+#pragma link C++ class  muCastorInfo+;
 
 #endif // __CINT__
 

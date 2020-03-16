@@ -12,16 +12,9 @@
 #include "vector"
 #include "TObject.h"
 #include "TParticle.h"
+#include "Detectors/MuonScatter.h"
 
 class TClonesArray;
-
-
-namespace uLib {
-class MuonScatter;
-}
-
-//namespace ROOT {
-//namespace Mutom {
 
 class muCastorMCTrack : public TObject
 {
@@ -89,8 +82,6 @@ public:
   ClassDef(muCastorMCTrack,1);
 
 };
-//} // Mutom
-//} // ROOT
 
 uLib::MuonScatter &operator << (uLib::MuonScatter &mu, const muCastorMCTrack &bsmu);
 #endif //muCastor_MCTRACK_H   

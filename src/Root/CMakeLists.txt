@@ -7,6 +7,7 @@ set(HEADERS
  muBlastMCTrack.h
  muCastorMCTrack.h
  muCastorHit.h
+ muCastorInfo.h
 )
 
 set(DICTIONARY_HEADERS
@@ -18,6 +19,7 @@ set(DICTIONARY_HEADERS
  muBlastMCTrack.h
  muCastorMCTrack.h
  muCastorHit.h
+ muCastorInfo.h
 )
 
 SET(SOURCES
@@ -27,6 +29,7 @@ SET(SOURCES
  muBlastMCTrack.cpp
  muCastorMCTrack.cpp
  muCastorHit.cpp
+ muCastorInfo.cpp
 )
 
 set(LIBRARIES

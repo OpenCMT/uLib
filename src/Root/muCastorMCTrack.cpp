@@ -6,11 +6,9 @@
 //         Martin Subieta   martin.subieta@ing.unibs.it
 //******************************************************************************************
 
-#include <iostream>
-
-#include "Detectors/MuonScatter.h"
 #include <Root/muCastorMCTrack.h>
 #include <TClonesArray.h>
+#include <iostream>
 
 using namespace std;
 
@@ -32,8 +30,6 @@ uLib::MuonScatter &operator << (uLib::MuonScatter &mu, const muCastorMCTrack &bs
     return mu;
 }
 
-//namespace ROOT {
-//namespace Mutom {
 // -----   Default constructor   -------------------------------------------
 muCastorMCTrack::muCastorMCTrack()
 {
@@ -223,5 +219,3 @@ void muCastorMCTrack::Reset()
    fPntE       = 0;
 
 }
-//} // Mutom
-//} // ROOT
