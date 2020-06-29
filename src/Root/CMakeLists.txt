@@ -1,55 +1,64 @@
-set(HEADERS
- TestTObject.h
- RootMathDense.h
- RootMuonScatter.h
- RootHitRaw.h
- muBlastHit.h
- muBlastMCTrack.h
- muCastorMCTrack.h
- muCastorHit.h
- muCastorInfo.h
-)
+set(HEADERS TestTObject.h
+            RootMathDense.h
+            RootMuonScatter.h
+            RootHitRaw.h
+            muBlastHit.h
+            muBlastMCTrack.h
+            muCastorMCTrack.h
+            muCastorHit.h
+            muCastorInfo.h)
 
-set(DICTIONARY_HEADERS
- TestTObject.h
- RootMathDense.h
- RootMuonScatter.h
- RootHitRaw.h
- muBlastHit.h
- muBlastMCTrack.h
- muCastorMCTrack.h
- muCastorHit.h
- muCastorInfo.h
-)
+set(DICTIONARY_HEADERS TestTObject.h
+                       RootMathDense.h
+                       RootMuonScatter.h
+                       RootHitRaw.h
+                       muBlastHit.h
+                       muBlastMCTrack.h
+                       muCastorMCTrack.h
+                       muCastorHit.h
+                       muCastorInfo.h)
 
-SET(SOURCES
- TestTObject.cpp
- RootMuonScatter.cpp
- muBlastHit.cpp
- muBlastMCTrack.cpp
- muCastorMCTrack.cpp
- muCastorHit.cpp
- muCastorInfo.cpp
-)
+set(SOURCES TestTObject.cpp
+            RootMuonScatter.cpp
+            muBlastHit.cpp
+            muBlastMCTrack.cpp
+            muCastorMCTrack.cpp
+            muCastorHit.cpp
+            muCastorInfo.cpp)
 
-set(LIBRARIES
-#       ${Boost_SERIALIZATION_LIBRARY}
-#       ${Boost_SIGNALS_LIBRARY}
-#       ${Boost_PROGRAM_OPTIONS_LIBRARY}
-       ${ROOT_LIBRARIES}
-       ${PACKAGE_LIBPREFIX}Core
-       ${PACKAGE_LIBPREFIX}Math
-)
+set(LIBRARIES ${ROOT_LIBRARIES}
+              ${PACKAGE_LIBPREFIX}Math)
 
-include(FindROOTv6)
-root_generate_dictionary(uLibRootDict ${DICTIONARY_HEADERS} LINKDEF Linkdef.h)
-set_source_files_properties(uLibRootDict.cxx PROPERTIES GENERATED TRUE)
-set_source_files_properties(uLibRootDict.h PROPERTIES GENERATED TRUE)
-list(APPEND SOURCES     uLibRootDict.cxx)
+set(rDictName ${PACKAGE_LIBPREFIX}RootDict)
+root_generate_dictionary(${rDictName} ${DICTIONARY_HEADERS}
+                         LINKDEF Linkdef.h)
+set_source_files_properties(${rDictName}.cxx
+                            PROPERTIES GENERATED TRUE)
+set_source_files_properties(${rDictName}.h
+                            PROPERTIES GENERATED TRUE)
+list(APPEND SOURCES ${rDictName}.cxx)
 
 # TODO use a custom target linked to root_generate_dictionary
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/uLibRootDict_rdict.pcm
+set(R_ARTIFACTS ${CMAKE_CURRENT_BINARY_DIR}/lib${rDictName}_rdict.pcm
+                   ${CMAKE_CURRENT_BINARY_DIR}/lib${rDictName}.rootmap)
+install(FILES ${R_ARTIFACTS}
         DESTINATION ${PACKAGE_INSTALL_LIB_DIR})
 
-uLib_add_shared_library(${uLib-module})
-add_subdirectory(testing)
+set(libname ${PACKAGE_LIBPREFIX}Root)
+set(ULIB_SHARED_LIBRARIES ${ULIB_SHARED_LIBRARIES} ${libname} PARENT_SCOPE)
+set(ULIB_SELECTED_MODULES ${ULIB_SELECTED_MODULES} Root PARENT_SCOPE)
+
+add_library(${libname} SHARED ${SOURCES})
+set_target_properties(${libname} PROPERTIES
+                      VERSION ${PROJECT_VERSION}
+                      SOVERSION ${PROJECT_SOVERSION})
+target_link_libraries(${libname} ${LIBRARIES})
+
+install(TARGETS ${libname}
+        EXPORT "${PROJECT_NAME}Targets"
+        RUNTIME DESTINATION ${PACKAGE_INSTALL_BIN_DIR} COMPONENT bin
+        LIBRARY DESTINATION ${PACKAGE_INSTALL_LIB_DIR} COMPONENT lib)
+
+install(FILES ${HEADERS} DESTINATION ${PACKAGE_INSTALL_INC_DIR}/Root)
+
+

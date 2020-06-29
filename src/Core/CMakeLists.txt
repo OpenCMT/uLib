@@ -1,41 +1,27 @@
 
-set(HEADERS
-                                Archives.h
-                                Array.h
-                                Debug.h
-                                Export.h
-                                Function.h
-                                Macros.h
-                                Mpl.h
-                                Object.h
-                                ObjectProps.h
-                                Options.h
-                                Serializable.h
-                                Signal.h
-                                Singleton.h
-                                SmartPointer.h
-                                StaticInterface.h
-                                StringReader.h
-                                Types.h
-                                Uuid.h
-                                Timer.h
-)
+set(HEADERS Options.h
+            StaticInterface.h)
 
-SET(SOURCES
-                Archives.cpp
-                Object.cpp
-                Options.cpp
-                Serializable.cpp
-                Signal.cpp
-                Uuid.cpp
-)
+set(SOURCES Options.cpp)
 
-set(LIBRARIES
-       ${Boost_SERIALIZATION_LIBRARY}
-       ${Boost_SIGNALS_LIBRARY}
-       ${Boost_PROGRAM_OPTIONS_LIBRARY}
-       ${ROOT_LIBRARIES}
-)
+set(LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
 
-uLib_add_shared_library(${uLib-module})
-add_subdirectory(testing)
+set(libname ${PACKAGE_LIBPREFIX}Core)
+set(ULIB_SHARED_LIBRARIES ${ULIB_SHARED_LIBRARIES} ${libname} PARENT_SCOPE)
+set(ULIB_SELECTED_MODULES ${ULIB_SELECTED_MODULES} Core PARENT_SCOPE)
+
+add_library(${libname} SHARED ${SOURCES})
+set_target_properties(${libname} PROPERTIES
+                      VERSION ${PROJECT_VERSION}
+                      SOVERSION ${PROJECT_SOVERSION})
+target_link_libraries(${libname} ${LIBRARIES})
+
+install(TARGETS ${libname}
+        EXPORT "${PROJECT_NAME}Targets"
+        RUNTIME DESTINATION ${PACKAGE_INSTALL_BIN_DIR} COMPONENT bin
+        LIBRARY DESTINATION ${PACKAGE_INSTALL_LIB_DIR} COMPONENT lib)
+
+install(FILES ${HEADERS} DESTINATION ${PACKAGE_INSTALL_INC_DIR}/Core)
+
+
+

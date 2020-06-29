@@ -1,37 +1,38 @@
-set(HEADERS
-                          uLibVtkInterface.h
-                          uLibVtkViewer.h
-                          vtkContainerBox.h
-                          vtkMuonScatter.h
-                          vtkStructuredGrid.h
-                          vtkVoxRaytracerRepresentation.h
-                          vtkVoxImage.h
-#                          vtkHLineRepresentation.h
-#			  vtkTriangleMesh.h
-)
+set(HEADERS uLibVtkInterface.h
+            uLibVtkViewer.h
+            vtkContainerBox.h
+            vtkMuonScatter.h
+            vtkStructuredGrid.h
+            vtkVoxRaytracerRepresentation.h
+            vtkVoxImage.h)
 
-SET(SOURCES
-                uLibVtkInterface.cxx
-                uLibVtkViewer.cpp
-                vtkContainerBox.cpp
-                vtkMuonScatter.cxx
-                vtkStructuredGrid.cpp
-                vtkVoxRaytracerRepresentation.cpp
-                vtkVoxImage.cpp
-)
+set(SOURCES uLibVtkInterface.cxx
+            uLibVtkViewer.cpp
+            vtkContainerBox.cpp
+            vtkMuonScatter.cxx
+            vtkStructuredGrid.cpp
+            vtkVoxRaytracerRepresentation.cpp
+            vtkVoxImage.cpp)
 
-set(LIBRARIES
-       ${Boost_SERIALIZATION_LIBRARY}
-       ${Boost_SIGNALS_LIBRARY}
-       ${Boost_PROGRAM_OPTIONS_LIBRARY}
-       ${Eigen_LIBRARY}
-       ${ROOT_LIBRARIES}
-       ${Geant4_LIBRARIES}
-       ${VTK_LIBRARIES}
-       ${PACKAGE_LIBPREFIX}Core
-       ${PACKAGE_LIBPREFIX}Math
-)
+set(LIBRARIES ${Eigen_LIBRARY}
+              ${ROOT_LIBRARIES}
+              ${VTK_LIBRARIES}
+              ${PACKAGE_LIBPREFIX}Math)
 
-uLib_add_shared_library(${uLib-module})
+set(libname ${PACKAGE_LIBPREFIX}Vtk)
+set(ULIB_SHARED_LIBRARIES ${ULIB_SHARED_LIBRARIES} ${libname} PARENT_SCOPE)
+set(ULIB_SELECTED_MODULES ${ULIB_SELECTED_MODULES} Vtk PARENT_SCOPE)
 
-add_subdirectory(testing)
+add_library(${libname} SHARED ${SOURCES})
+set_target_properties(${libname} PROPERTIES
+                      VERSION ${PROJECT_VERSION}
+                      SOVERSION ${PROJECT_SOVERSION})
+target_link_libraries(${libname} ${LIBRARIES})
+
+install(TARGETS ${libname}
+        EXPORT "${PROJECT_NAME}Targets"
+        RUNTIME DESTINATION ${PACKAGE_INSTALL_BIN_DIR} COMPONENT bin
+        LIBRARY DESTINATION ${PACKAGE_INSTALL_LIB_DIR} COMPONENT lib)
+
+install(FILES ${HEADERS} DESTINATION ${PACKAGE_INSTALL_INC_DIR}/Vtk)
+

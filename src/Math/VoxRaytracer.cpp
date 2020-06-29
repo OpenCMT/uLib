@@ -24,12 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////*/
 
 
-
+#include <iostream>
 
 #include "VoxRaytracer.h"
 #include "Utils.h"
 
-#include "Core/Macros.h"
+#define unlikely(expr) __builtin_expect(!!(expr), 0)
 
 inline float fast_sign(float f) { return 1 - 2 * (f < 0); }
 

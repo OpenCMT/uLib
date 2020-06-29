@@ -28,10 +28,11 @@
 #ifndef VOXIMAGEFILTERCUSTOM_HPP
 #define VOXIMAGEFILTERCUSTOM_HPP
 
-#include "Core/Macros.h"
 #include <Math/Dense.h>
 #include "Math/VoxImage.h"
 #include "VoxImageFilter.h"
+
+#define likely(expr) __builtin_expect(!!(expr), 1)
 
 ////////////////////////////////////////////////////////////////////////////////
 /////  VOXIMAGE FILTER CUSTOM  /////////////////////////////////////////////////
