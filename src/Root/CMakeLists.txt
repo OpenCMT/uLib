@@ -1,48 +1,11 @@
-set(HEADERS TestTObject.h
-            RootMathDense.h
+set(HEADERS RootMathDense.h
             RootMuonScatter.h
-            RootHitRaw.h
-            muBlastHit.h
-            muBlastMCTrack.h
-            muCastorMCTrack.h
-            muCastorHit.h
-            muCastorInfo.h)
+            RootHitRaw.h)
 
-set(DICTIONARY_HEADERS TestTObject.h
-                       RootMathDense.h
-                       RootMuonScatter.h
-                       RootHitRaw.h
-                       muBlastHit.h
-                       muBlastMCTrack.h
-                       muCastorMCTrack.h
-                       muCastorHit.h
-                       muCastorInfo.h)
-
-set(SOURCES TestTObject.cpp
-            RootMuonScatter.cpp
-            muBlastHit.cpp
-            muBlastMCTrack.cpp
-            muCastorMCTrack.cpp
-            muCastorHit.cpp
-            muCastorInfo.cpp)
+set(SOURCES ${HEADERS} RootMuonScatter.cpp)
 
 set(LIBRARIES ${ROOT_LIBRARIES}
               ${PACKAGE_LIBPREFIX}Math)
-
-set(rDictName ${PACKAGE_LIBPREFIX}RootDict)
-root_generate_dictionary(${rDictName} ${DICTIONARY_HEADERS}
-                         LINKDEF Linkdef.h)
-set_source_files_properties(${rDictName}.cxx
-                            PROPERTIES GENERATED TRUE)
-set_source_files_properties(${rDictName}.h
-                            PROPERTIES GENERATED TRUE)
-list(APPEND SOURCES ${rDictName}.cxx)
-
-# TODO use a custom target linked to root_generate_dictionary
-set(R_ARTIFACTS ${CMAKE_CURRENT_BINARY_DIR}/lib${rDictName}_rdict.pcm
-                   ${CMAKE_CURRENT_BINARY_DIR}/lib${rDictName}.rootmap)
-install(FILES ${R_ARTIFACTS}
-        DESTINATION ${PACKAGE_INSTALL_LIB_DIR})
 
 set(libname ${PACKAGE_LIBPREFIX}Root)
 set(ULIB_SHARED_LIBRARIES ${ULIB_SHARED_LIBRARIES} ${libname} PARENT_SCOPE)
