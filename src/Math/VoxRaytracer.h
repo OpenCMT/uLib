@@ -63,19 +63,17 @@ public:
     };
 
 
- public:
- VoxRaytracer(StructuredGrid &image) : m_Image(&image) {
-      m_scale <<
-	(m_Image->GetWorldMatrix() * Vector4f(1,0,0,0)).norm(),
-	(m_Image->GetWorldMatrix() * Vector4f(0,1,0,0)).norm(),
-	(m_Image->GetWorldMatrix() * Vector4f(0,0,1,0)).norm();
-    }
+public:
+    VoxRaytracer(StructuredGrid &image);
 
     bool GetEntryPoint(const HLine3f &line, HPoint3f &pt);
 
     bool GetExitPoint(const HLine3f &line, HPoint3f &pt);
 
     RayData TraceBetweenPoints(const HPoint3f &in, const HPoint3f &out) const;
+
+    RayData BeamBetweenPoints(const HPoint3f &in, const HPoint3f &out,
+                              int h_thick = 0, int v_thick = 0) const;
 
     RayData TraceLine(const HLine3f &line) const;
 
