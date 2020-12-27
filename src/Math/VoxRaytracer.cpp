@@ -208,48 +208,53 @@ VoxRaytracer::RayData VoxRaytracer::TraceBetweenPoints(const HPoint3f &in, const
 
 // Rectangular beam
 VoxRaytracer::RayData VoxRaytracer::BeamBetweenPoints(const HPoint3f &in, const HPoint3f &out,
-                                                      int h_thick, int v_thick) const
+                                                      int x_thick, int y_thick, int z_thick) const
 {
-    if (h_thick < 0) h_thick = 0;
-    if (v_thick < 0) v_thick = 0;
+    if (x_thick < 0) x_thick = 0;
+    if (y_thick < 0) y_thick = 0;
+    if (z_thick < 0) z_thick = 0;
 
     RayData ray = TraceBetweenPoints(in, out);
-    if (h_thick == 0 && v_thick == 0) return ray;
+    if (x_thick == 0 && y_thick == 0 && z_thick == 0) return ray;
 
     RayTable rTable = RayTable(ray.Data().size());
-    for(auto it = ray.Data().begin(); it < ray.Data().end(); ++it)
-    {
-        rTable.emplace(it->vox_id, it->L);
-    }
 
-    RayData beam;
-    for(auto it = ray.Data().begin(); it < ray.Data().end(); ++it)
+    for (auto iter : ray.Data())
     {
-        Vector3i rPos = m_Image->UnMap(it->vox_id);
+        Vector3i rPos = m_Image->UnMap(iter.vox_id);
 
-        for (int k = h_thick * -1; k <= h_thick; k++)
+        for (int k = x_thick * -1; k <= x_thick; k++)
         {
-            for (int j = v_thick * -1; j <= v_thick; j++)
+            for (int j = y_thick * -1; j <= y_thick; j++)
             {
-                // TODO check data order in StructuredData
-                Vector3i offset { j, k, 0 };
-                Vector3i n_id = rPos + offset;
-                if (!m_Image->IsInsideGrid(n_id)) continue;
-
-                Id_t n_vox_id = m_Image->Map(n_id);
-
-                auto tPair = rTable.find(n_vox_id);
-                if (tPair == rTable.end())
+                for (int h = z_thick * -1; h <= z_thick; h++)
                 {
-                    beam.AddElement(n_vox_id, 0);        //TODO Verify any condition with L==0
-                }
-                else if (tPair->second != 0) 
-                {
-                    beam.AddElement(n_vox_id, tPair->second);
-                    rTable[n_vox_id] = 0;
+                    // TODO check data order in StructuredData
+                    Vector3i offset { j, k, h };
+                    Vector3i n_id = rPos + offset;
+                    if (!m_Image->IsInsideGrid(n_id)) continue;
+
+                    Id_t n_vox_id = m_Image->Map(n_id);
+                    Scalarf t_len = (k == 0 && j == 0 && h == 0) ? iter.L : 0; //TODO Verify any condition with L==0
+
+                    auto tPair = rTable.find(n_vox_id);
+                    if (tPair == rTable.end())
+                    {
+                        rTable.emplace(n_vox_id, t_len);
+                    }
+                    else if (t_len != 0)
+                    {
+                        rTable[n_vox_id] = t_len;
+                    }
                 }
             }
         }
+    }
+
+    RayData beam;
+    for (auto iter : rTable)
+    {
+        beam.AddElement(iter.first, iter.second);
     }
     return beam;
 }

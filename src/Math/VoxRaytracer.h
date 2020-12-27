@@ -73,7 +73,7 @@ public:
     RayData TraceBetweenPoints(const HPoint3f &in, const HPoint3f &out) const;
 
     RayData BeamBetweenPoints(const HPoint3f &in, const HPoint3f &out,
-                              int h_thick = 0, int v_thick = 0) const;
+                              int x_thick = 0, int y_thick = 0, int z_thick = 0) const;
 
     RayData TraceLine(const HLine3f &line) const;
 
