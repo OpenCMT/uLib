@@ -32,8 +32,6 @@
 
 inline float fast_sign(float f) { return 1 - 2 * (f < 0); }
 
-typedef std::unordered_map<uLib::Id_t, uLib::Scalarf> RayTable;
-
 namespace uLib {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +87,6 @@ void VoxRaytracer::RayData::PrintSelf(std::ostream &o)
         o << "[ " << (*it).vox_id << ", " << (*it).L << "] \n";
     }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //// RAY TRACER ////////////////////////////////////////////////////////////////
@@ -205,57 +202,93 @@ VoxRaytracer::RayData VoxRaytracer::TraceBetweenPoints(const HPoint3f &in, const
     return ray;
 }
 
-
-// Rectangular beam
-VoxRaytracer::RayData VoxRaytracer::BeamBetweenPoints(const HPoint3f &in, const HPoint3f &out,
-                                                      int x_thick, int y_thick, int z_thick) const
+static int encode_v(Vector3i in)
 {
-    if (x_thick < 0) x_thick = 0;
-    if (y_thick < 0) y_thick = 0;
-    if (z_thick < 0) z_thick = 0;
+    return ((in[0] + 1) << 4) + ((in[1] + 1) << 2) + in[2] + 1;
+}
+
+static Vector3i decode_v(int in)
+{
+    Vector3i result {
+     ((in & 48) >> 4) - 1,
+     ((in & 12) >> 2) - 1,
+     (in & 3) - 1
+    };
+    return result;
+}
+
+VoxRaytracer::RayData VoxRaytracer::BeamBetweenPoints(const HPoint3f &in, const HPoint3f &out, Vector3i thickness) const
+{
+    if (thickness[0] < 0) thickness[0] = 0;
+    if (thickness[1] < 0) thickness[1] = 0;
+    if (thickness[2] < 0) thickness[2] = 0;
+
+    Vector3i zero_v { 0, 0, 0 };
 
     RayData ray = TraceBetweenPoints(in, out);
-    if (x_thick == 0 && y_thick == 0 && z_thick == 0) return ray;
+    if (thickness == zero_v || ray.Data().size() == 0) return ray;
 
-    RayTable rTable = RayTable(ray.Data().size());
+    /*
+     * Calculate the forbidden relocations
+     */
 
+    std::unordered_map<int, int> ban_points(26);
+
+    Vector3i prevPos = m_Image->UnMap(ray.Data()[0].vox_id);
+    Vector3i currDir = zero_v;
+    int currLen = 1;
+
+    for (int k = 1; k < ray.Data().size(); k++)
+    {
+        Vector3i currPos = m_Image->UnMap(ray.Data()[k].vox_id);
+        Vector3i offset = currPos - prevPos;
+        prevPos = currPos;
+
+        if (k == 1) currDir = offset;
+
+        if (offset == currDir)
+        {
+            currLen++;
+            continue;
+        }
+
+        int enc_v = encode_v(currDir);
+        if (ban_points.find(enc_v) == ban_points.end())
+        {
+            ban_points.emplace(enc_v, currLen);
+        }
+        else if (currLen > ban_points[enc_v])
+        {
+            ban_points[enc_v] = currLen;
+        }
+
+        currDir = offset;
+        currLen = 2;
+    }
+
+    /*
+     * Calculate the beam section
+     */
+    std::vector<Vector3i> relocs;
+    relocs.push_back(zero_v);
+
+    /*
+     * Compose the beam
+     */
+    RayData beam;
     for (auto iter : ray.Data())
     {
         Vector3i rPos = m_Image->UnMap(iter.vox_id);
 
-        for (int k = x_thick * -1; k <= x_thick; k++)
+        for (Vector3i reloc : relocs)
         {
-            for (int j = y_thick * -1; j <= y_thick; j++)
-            {
-                for (int h = z_thick * -1; h <= z_thick; h++)
-                {
-                    // TODO check data order in StructuredData
-                    Vector3i offset { j, k, h };
-                    Vector3i n_id = rPos + offset;
-                    if (!m_Image->IsInsideGrid(n_id)) continue;
+            Vector3i cPos = rPos + reloc;
+            if (!m_Image->IsInsideGrid(cPos)) continue;
 
-                    Id_t n_vox_id = m_Image->Map(n_id);
-                    Scalarf t_len = (k == 0 && j == 0 && h == 0) ? iter.L : 0; //TODO Verify any condition with L==0
-
-                    auto tPair = rTable.find(n_vox_id);
-                    if (tPair == rTable.end())
-                    {
-                        rTable.emplace(n_vox_id, t_len);
-                    }
-                    else if (t_len != 0)
-                    {
-                        rTable[n_vox_id] = t_len;
-                    }
-                }
-            }
+            beam.AddElement(m_Image->Map(cPos), iter.L);
         }
     }
 
-    RayData beam;
-    for (auto iter : rTable)
-    {
-        beam.AddElement(iter.first, iter.second);
-    }
     return beam;
 }
 

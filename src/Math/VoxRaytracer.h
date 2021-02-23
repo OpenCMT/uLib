@@ -38,7 +38,8 @@ namespace uLib {
 class VoxRaytracer {
 
 public:
-    class RayData {
+    class RayData
+    {
     public:
         RayData() : m_TotalLength(0) {}
 
@@ -62,7 +63,6 @@ public:
         Scalarf              m_TotalLength;
     };
 
-
 public:
     VoxRaytracer(StructuredGrid &image);
 
@@ -72,8 +72,7 @@ public:
 
     RayData TraceBetweenPoints(const HPoint3f &in, const HPoint3f &out) const;
 
-    RayData BeamBetweenPoints(const HPoint3f &in, const HPoint3f &out,
-                              int x_thick = 0, int y_thick = 0, int z_thick = 0) const;
+    RayData BeamBetweenPoints(const HPoint3f &in, const HPoint3f &out, Vector3i thickness) const;
 
     RayData TraceLine(const HLine3f &line) const;
 
