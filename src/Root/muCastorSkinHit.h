@@ -26,6 +26,12 @@ public:
     void SetMotherID(Int_t mid)     { fMotherID = mid; };
     void SetMom(TVector3 xyz)       { fMomX = xyz.X(); fMomY = xyz.Y(); fMomZ = xyz.Z(); };
     void SetPos(TVector3 xyz)       { fPosX = xyz.X(); fPosY = xyz.Y(); fPosZ = xyz.Z(); };
+
+    Int_t GetDetID()    { return fDetID; }
+    Int_t GetPdgCode()  { return fPdgCode; }
+    Int_t GetMotherID() { return fMotherID; }
+    TVector3 GetMom()   { return TVector3(fMomX, fMomY, fMomZ); }
+    TVector3 GetPos()   { return TVector3(fPosX, fPosY, fPosZ); }
       
 private:
     Int_t      fDetID;      // Detector module ID 

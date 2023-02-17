@@ -81,6 +81,8 @@ using namespace ROOT::Mutom;
 #pragma link C++ class  muCastorInfo+;
 #pragma link C++ class  muCastorSkinHit+;
 
+#pragma link C++ class  SkinDetectorWriter+;
+
 #endif // __CINT__
 
 #endif // LINKDEF_H

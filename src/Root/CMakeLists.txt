@@ -4,18 +4,21 @@ set(HEADERS RootMathDense.h
             muCastorMCTrack.h
             muCastorHit.h
             muCastorInfo.h
-            muCastorSkinHit.h)
+            muCastorSkinHit.h
+            SkinDetectorWriter.h)
 
 set(SOURCES ${HEADERS} RootMuonScatter.cpp
                        muCastorMCTrack.cpp
                        muCastorHit.cpp
                        muCastorInfo.cpp
-                       muCastorSkinHit.cpp)
+                       muCastorSkinHit.cpp
+                       SkinDetectorWriter.cpp)
 
 set(DICTIONARY_HEADERS muCastorMCTrack.h
                        muCastorHit.h
                        muCastorInfo.h
-                       muCastorSkinHit.h)
+                       muCastorSkinHit.h
+                       SkinDetectorWriter.h)
 
 set(LIBRARIES ${ROOT_LIBRARIES}
               ${PACKAGE_LIBPREFIX}Math)
