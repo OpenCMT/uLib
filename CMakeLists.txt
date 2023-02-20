@@ -88,6 +88,7 @@ find_package(VTK REQUIRED
                             IOLegacy
                             IOXML
                             IOXMLParser
+                            ImagingCore
                             InteractionStyle
                             InteractionWidgets
                             RenderingAnnotation
