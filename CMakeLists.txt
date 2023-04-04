@@ -79,25 +79,31 @@ include(${EIGEN3_USE_FILE})
 find_package(ROOT CONFIG REQUIRED)
 include(${ROOT_USE_FILE})
 
-find_package(VTK REQUIRED
-                 COMPONENTS CommonColor
-                            CommonCore
-                            FiltersCore
-                            FiltersModeling
-                            FiltersSources
-                            IOLegacy
-                            IOXML
-                            IOXMLParser
-                            ImagingCore
-                            InteractionStyle
-                            InteractionWidgets
-                            RenderingAnnotation
-                            RenderingContextOpenGL2
-                            RenderingCore
-                            RenderingFreeType
-                            RenderingGL2PSOpenGL2
-                            RenderingOpenGL2
-                            RenderingVolumeOpenGL2)
+option(CENTOS_SUPPORT "VTK definitions for CentOS" OFF)
+if(CENTOS_SUPPORT)
+    find_package(VTK CONFIG REQUIRED)
+    include(${VTK_USE_FILE})
+else()
+    find_package(VTK REQUIRED
+                     COMPONENTS CommonColor
+                                CommonCore
+                                FiltersCore
+                                FiltersModeling
+                                FiltersSources
+                                IOLegacy
+                                IOXML
+                                IOXMLParser
+                                ImagingCore
+                                InteractionStyle
+                                InteractionWidgets
+                                RenderingAnnotation
+                                RenderingContextOpenGL2
+                                RenderingCore
+                                RenderingFreeType
+                                RenderingGL2PSOpenGL2
+                                RenderingOpenGL2
+                                RenderingVolumeOpenGL2)
+endif()
 
 set(CMAKE_REQUIRED_INCLUDES CMAKE_REQUIRED_INCLUDES math.h)
 set(CMAKE_REQUIRED_LIBRARIES CMAKE_REQUIRED_LIBRARIES m)
