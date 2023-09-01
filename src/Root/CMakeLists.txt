@@ -5,6 +5,8 @@ set(HEADERS RootMathDense.h
             muCastorHit.h
             muCastorInfo.h
             muCastorSkinHit.h
+            muCastorPrimaryVertex.h
+            muCastorMuDetDIGI.h
             SkinDetectorWriter.h)
 
 set(SOURCES ${HEADERS} RootMuonScatter.cpp
@@ -12,12 +14,16 @@ set(SOURCES ${HEADERS} RootMuonScatter.cpp
                        muCastorHit.cpp
                        muCastorInfo.cpp
                        muCastorSkinHit.cpp
+                       muCastorPrimaryVertex.cpp
+                       muCastorMuDetDIGI.cpp
                        SkinDetectorWriter.cpp)
 
 set(DICTIONARY_HEADERS muCastorMCTrack.h
                        muCastorHit.h
                        muCastorInfo.h
                        muCastorSkinHit.h
+                       muCastorPrimaryVertex.h
+                       muCastorMuDetDIGI.h
                        SkinDetectorWriter.h)
 
 set(LIBRARIES ${ROOT_LIBRARIES}

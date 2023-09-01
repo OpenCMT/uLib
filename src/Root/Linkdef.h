@@ -74,13 +74,12 @@ using namespace ROOT::Mutom;
 #pragma link C++ function HitRaw::Tdc() const;
 #pragma link C++ function HitRaw::Ch() const;
 
-#pragma link C++ class  muBlastMCTrack+;
-#pragma link C++ class  muBlastHit+;
 #pragma link C++ class  muCastorMCTrack+;
 #pragma link C++ class  muCastorHit+;
 #pragma link C++ class  muCastorInfo+;
 #pragma link C++ class  muCastorSkinHit+;
-
+#pragma link C++ class  muCastorPrimaryVertex+;
+#pragma link C++ class  muCastorMuDetDIGI+;
 #pragma link C++ class  SkinDetectorWriter+;
 
 #endif // __CINT__
