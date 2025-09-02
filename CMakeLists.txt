@@ -79,6 +79,11 @@ include(${EIGEN3_USE_FILE})
 find_package(ROOT CONFIG REQUIRED)
 include(${ROOT_USE_FILE})
 
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
+
+
+
 option(CENTOS_SUPPORT "VTK definitions for CentOS" OFF)
 if(CENTOS_SUPPORT)
     find_package(VTK CONFIG REQUIRED)

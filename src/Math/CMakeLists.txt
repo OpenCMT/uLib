@@ -32,7 +32,8 @@ set(SOURCES VoxRaytracer.cpp
             Structured4DGrid.cpp)
 
 set(LIBRARIES ${Eigen_LIBRARY}
-              ${ROOT_LIBRARIES})
+              ${ROOT_LIBRARIES}
+              ${VTK_LIBRARIES})
 
 set(libname ${PACKAGE_LIBPREFIX}Math)
 set(ULIB_SHARED_LIBRARIES ${ULIB_SHARED_LIBRARIES} ${libname} PARENT_SCOPE)

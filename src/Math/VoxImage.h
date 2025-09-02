@@ -58,6 +58,7 @@ public:
     void ExportToVtk(const char *file, bool density_type = 0);
     void ExportToVtkXml(const char *file, bool density_type = 0);
     int ImportFromVtk(const char *file);
+    void SaveToVtkVti (const char *file);
 
 protected:
 
