@@ -32,40 +32,11 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
-
 #include <vtkXMLImageDataWriter.h>
+#include <vtkStringArray.h>
 
 
 namespace uLib {
-
-void Abstract::VoxImage::SaveToVtkVti (const char *file)
-{
-    Abstract::VoxImage *voxels = this;
-
-    vtkSmartPointer<vtkImageData> image = vtkSmartPointer<vtkImageData>::New();
-    image->SetDimensions(voxels->GetDims()(0), voxels->GetDims()(1), voxels->GetDims()(2));
-    image->SetSpacing(voxels->GetSpacing()(0), voxels->GetSpacing()(1), voxels->GetSpacing()(2));
-    image->SetOrigin(voxels->GetOrigin()(0), voxels->GetOrigin()(1), voxels->GetOrigin()(2));
-    image->AllocateScalars(VTK_FLOAT, 1);
-
-    int nx = voxels->GetDims()(0);
-    int ny = voxels->GetDims()(1);
-    int nz = voxels->GetDims()(2);
-
-    size_t npoints = nx*ny*nz;
-    float *scalar = static_cast<float*>(image->GetScalarPointer());
-
-    for (size_t i = 0; i < npoints; i++) {
-        scalar[i] = static_cast<float>(voxels->GetValue(i));
-    }
-
-    vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
-    writer->SetFileName(file);
-    writer->SetInputData(image);
-    writer->Write();
-}
-
-
 
 void Abstract::VoxImage::ExportToVtk (const char *file, bool density_type)
 {
@@ -116,6 +87,57 @@ void Abstract::VoxImage::ExportToVtk (const char *file, bool density_type)
     fclose(vtk_file);
     printf("%s vtk file saved\n",file);
 }
+
+
+
+void Abstract::VoxImage::ExportToVti (const char *file, bool density_type, bool compressed)
+{
+    Abstract::VoxImage *voxels = this;
+
+    vtkSmartPointer<vtkImageData> image = vtkSmartPointer<vtkImageData>::New();
+    image->SetDimensions(voxels->GetDims()(0), voxels->GetDims()(1), voxels->GetDims()(2));
+    image->SetSpacing(voxels->GetSpacing()(0), voxels->GetSpacing()(1), voxels->GetSpacing()(2));
+    image->SetOrigin(voxels->GetOrigin()(0), voxels->GetOrigin()(1), voxels->GetOrigin()(2));
+    image->AllocateScalars(VTK_FLOAT, 1);
+
+    float norm;
+    if (density_type) {
+        norm = 1;
+    } else norm = 1.E6;
+
+    int nx = voxels->GetDims()(0);
+    int ny = voxels->GetDims()(1);
+    int nz = voxels->GetDims()(2);
+
+    size_t npoints = nx*ny*nz;
+    float *scalar = static_cast<float*>(image->GetScalarPointer());
+
+    for (size_t i = 0; i < npoints; i++) {
+        scalar[i] = static_cast<float>(voxels->GetValue(i) * norm);
+    }
+
+    // // Create a custom string key
+    // static vtkInformationStringKey* ConfigNote =
+    //     vtkInformationStringKey::MakeKey("ConfigNote", "MyNotes");
+
+    // // Attach metadata
+    // image->GetInformation()->Set(ConfigNote, "This image was generated with method X, threshold=0.5");
+
+
+    vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+    writer->SetFileName(file);
+    writer->SetInputData(image);
+    if(compressed) {
+        writer->SetDataModeToBinary();
+        writer->SetCompressorTypeToZLib();
+    }
+    writer->Write();
+}
+
+
+
+
+
 
 int Abstract::VoxImage::ImportFromVtk(const char *file)
 {
