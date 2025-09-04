@@ -51,7 +51,8 @@ set(ULIB_SELECTED_MODULES ${ULIB_SELECTED_MODULES} Root PARENT_SCOPE)
 add_library(${libname} SHARED ${SOURCES})
 set_target_properties(${libname} PROPERTIES
                       VERSION ${PROJECT_VERSION}
-                      SOVERSION ${PROJECT_SOVERSION})
+                      SOVERSION ${PROJECT_SOVERSION}
+                      CXX_STANDARD 17)
 target_link_libraries(${libname} ${LIBRARIES})
 
 install(TARGETS ${libname}
