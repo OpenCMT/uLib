@@ -1,15 +1,66 @@
-# - Config file for the FooBar package
+# - Config file for the ULib package
 # It defines the following variables
-#  FOOBAR_INCLUDE_DIRS - include directories for FooBar
-#  FOOBAR_LIBRARIES    - libraries to link against
-#  FOOBAR_EXECUTABLE   - the bar executable
+#  ULIB_INCLUDE_DIRS - include directories for ULib
+#  ULIB_LIBRARIES    - libraries to link against
+#  ULIB_EXECUTABLE   - the bar executable
 
-# Compute paths
+
+set(ULIB_VERSION @PROJECT_VERSION@)
+
+@PACKAGE_INIT@
+
+# Definisce le directory per l'inclusione dei file header
+# PACKAGE_INCLUDE_INSTALL_DIR è sostituito da configure_package_config_file
+# con il percorso corretto per l'installazione.
+set(ULIB_INCLUDE_DIRS "${PACKAGE_INCLUDE_INSTALL_DIR}")
+
 get_filename_component(ULIB_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-set(ULIB_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
 
-# Our library dependencies (contains definitions for IMPORTED targets)
-include("${ULIB_CMAKE_DIR}/uLibTargets.cmake")
+# Search for the directory of exported build targets
+set(uLib_BUILD_TARGETS_FILE
+    "${ULIB_CMAKE_DIR}/uLibTargets-build.cmake"
+)
 
-# These are IMPORTED targets created by FooBarTargets.cmake
-set(ULIB_LIBRARIES @ULIB_SHARED_LIBRARIES@)
+# Search for the directory of installed targets
+set(uLib_INSTALL_TARGETS_FILE
+    "${ULIB_CMAKE_DIR}/uLibTargets.cmake"
+)
+
+# We use a logic based on the presence of the build target file
+# to determine if we are in a local build.
+if(EXISTS "${uLib_BUILD_TARGETS_FILE}")
+    message(WARNING " ++ Using uLib build targets")
+
+    include("${uLib_BUILD_TARGETS_FILE}")
+    set_and_check(ULIB_INCLUDE_DIRS "@ULIB_SOURCE_DIR@")
+    set_and_check(ULIB_LIBRARY_DIRS "${ULIB_CMAKE_DIR}")
+
+else()
+    message(STATUS " ++ UsingLib install targets")
+
+    include("${uLib_INSTALL_TARGETS_FILE}")
+    set_and_check(ULIB_INCLUDE_DIRS "@PACKAGE_PACKAGE_INSTALL_INC_DIR@")
+    set(ULIB_SYSCONFIG_DIR "@PACKAGE_PACKAGE_INSTALL_ETC_DIR@")
+    set_and_check(ULIB_CMAKE_DIR "@PACKAGE_PACKAGE_INSTALL_CMAKE_DIR@")
+    set_and_check(ULIB_LIBRARY_DIRS "@PACKAGE_PACKAGE_INSTALL_LIB_DIR@")
+endif()
+
+link_directories("${ULIB_LIBRARY_DIRS}")
+set(ULIB_LIBRARIES "@ULIB_SHARED_LIBRARIES@")
+
+# include("${ULIB_CMAKE_DIR}/uLibTargets.cmake")
+check_required_components(uLib)
+
+# Imposta la variabile per indicare che il pacchetto è stato trovato.
+set(uLib_FOUND TRUE)
+
+
+# # Compute paths
+# get_filename_component(ULIB_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+# set(ULIB_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+
+# # Our library dependencies (contains definitions for IMPORTED targets)
+# include("${ULIB_CMAKE_DIR}/uLibTargets.cmake")
+
+# # These are IMPORTED targets created by ULibTargets.cmake
+# set(ULIB_LIBRARIES @ULIB_SHARED_LIBRARIES@)

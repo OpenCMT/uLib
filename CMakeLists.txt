@@ -3,7 +3,7 @@
 ##### CMAKE LISTS ##############################################################
 ################################################################################
 
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.26)
 
 ## -------------------------------------------------------------------------- ##
 
@@ -11,7 +11,7 @@ project(uLib)
 
 # The version number.
 set(PROJECT_VERSION_MAJOR 0)
-set(PROJECT_VERSION_MINOR 5)
+set(PROJECT_VERSION_MINOR 6)
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 set(PROJECT_SOVERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
@@ -33,18 +33,41 @@ message(STATUS "Module path = ${CMAKE_MODULE_PATH}")
 
 ## GLOBALS ------------------------------------------------------------------ ##
 
-set(PACKAGE_INSTALL_BIN_DIR ${CMAKE_INSTALL_PREFIX}/bin 
-    CACHE PATH "Installation directory for executables")
-set(PACKAGE_INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib/
-    CACHE PATH "Installation directory for libraries")
-set(PACKAGE_INSTALL_INC_DIR ${CMAKE_INSTALL_PREFIX}/include/${PACKAGE_NAME}
-    CACHE PATH "Installation directory for headers")
-set(PACKAGE_INSTALL_DATA_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}
-    CACHE PATH "Installation directory for data files")
-set(PACKAGE_INSTALL_CMAKE_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/${PACKAGE_NAME}
-    CACHE PATH "Installation directory for CMake files")
+# set(PACKAGE_INSTALL_BIN_DIR ${CMAKE_INSTALL_PREFIX}/bin 
+#     CACHE PATH "Installation directory for executables")
+# set(PACKAGE_INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib/
+#     CACHE PATH "Installation directory for libraries")
+# set(PACKAGE_INSTALL_INC_DIR ${CMAKE_INSTALL_PREFIX}/include/${PACKAGE_NAME}
+#     CACHE PATH "Installation directory for headers")
+# set(PACKAGE_INSTALL_DATA_DIR ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE_NAME}
+#     CACHE PATH "Installation directory for data files")
+# set(PACKAGE_INSTALL_CMAKE_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/${PACKAGE_NAME}
+#     CACHE PATH "Installation directory for CMake files")
+
+# -- move to GnuInstallDirs
+# ref: https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
+include(GNUInstallDirs)
+set(PACKAGE_INSTALL_INC_DIR ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME}
+    CACHE PATH "Location of header files (.../include)" )
+set(PACKAGE_INSTALL_ETC_DIR ${CMAKE_INSTALL_SYSCONFDIR}/${PACKAGE_NAME}
+    CACHE PATH "Location of configuration files (.../etc)" )
+set(PACKAGE_INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR}/${PACKAGE_NAME}
+    CACHE PATH "Location of executable files (.../bin)" )
+set(PACKAGE_INSTALL_LIB_DIR ${CMAKE_INSTALL_LIBDIR}
+    CACHE PATH "Location of library files (.../lib)" )
+set(PACKAGE_INSTALL_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PACKAGE_NAME}
+    CACHE PATH "Location of cmake files (.../lib/cmake)" )   
+set(PACKAGE_INSTALL_DATA_DIR ${CMAKE_INSTALL_DATADIR}/${PACKAGE_NAME}
+    CACHE PATH "Location of data files (.../share)" )
+
+
+
 
 set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
+
+# this is used to be exported in build target 
+# ( to compile against build directory instead of install )
+set(ULIB_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     message(STATUS "Setting build type to 'Release' as none was specified.")
@@ -60,10 +83,12 @@ set(CMAKE_CXX_WARNING_OPTION ""
 set(CMAKE_VERBOSE_MAKEFILE FALSE
     CACHE STRING "Verbose compile output switch")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x ${CMAKE_CXX_WARNING_OPTION}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_WARNING_OPTION}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -UULIB_SERIALIZATION_ON")
 
-#enable_testing()
+# CTEST framework
+enable_testing()
+
 
 ## FIND PACKAGES ------------------------------------------------------------ ##
 
@@ -192,8 +217,8 @@ add_subdirectory(${SRC_DIR}/Vtk)
 
 
 # Create the FooBarConfig.cmake and FooBarConfigVersion files
-file(RELATIVE_PATH REL_INCLUDE_DIR "${PACKAGE_INSTALL_CMAKE_DIR}"
-   "${PACKAGE_INSTALL_INC_DIR}")
+# file(RELATIVE_PATH REL_INCLUDE_DIR "${PACKAGE_INSTALL_CMAKE_DIR}"
+#    "${PACKAGE_INSTALL_INC_DIR}")
 
 # ... for the build tree
 #set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src" "${PROJECT_BINARY_DIR}")
@@ -202,21 +227,54 @@ file(RELATIVE_PATH REL_INCLUDE_DIR "${PACKAGE_INSTALL_CMAKE_DIR}"
 
 # ... for the install tree
 set(CONF_INCLUDE_DIRS "\${ULIB_CMAKE_DIR}/${REL_INCLUDE_DIR}")
-configure_file(uLibConfig.cmake.in
-               "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/uLibConfig.cmake"
-               @ONLY)
+# [ removed for the configure_config_file ]
+# configure_file(uLibConfig.cmake.in
+#                "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/uLibConfig.cmake"
+#                @ONLY)
 
 # ... for both
 configure_file(uLibConfigVersion.cmake.in
-               "${PROJECT_BINARY_DIR}/uLibConfigVersion.cmake" @ONLY)
+                "${PROJECT_BINARY_DIR}/uLibConfigVersion.cmake" @ONLY)
 
-install(FILES "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/uLibConfig.cmake"
+
+include(CMakePackageConfigHelpers)
+
+# from CMake 3.x configure file shall be created using a dedicated function
+# see: https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html
+#
+configure_package_config_file(uLibConfig.cmake.in
+                              "${PROJECT_BINARY_DIR}/uLibConfig.cmake"
+                              INSTALL_DESTINATION ${PACKAGE_INSTALL_CMAKE_DIR}
+                              PATH_VARS 
+                                PACKAGE_INSTALL_LIB_DIR 
+                                PACKAGE_INSTALL_INC_DIR 
+                                PACKAGE_INSTALL_BIN_DIR 
+                                PACKAGE_INSTALL_CMAKE_DIR 
+                                PACKAGE_INSTALL_ETC_DIR 
+                                PACKAGE_INSTALL_DATA_DIR
+                                ULIB_SOURCE_DIR
+                                ULIB_SHARED_LIBRARIES
+                              # NO_SET_AND_CHECK_MACRO
+                              # NO_CHECK_REQUIRED_COMPONENTS_MACRO
+                              )
+
+install(FILES "${PROJECT_BINARY_DIR}/uLibConfig.cmake"
               "${PROJECT_BINARY_DIR}/uLibConfigVersion.cmake"
         DESTINATION "${PACKAGE_INSTALL_CMAKE_DIR}"
         COMPONENT dev)
 
+
+# this is a special target file for the build tree
+# it is used also to identify if we are using a build direcory
+# to link a project against uLib. see: uLibConfig.cmake ( IF )
+export (TARGETS ${ULIB_SHARED_LIBRARIES}
+        FILE "${PROJECT_BINARY_DIR}/uLibTargets-build.cmake"
+        # NAMESPACE "uLib::"
+)        
+
 # Install the export set for use with the install-tree
-install(EXPORT "${PROJECT_NAME}Targets"
+install(EXPORT "uLibTargets"
+        FILE "uLibTargets.cmake"
         DESTINATION "${PACKAGE_INSTALL_CMAKE_DIR}"
         COMPONENT dev)
 

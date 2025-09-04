@@ -65,6 +65,7 @@ vtkContainerBox::~vtkContainerBox()
 vtkPolyData *vtkContainerBox::GetPolyData() const
 {
     // TODO
+    return NULL;
 }
 
 void vtkContainerBox::InstallPipe()

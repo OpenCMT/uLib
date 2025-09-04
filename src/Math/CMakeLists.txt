@@ -1,3 +1,4 @@
+
 set(HEADERS ContainerBox.h
             Dense.h
             Geometry.h
@@ -45,10 +46,15 @@ set_target_properties(${libname} PROPERTIES
                       SOVERSION ${PROJECT_SOVERSION})
 target_link_libraries(${libname} ${LIBRARIES})
 
+
 install(TARGETS ${libname}
         EXPORT "${PROJECT_NAME}Targets"
         RUNTIME DESTINATION ${PACKAGE_INSTALL_BIN_DIR} COMPONENT bin
         LIBRARY DESTINATION ${PACKAGE_INSTALL_LIB_DIR} COMPONENT lib)
 
 install(FILES ${HEADERS} DESTINATION ${PACKAGE_INSTALL_INC_DIR}/Math)
+
+# TESTING
+# include(uLibTargetMacros)
+# add_subdirectory(testing)
 

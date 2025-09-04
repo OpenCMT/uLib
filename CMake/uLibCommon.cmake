@@ -58,7 +58,7 @@ endif()
 set(CMAKE_CXX_WARNING_OPTION "" CACHE STRING "Warning level -WAll to verbose all warnings")
 set(CMAKE_VERBOSE_MAKEFILE FALSE CACHE STRING "Verbose compile output switch")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x ${CMAKE_CXX_WARNING_OPTION}")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x ${CMAKE_CXX_WARNING_OPTION}")
 
 
 
