@@ -41,15 +41,15 @@ macro(uLib_add_shared_library name)
 
   install(TARGETS ${mname}
          EXPORT "${PROJECT_NAME}Targets"
-         RUNTIME DESTINATION ${PACKAGE_INSTALL_BIN_DIR} COMPONENT bin
-         LIBRARY DESTINATION ${PACKAGE_INSTALL_LIB_DIR} COMPONENT lib
-  #         PUBLIC_HEADER DESTINATION ${PACKAGE_INSTALL_INC_DIR} COMPONENT dev
+         RUNTIME DESTINATION ${INSTALL_BIN_DIR} COMPONENT bin
+         LIBRARY DESTINATION ${INSTALL_LIB_DIR} COMPONENT lib
+  #         PUBLIC_HEADER DESTINATION ${INSTALL_INC_DIR} COMPONENT dev
   )
  endif(SOURCES)
 
  if(HEADERS)
   foreach(header ${HEADERS})
-   install(FILES ${header} DESTINATION ${PACKAGE_INSTALL_INC_DIR}/${name})
+   install(FILES ${header} DESTINATION ${INSTALL_INC_DIR}/${name})
   endforeach(header)
   endif(HEADERS)
 
@@ -70,7 +70,7 @@ macro(uLib_add_target name)
 
     install(TARGETS ${name}
             EXPORT "${PROJECT_NAME}Targets"
-            RUNTIME DESTINATION ${PACKAGE_INSTALL_BIN_DIR} COMPONENT bin
+            RUNTIME DESTINATION ${INSTALL_BIN_DIR} COMPONENT bin
            )
 ENDMACRO(uLib_add_target)
 

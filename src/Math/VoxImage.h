@@ -56,9 +56,18 @@ public:
     virtual void SetDims(const Vector3i &size) = 0;
 
     void ExportToVtk(const char *file, bool density_type = 0);
+
+    // use this function to export to VTK binary format
     void ExportToVti (const char *file, bool density_type = 0, bool compressed = 0);
+    
+    // this function has been deprecated in favor of ExportToVti
+    // but it is kept for backward compatibility and because it 
+    // does not depend on vtk library
     void ExportToVtkXml(const char *file, bool density_type = 0);
-    int ImportFromVtk(const char *file);
+
+    int ImportFromVtk(const char *file, bool density_type = 0);
+
+    int ImportFromVti(const char *file, bool density_type = 0);
 
 protected:
 

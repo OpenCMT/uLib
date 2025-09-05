@@ -15,16 +15,16 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin CACHE PATH "build path for 
 mark_as_advanced(EXECUTABLE_OUTPUT_PATH)
 
 ## Install directories ##
-set(PACKAGE_INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
-set(PACKAGE_INSTALL_LIB_DIR lib/${PACKAGE_NAME} CACHE PATH "Installation directory for libraries")
-set(PACKAGE_INSTALL_INC_DIR include/${PACKAGE_NAME} CACHE PATH "Installation directory for headers")
-set(PACKAGE_INSTALL_DATA_DIR share/${PACKAGE_NAME} CACHE PATH "Installation directory for data files")
+set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
+set(INSTALL_LIB_DIR lib/${PACKAGE_NAME} CACHE PATH "Installation directory for libraries")
+set(INSTALL_INC_DIR include/${PACKAGE_NAME} CACHE PATH "Installation directory for headers")
+set(INSTALL_DATA_DIR share/${PACKAGE_NAME} CACHE PATH "Installation directory for data files")
 if(WIN32 AND NOT CYGWIN)
  set(DEF_INSTALL_CMAKE_DIR CMake)
 else()
  set(DEF_INSTALL_CMAKE_DIR lib/cmake/${PACKAGE_NAME})
 endif()
-set(PACKAGE_INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH "Installation directory for CMake files")
+set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH "Installation directory for CMake files")
 
 # Make relative paths absolute (needed later on)
 foreach(p LIB BIN INC DATA CMAKE)

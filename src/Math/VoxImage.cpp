@@ -32,9 +32,11 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
+#include <vtkXMLImageDataReader.h>
 #include <vtkXMLImageDataWriter.h>
 #include <vtkStringArray.h>
-
+#include <vtkInformation.h>
+#include <vtkInformationStringKey.h>
 
 namespace uLib {
 
@@ -116,14 +118,23 @@ void Abstract::VoxImage::ExportToVti (const char *file, bool density_type, bool 
         scalar[i] = static_cast<float>(voxels->GetValue(i) * norm);
     }
 
-    // // Create a custom string key
-    // static vtkInformationStringKey* ConfigNote =
-    //     vtkInformationStringKey::MakeKey("ConfigNote", "MyNotes");
+    // Create a custom string key
+    static vtkInformationStringKey* ConfigNote =
+        vtkInformationStringKey::MakeKey("cmt.config", "Config");
 
-    // // Attach metadata
-    // image->GetInformation()->Set(ConfigNote, "This image was generated with method X, threshold=0.5");
+    // Attach metadata
+    vtkInformation *info = image->GetInformation();
+    info->Set(ConfigNote, 
 
+    "This image was generated with uLib\n"
+    "-----------------------------------\n"
+    "Author: Andrea Rigoni\n"
+    "Version: 0.1\n"
+    "Date: 2025\n"
 
+    );
+
+    // std::cout << info->Get(ConfigNote) << std::endl;
     vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
     writer->SetFileName(file);
     writer->SetInputData(image);
@@ -135,11 +146,40 @@ void Abstract::VoxImage::ExportToVti (const char *file, bool density_type, bool 
 }
 
 
+int Abstract::VoxImage::ImportFromVti(const char *file, bool density_type) {
+    
+    vtkSmartPointer<vtkXMLImageDataReader> reader = vtkSmartPointer<vtkXMLImageDataReader>::New();
+    reader->SetFileName(file);
+    reader->Update();
+    vtkImageData *image = reader->GetOutput();
+    if(!image) return false;
+    
+    Abstract::VoxImage *voxels = this;
+    int nx = image->GetDimensions()[0];
+    int ny = image->GetDimensions()[1];
+    int nz = image->GetDimensions()[2];
+    
+    voxels->SetDims(Vector3i(nx,ny,nz));
+    voxels->SetSpacing(Vector3f(image->GetSpacing()[0],image->GetSpacing()[1],image->GetSpacing()[2]));
+    voxels->SetOrigin(Vector3f(image->GetOrigin()[0],image->GetOrigin()[1],image->GetOrigin()[2]));
+
+    float norm;
+    if (density_type) {
+        norm = 1;
+    } else norm = 1.E6;
+
+    size_t npoints = nx*ny*nz;
+    float *scalar = static_cast<float*>(image->GetScalarPointer());
+    for (size_t i = 0; i < npoints; i++) {
+        voxels->SetValue(i, scalar[i] / norm);
+    }
+
+    return true;
+}
 
 
 
-
-int Abstract::VoxImage::ImportFromVtk(const char *file)
+int Abstract::VoxImage::ImportFromVtk(const char *file, bool density_type)
 {
     FILE * vtk_file = fopen(file, "r");
     if (!vtk_file) return false;
@@ -171,14 +211,18 @@ int Abstract::VoxImage::ImportFromVtk(const char *file)
     this->SetSpacing(Vector3f(sx,sy,sz));
     this->SetPosition(Vector3f(ox,oy,oz));
 
+    float norm;
+    if (density_type) {
+        norm = 1;
+    } else norm = 1.E6;
+
     for (int k = 0; k < dz; ++k) {
         for (int j = 0; j < dy; ++j) {
             for (int i = 0; i < dx; ++i) {
                 Vector3i idx(i, j, k);
                 float tmp_val;
                 fscanf(vtk_file, "%f", &tmp_val);
-                //this->SetValue(idx,fabs(tmp_val)*1E-6);
-                this->SetValue(idx,tmp_val*1E-6);
+                this->SetValue(idx,tmp_val / norm);
             }
         }
     }
