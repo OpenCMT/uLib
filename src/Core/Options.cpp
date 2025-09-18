@@ -31,6 +31,9 @@
 
 #include <boost/program_options.hpp>
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+
 
 //class boost::program_options::error_with_option_name;
 //template<> boost::program_options::typed_value<int> boost::program_options::value<int>();
@@ -73,6 +76,23 @@ void Options::parse_config_file(const char *fname)
         boost::program_options::notify(m_vm);
     }
 }
+
+void Options::save_config_file(const char *fname) {
+    std::ofstream os;
+    os.open(fname);
+    
+    using boost::property_tree::ptree;
+
+    ptree root;
+
+
+    std::cout << m_configuration << "\n";
+    std::cout << m_global << "\n";
+
+    write_ini( std::cout, root );
+
+}
+
 
 bool Options::count(const char *str) const
 {

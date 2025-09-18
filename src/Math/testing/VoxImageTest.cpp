@@ -92,6 +92,20 @@ int main() {
         imgR.ExportToVtk("./read_and_saved.vtk");
     }
 
+    {
+        VoxImage<TestVoxel> img(Vector3i(4,4,4));
+        img.InitVoxels({0,0});
+        for (int i=0; i<4; i++) {
+            for (int j=0; j<4; j++) {
+                for (int k=0; k<4; k++) {
+                    img[Vector3i(i,j,k)] = {i+j+k,0};
+                }
+            }
+        }
+        img.ExportToVti("./vti_saved.vti",0,1);
+        // img.ImportFromVtkXml("./test_vox_image.vti");
+    }
+
 
     {
         VoxImage<TestVoxel> img1(Vector3i(5,5,5));

@@ -19,4 +19,4 @@ set(LIBRARIES
        ${PACKAGE_LIBPREFIX}Math
 )
 
-uLib_add_tests(${uLib-module})
+uLib_add_tests(Math)

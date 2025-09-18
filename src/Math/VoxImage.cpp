@@ -30,6 +30,13 @@
 
 #include "VoxImage.h"
 
+#include <vtkSmartPointer.h>
+#include <vtkImageData.h>
+#include <vtkXMLImageDataReader.h>
+#include <vtkXMLImageDataWriter.h>
+#include <vtkStringArray.h>
+#include <vtkInformation.h>
+#include <vtkInformationStringKey.h>
 
 namespace uLib {
 
@@ -83,7 +90,96 @@ void Abstract::VoxImage::ExportToVtk (const char *file, bool density_type)
     printf("%s vtk file saved\n",file);
 }
 
-int Abstract::VoxImage::ImportFromVtk(const char *file)
+
+
+void Abstract::VoxImage::ExportToVti (const char *file, bool density_type, bool compressed)
+{
+    Abstract::VoxImage *voxels = this;
+
+    vtkSmartPointer<vtkImageData> image = vtkSmartPointer<vtkImageData>::New();
+    image->SetDimensions(voxels->GetDims()(0), voxels->GetDims()(1), voxels->GetDims()(2));
+    image->SetSpacing(voxels->GetSpacing()(0), voxels->GetSpacing()(1), voxels->GetSpacing()(2));
+    image->SetOrigin(voxels->GetOrigin()(0), voxels->GetOrigin()(1), voxels->GetOrigin()(2));
+    image->AllocateScalars(VTK_FLOAT, 1);
+
+    float norm;
+    if (density_type) {
+        norm = 1;
+    } else norm = 1.E6;
+
+    int nx = voxels->GetDims()(0);
+    int ny = voxels->GetDims()(1);
+    int nz = voxels->GetDims()(2);
+
+    size_t npoints = nx*ny*nz;
+    float *scalar = static_cast<float*>(image->GetScalarPointer());
+
+    for (size_t i = 0; i < npoints; i++) {
+        scalar[i] = static_cast<float>(voxels->GetValue(i) * norm);
+    }
+
+    // Create a custom string key
+    static vtkInformationStringKey* ConfigNote =
+        vtkInformationStringKey::MakeKey("cmt.config", "Config");
+
+    // Attach metadata
+    vtkInformation *info = image->GetInformation();
+    info->Set(ConfigNote, 
+
+    "This image was generated with uLib\n"
+    "-----------------------------------\n"
+    "Author: Andrea Rigoni\n"
+    "Version: 0.1\n"
+    "Date: 2025\n"
+
+    );
+
+    // std::cout << info->Get(ConfigNote) << std::endl;
+    vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+    writer->SetFileName(file);
+    writer->SetInputData(image);
+    if(compressed) {
+        writer->SetDataModeToBinary();
+        writer->SetCompressorTypeToZLib();
+    }
+    writer->Write();
+}
+
+
+int Abstract::VoxImage::ImportFromVti(const char *file, bool density_type) {
+    
+    vtkSmartPointer<vtkXMLImageDataReader> reader = vtkSmartPointer<vtkXMLImageDataReader>::New();
+    reader->SetFileName(file);
+    reader->Update();
+    vtkImageData *image = reader->GetOutput();
+    if(!image) return false;
+    
+    Abstract::VoxImage *voxels = this;
+    int nx = image->GetDimensions()[0];
+    int ny = image->GetDimensions()[1];
+    int nz = image->GetDimensions()[2];
+    
+    voxels->SetDims(Vector3i(nx,ny,nz));
+    voxels->SetSpacing(Vector3f(image->GetSpacing()[0],image->GetSpacing()[1],image->GetSpacing()[2]));
+    voxels->SetOrigin(Vector3f(image->GetOrigin()[0],image->GetOrigin()[1],image->GetOrigin()[2]));
+
+    float norm;
+    if (density_type) {
+        norm = 1;
+    } else norm = 1.E6;
+
+    size_t npoints = nx*ny*nz;
+    float *scalar = static_cast<float*>(image->GetScalarPointer());
+    for (size_t i = 0; i < npoints; i++) {
+        voxels->SetValue(i, scalar[i] / norm);
+    }
+
+    return true;
+}
+
+
+
+int Abstract::VoxImage::ImportFromVtk(const char *file, bool density_type)
 {
     FILE * vtk_file = fopen(file, "r");
     if (!vtk_file) return false;
@@ -115,14 +211,18 @@ int Abstract::VoxImage::ImportFromVtk(const char *file)
     this->SetSpacing(Vector3f(sx,sy,sz));
     this->SetPosition(Vector3f(ox,oy,oz));
 
+    float norm;
+    if (density_type) {
+        norm = 1;
+    } else norm = 1.E6;
+
     for (int k = 0; k < dz; ++k) {
         for (int j = 0; j < dy; ++j) {
             for (int i = 0; i < dx; ++i) {
                 Vector3i idx(i, j, k);
                 float tmp_val;
                 fscanf(vtk_file, "%f", &tmp_val);
-                //this->SetValue(idx,fabs(tmp_val)*1E-6);
-                this->SetValue(idx,tmp_val*1E-6);
+                this->SetValue(idx,tmp_val / norm);
             }
         }
     }

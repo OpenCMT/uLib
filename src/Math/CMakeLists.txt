@@ -1,3 +1,4 @@
+
 set(HEADERS ContainerBox.h
             Dense.h
             Geometry.h
@@ -32,7 +33,8 @@ set(SOURCES VoxRaytracer.cpp
             Structured4DGrid.cpp)
 
 set(LIBRARIES ${Eigen_LIBRARY}
-              ${ROOT_LIBRARIES})
+              ${ROOT_LIBRARIES}
+              ${VTK_LIBRARIES})
 
 set(libname ${PACKAGE_LIBPREFIX}Math)
 set(ULIB_SHARED_LIBRARIES ${ULIB_SHARED_LIBRARIES} ${libname} PARENT_SCOPE)
@@ -44,10 +46,15 @@ set_target_properties(${libname} PROPERTIES
                       SOVERSION ${PROJECT_SOVERSION})
 target_link_libraries(${libname} ${LIBRARIES})
 
+
 install(TARGETS ${libname}
         EXPORT "${PROJECT_NAME}Targets"
-        RUNTIME DESTINATION ${PACKAGE_INSTALL_BIN_DIR} COMPONENT bin
-        LIBRARY DESTINATION ${PACKAGE_INSTALL_LIB_DIR} COMPONENT lib)
+        RUNTIME DESTINATION ${INSTALL_BIN_DIR} COMPONENT bin
+        LIBRARY DESTINATION ${INSTALL_LIB_DIR} COMPONENT lib)
 
-install(FILES ${HEADERS} DESTINATION ${PACKAGE_INSTALL_INC_DIR}/Math)
+install(FILES ${HEADERS} DESTINATION ${INSTALL_INC_DIR}/Math)
+
+# TESTING
+# include(uLibTargetMacros)
+# add_subdirectory(testing)
 

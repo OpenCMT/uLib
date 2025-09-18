@@ -27,12 +27,15 @@
 #ifndef U_MATH_BITCODE_H
 #define U_MATH_BITCODE_H
 
+#include <iostream>
+
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/vector_c.hpp>
 #include <boost/mpl/set_c.hpp>
 
 #include <Math/Dense.h>
+
 
 namespace uLib {
 

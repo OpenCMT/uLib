@@ -160,6 +160,8 @@ public:
 
     void parse_config_file(const char *fname);
 
+    void save_config_file(const char *fname);
+
     template <typename T>
     static inline boost::program_options::typed_value<T>* value(T *v, T dvalue) {
         boost::program_options::typed_value<T> *r = boost::program_options::value<T>(v);
