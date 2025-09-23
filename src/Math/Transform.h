@@ -110,6 +110,17 @@ public:
 
     inline void Rotate(const Matrix3f &m) { this->m_T.rotate(m); }
 
+    inline void Rotate(const float angle, Vector3f axis)
+    {
+        axis.normalize(); // prehaps not necessary ( see eigens )
+        Eigen::AngleAxisf ax(angle,axis);
+        this->m_T.rotate(Eigen::Quaternion<float>(ax));
+    }
+
+    inline void Rotate(const Vector3f euler_axis) {
+        float angle = euler_axis.norm();
+        Rotate(angle,euler_axis);
+    }
 
     inline void PreRotate(const Matrix3f &m) { this->m_T.prerotate(m); }
 
