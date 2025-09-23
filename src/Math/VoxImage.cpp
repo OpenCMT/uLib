@@ -114,8 +114,11 @@ void Abstract::VoxImage::ExportToVti (const char *file, bool density_type, bool 
     size_t npoints = nx*ny*nz;
     float *scalar = static_cast<float*>(image->GetScalarPointer());
 
+    StructuredData unwrap(*voxels);
+    unwrap.SetDataOrder(StructuredData::XYZ); // move to XYZ order (VTK)
     for (size_t i = 0; i < npoints; i++) {
-        scalar[i] = static_cast<float>(voxels->GetValue(i) * norm);
+        Vector3i idx = unwrap.UnMap(i);
+        scalar[i] = static_cast<float>(voxels->GetValue(idx) * norm);
     }
 
     // Create a custom string key
@@ -170,8 +173,12 @@ int Abstract::VoxImage::ImportFromVti(const char *file, bool density_type) {
 
     size_t npoints = nx*ny*nz;
     float *scalar = static_cast<float*>(image->GetScalarPointer());
+
+    StructuredData wrap(*voxels);
+    wrap.SetDataOrder(StructuredData::XYZ);
     for (size_t i = 0; i < npoints; i++) {
-        voxels->SetValue(i, scalar[i] / norm);
+        Vector3i idx = wrap.UnMap(i);
+        voxels->SetValue(idx, scalar[i] / norm);
     }
 
     return true;
