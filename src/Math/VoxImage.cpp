@@ -99,7 +99,7 @@ void Abstract::VoxImage::ExportToVti (const char *file, bool density_type, bool 
     vtkSmartPointer<vtkImageData> image = vtkSmartPointer<vtkImageData>::New();
     image->SetDimensions(voxels->GetDims()(0), voxels->GetDims()(1), voxels->GetDims()(2));
     image->SetSpacing(voxels->GetSpacing()(0), voxels->GetSpacing()(1), voxels->GetSpacing()(2));
-    image->SetOrigin(voxels->GetOrigin()(0), voxels->GetOrigin()(1), voxels->GetOrigin()(2));
+    image->SetOrigin(voxels->GetPosition()(0), voxels->GetPosition()(1), voxels->GetPosition()(2));
     image->AllocateScalars(VTK_FLOAT, 1);
 
     float norm;
@@ -164,7 +164,7 @@ int Abstract::VoxImage::ImportFromVti(const char *file, bool density_type) {
     
     voxels->SetDims(Vector3i(nx,ny,nz));
     voxels->SetSpacing(Vector3f(image->GetSpacing()[0],image->GetSpacing()[1],image->GetSpacing()[2]));
-    voxels->SetOrigin(Vector3f(image->GetOrigin()[0],image->GetOrigin()[1],image->GetOrigin()[2]));
+    voxels->SetPosition(Vector3f(image->GetOrigin()[0],image->GetOrigin()[1],image->GetOrigin()[2]));
 
     float norm;
     if (density_type) {
